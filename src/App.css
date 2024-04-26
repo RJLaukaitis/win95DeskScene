@@ -8,3 +8,10 @@ body,
   height: 100%;
   background: ivory;
 }
+
+.computer iframe{
+  width: 690px;
+  height: 580px;
+  border: none;
+  border-radius: 10px;
+}

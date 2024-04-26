@@ -4,8 +4,6 @@ import Desk from "./Desk.jsx";
 import "./App.css"
 import { useEffect } from 'react';
 import { AmbientLight, DirectionalLight, TextureLoader } from 'three';
-import { OrbitControls } from '@react-three/drei';
-import { FlyControls } from 'three/addons/controls/FlyControls.js';
 
 const Scene = () => {
   const { camera, scene } = useThree();
@@ -29,18 +27,12 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Canvas
     camera={{
-      fov: 45,
+      fov: 39,
       near: 0.1,
       far: 2000,
-      position: [1.3, 3, .12]
+      position: [1.3, 3, .1]
     }}
   >
     <Scene />
-    {/* <OrbitControls 
-    enableZoom={false}
-    enableRotate={false}
-    enablePan={false}
-    autoRotate autoRotateSpeed={1.0}
-    /> */}
   </Canvas>
 );
