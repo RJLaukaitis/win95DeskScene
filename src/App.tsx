@@ -17,7 +17,9 @@ function App() {
   // Return the view, these are regular Threejs elements expressed in JSX
   return (
     <>
-      <Environment preset='forest' />
+      <Environment preset='warehouse' />
+
+      const camera = new THREE.Pers
 
       <OrbitControls />
 
