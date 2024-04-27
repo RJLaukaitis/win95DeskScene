@@ -1,26 +1,25 @@
 import { Canvas, useThree, extend, useLoader } from '@react-three/fiber'
-import ReactDOM from 'react-dom/client'
+import ReactDOM from 'react-dom/client';
 import Desk from "./Desk.jsx";
-import "./App.css"
 import { useEffect } from 'react';
+import "./App.css";
 import { AmbientLight, DirectionalLight, TextureLoader } from 'three';
 import CSS3DScene from './CSS3DScene.jsx';
 
-
 const Scene = () => {
   const { camera, scene } = useThree();
-
   useEffect(() => {
+    // Adjust camera focus as needed
+    camera.lookAt(-8, 2.7,0);
+    camera.updateProjectionMatrix();
     // Setup lighting
     const ambientLight = new AmbientLight(0x404040, 1); // Soft white light
     const directionalLight = new DirectionalLight(0xffffff, 1);
     directionalLight.position.set(5, 10, 5);
     scene.add(ambientLight, directionalLight);
   }, [camera, scene]);
-
   return <Desk />;
 }
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Canvas
@@ -28,7 +27,7 @@ root.render(
       fov: 39,
       near: 0.1,
       far: 2000,
-      position: [10, 10, 8]
+      position: [4, 8, 12]
     }}
   >
     <Scene />
