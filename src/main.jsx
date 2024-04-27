@@ -10,7 +10,7 @@ const Scene = () => {
 
   useEffect(() => {
     // Adjust camera focus as needed
-    camera.lookAt(-8, 2.7,0);
+    camera.lookAt(0, 0,0);
     camera.updateProjectionMatrix();
 
     // Setup lighting
@@ -30,7 +30,7 @@ root.render(
       fov: 39,
       near: 0.1,
       far: 2000,
-      position: [1.3, 3, .1]
+      position: [10, 10, 8]
     }}
   >
     <Scene />
