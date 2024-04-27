@@ -4,15 +4,13 @@ import Desk from "./Desk.jsx";
 import "./App.css"
 import { useEffect } from 'react';
 import { AmbientLight, DirectionalLight, TextureLoader } from 'three';
+import CSS3DScene from './CSS3DScene.jsx';
+
 
 const Scene = () => {
   const { camera, scene } = useThree();
 
   useEffect(() => {
-    // Adjust camera focus as needed
-    camera.lookAt(0, 0,0);
-    camera.updateProjectionMatrix();
-
     // Setup lighting
     const ambientLight = new AmbientLight(0x404040, 1); // Soft white light
     const directionalLight = new DirectionalLight(0xffffff, 1);
@@ -34,5 +32,6 @@ root.render(
     }}
   >
     <Scene />
+    <CSS3DScene/>
   </Canvas>
 );
