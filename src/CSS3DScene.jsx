@@ -10,51 +10,58 @@ extend({ CSS3DRenderer });
 function CSS3DScene() {
     const { scene, camera, gl } = useThree();
     const ref = useRef();
+    let scene2;
+    
 
     useEffect(() => {
         // Setup the CSS3DRenderer
-        const cssRenderer = new CSS3DRenderer();
-        const screenPosition = new THREE.Vector3(0,3,5);
-        cssRenderer.setSize(120, 100);
-        cssRenderer.domElement.style.setProperty('position', 'absolute');
-        cssRenderer.domElement.style.setProperty('top', '40%', 'important');
-        cssRenderer.domElement.style.setProperty('left', '50%', 'important');
-        document.body.appendChild(cssRenderer.domElement);
+    scene2 = new THREE.Scene();
+    const cssRenderer = new CSS3DRenderer();
+    cssRenderer.setSize(window.innerWidth, window.innerHeight);
+    cssRenderer.domElement.style.position = 'absolute';
+    cssRenderer.domElement.style.top = '0';
+    cssRenderer.domElement.style.left = '0';
+    document.body.appendChild(cssRenderer.domElement);
 
+    // Rendering iframe
+    var element = document.createElement("iframe");
+    element.style.width = "10px"; // Adjusted to a standard video size
+    element.style.height = "10px"; // Adjusted to a standard video size
+    element.src = "https://www.youtube.com/embed/7FG7nTUYowQ?si=Fvu-8rg4wVTI5iGQ";
+    var domObject = new CSS3DObject(element);
+    domObject.position.set(-5, 2, 0); // Positioned to be visible in front of the camera
+    domObject.rotation.y = Math.PI; // Adjust if necessary
+    scene.add(domObject);
 
-        //rendering iframe
-        var element = document.createElement("iframe");
-        element.style.width = "300px";
-        element.style.height = "200px";
-        element.style.opacity = 0.999;
-        element.src = "https://www.bing.com";
-        var domObject = new CSS3DObject(element);
-        scene.add(domObject);
+    var material = new THREE.MeshPhongMaterial({
+        opacity: 0.2,
+        color: new THREE.Color("black"),
+        blending: THREE.NoBlending,
+        side: THREE.DoubleSide,
+        transparent: true
+    });
 
+    var geometry = new THREE.PlaneGeometry(10, 10); // Match the iframe's aspect ratio
+    var mesh = new THREE.Mesh(geometry, material);
+    mesh.position.copy(domObject.position);
+    mesh.rotation.copy(domObject.rotation);
+    scene.add(mesh);
 
+    // Animation loop for CSS3D rendering
+    const animate = () => {
+        requestAnimationFrame(animate);
+        cssRenderer.render(scene, camera);
+    };
+    ref.current = requestAnimationFrame(animate);
 
-        // Create a test CSS3D object, aim to replace with the iframe containing the inner website
-        // const el = document.createElement('div');
-        // el.innerHTML = "<h1>TEST</h1>";
-        // const cssObject = new CSS3DObject(el);
-        // cssObject.position.copy(screenPosition);
-        // cssObject.rotateY(1)
-        // scene.add(cssObject);
-
-        // Animation loop for CSS3D rendering
-        const animate = () => {
-            cssRenderer.render(scene, camera);
-            ref.current = requestAnimationFrame(animate);
-        };
-        ref.current = requestAnimationFrame(animate);
-
-        // Cleanup
-        return () => {
-            cancelAnimationFrame(ref.current);
-            document.body.removeChild(cssRenderer.domElement);
-            scene.remove(cssObject);
-        };
-    }, [camera, scene, gl]);
+    // Cleanup
+    return () => {
+        cancelAnimationFrame(ref.current);
+        document.body.removeChild(cssRenderer.domElement);
+        scene.remove(domObject);
+        scene.remove(mesh);
+    };
+}, [camera, scene, gl]);
 
     return null; // As this component does not render anything directly
 }

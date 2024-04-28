@@ -35,7 +35,7 @@ const Scene = () => {
       camera.updateProjectionMatrix();
     };
 
-    window.addEventListener('mousedown', adjustCamera);
+    //window.addEventListener('mousedown', adjustCamera);
 
     // Cleanup the event listener when the component unmounts
     return () => {
@@ -57,12 +57,12 @@ root.render(
     }}
   >
     <Scene />
-     {/* <OrbitControls 
+     <OrbitControls 
     enableZoom={false}
     enableRotate={false}
     enablePan={false}
     autoRotate autoRotateSpeed={1.0}
-    /> */}
+    />
     <CSS3DScene/>
   </Canvas>
 );
