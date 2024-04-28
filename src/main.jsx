@@ -1,10 +1,13 @@
 import { Canvas, useThree, extend, useLoader } from '@react-three/fiber';
 import ReactDOM from 'react-dom/client';
 import { useEffect } from 'react';
+import { OrbitControls } from '@react-three/drei';
 import { AmbientLight, DirectionalLight } from 'three';
 import "./App.css";
 import Desk from "./Desk.jsx";
 import CSS3DScene from './CSS3DScene.jsx';
+import gsap from 'gsap';
+
 
 const Scene = () => {
   const { camera, scene } = useThree();
@@ -17,10 +20,16 @@ const Scene = () => {
     directionalLight.position.set(5, 10, 5);
     scene.add(ambientLight, directionalLight);
 
+
     // Event listener for camera adjustment
     const adjustCamera = () => {
-      camera.position.set(1.3, 3, 0.1);
-      camera.lookAt(-8,2.7,0);
+      OrbitControls.autoRotate =false;
+      gsap.to(camera.position,{
+        x: 1.3,y:3,z:0.1, duration:1.5, onUpdate:function() {
+                        camera.lookAt(-8,2.7,0);
+
+        }
+      })
       camera.updateProjectionMatrix();
     };
 
@@ -42,10 +51,16 @@ root.render(
       fov: 39,
       near: 0.1,
       far: 2000,
-      position: [7, 11, 20]
+      position: [20, 9, 0]
     }}
   >
     <Scene />
+     {/* <OrbitControls 
+    enableZoom={false}
+    enableRotate={false}
+    enablePan={false}
+    autoRotate autoRotateSpeed={1.0}
+    /> */}
     <CSS3DScene/>
   </Canvas>
 );
