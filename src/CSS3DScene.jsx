@@ -21,13 +21,25 @@ function CSS3DScene() {
         cssRenderer.domElement.style.setProperty('left', '50%', 'important');
         document.body.appendChild(cssRenderer.domElement);
 
+
+        //rendering iframe
+        var element = document.createElement("iframe");
+        element.style.width = "300px";
+        element.style.height = "200px";
+        element.style.opacity = 0.999;
+        element.src = "https://www.bing.com";
+        var domObject = new CSS3DObject(element);
+        scene.add(domObject);
+
+
+
         // Create a test CSS3D object, aim to replace with the iframe containing the inner website
-        const el = document.createElement('div');
-        el.innerHTML = "<h1>TEST</h1>";
-        const cssObject = new CSS3DObject(el);
-        cssObject.position.copy(screenPosition);
-        cssObject.rotateY(1)
-        scene.add(cssObject);
+        // const el = document.createElement('div');
+        // el.innerHTML = "<h1>TEST</h1>";
+        // const cssObject = new CSS3DObject(el);
+        // cssObject.position.copy(screenPosition);
+        // cssObject.rotateY(1)
+        // scene.add(cssObject);
 
         // Animation loop for CSS3D rendering
         const animate = () => {

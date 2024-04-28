@@ -25,7 +25,9 @@ const Scene = () => {
     const adjustCamera = () => {
       OrbitControls.autoRotate =false;
       gsap.to(camera.position,{
-        x: 1.3,y:3,z:0.1, duration:1.5, onUpdate:function() {
+        x: 1.3,y:3,z:0.1, duration:1, onUpdate:function() {
+                        camera.lookAt(-1,2,0);
+                        camera.lookAt(-3,2,0);
                         camera.lookAt(-8,2.7,0);
 
         }
