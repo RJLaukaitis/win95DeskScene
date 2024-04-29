@@ -25,12 +25,13 @@ function CSS3DScene() {
 
     // Rendering iframe
     var element = document.createElement("iframe");
-    element.style.width = "10px"; // Adjusted to a standard video size
-    element.style.height = "10px"; // Adjusted to a standard video size
-    element.src = "https://www.youtube.com/embed/7FG7nTUYowQ?si=Fvu-8rg4wVTI5iGQ";
+    element.style.width = "640px"; // Adjusted to a standard video size
+    element.style.height = "320px"; // Adjusted to a standard video size
+    element.src = "https://www.bing.com";
     var domObject = new CSS3DObject(element);
     domObject.position.set(-5, 2, 0); // Positioned to be visible in front of the camera
     domObject.rotation.y = Math.PI; // Adjust if necessary
+    domObject.scale.set(.01,.01,.01);
     scene.add(domObject);
 
     var material = new THREE.MeshPhongMaterial({
@@ -41,10 +42,11 @@ function CSS3DScene() {
         transparent: true
     });
 
-    var geometry = new THREE.PlaneGeometry(10, 10); // Match the iframe's aspect ratio
+    var geometry = new THREE.PlaneGeometry(100, 100); // Match the iframe's aspect ratio
     var mesh = new THREE.Mesh(geometry, material);
     mesh.position.copy(domObject.position);
     mesh.rotation.copy(domObject.rotation);
+    mesh.scale.copy(domObject.scale);
     scene.add(mesh);
 
     // Animation loop for CSS3D rendering
