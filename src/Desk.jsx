@@ -13,7 +13,7 @@ export default function Desk() {
         <   Environment preset="warehouse" />
             <primitive object={desk.scene}>
             </primitive>
-        </>
+            </>
          </mesh>
     );
 }
