@@ -56,6 +56,7 @@ root.render(
       position: [20, 9, 0]
     }}
   >
+        <CSS3DScene/>
         <Scene />
          {/* <OrbitControls 
     enableZoom={false}
@@ -63,6 +64,5 @@ root.render(
     enablePan={false}
     autoRotate autoRotateSpeed={1.0}
     /> */}
-    <CSS3DScene/>
   </Canvas>
 );
