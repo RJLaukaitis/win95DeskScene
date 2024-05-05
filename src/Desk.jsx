@@ -10,10 +10,8 @@ export default function Desk() {
         <mesh>
         <>
         <   Environment preset="warehouse" />
-        <PresentationControls global polar ={[0,0]} azimuth={[-Math.PI / 2, Math.PI/2 / 2]}>
             <primitive object={desk.scene}>
             </primitive>
-            </PresentationControls>
             </>
          </mesh>
     );

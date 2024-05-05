@@ -58,11 +58,11 @@ root.render(
   >
         <CSS3DScene/>
         <Scene />
-         {/* <OrbitControls 
+         <OrbitControls 
     enableZoom={false}
     enableRotate={false}
     enablePan={false}
     autoRotate autoRotateSpeed={1.0}
-    /> */}
+    />
   </Canvas>
 );
