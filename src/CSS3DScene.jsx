@@ -27,29 +27,40 @@ function CSS3DScene() {
     var element = document.createElement("iframe");
     element.style.width = "720px"; // Adjusted to a standard video size
     element.style.height = "640px"; // Adjusted to a standard video size
-    //element.src = "https://www.bing.com";
+    element.src = "https://www.Bing.com";
     var domObject = new CSS3DObject(element);
-    domObject.position.set(-.36, 3.05, .12); // Positioned to be visible in front of the camera -.19
+    domObject.position.set(-.15, 2.98, .12); // Positioned to be visible in front of the camera -.19
     domObject.rotation.y =(Math.PI / 2); // Correct the rotation to face the camera
-
-
     domObject.scale.set(.0012,.0012,.0011);
-    scene.add(domObject);
+    scene2.add(domObject);
 
-    var material = new THREE.MeshPhongMaterial({
-        opacity: 0.2,
-        color: new THREE.Color("black"),
-        blending: THREE.NoBlending,
-        side: THREE.DoubleSide,
-        transparent: true
-    });
+//webgl plane for occluding css plane
+    const material = new THREE.MeshBasicMaterial();
+    material.side = THREE.DoubleSide;
+    material.opacity = 0;
+    material.transparent = true;
+    material.blending = THREE.NoBlending;
 
-    var geometry = new THREE.PlaneGeometry(720, 640); // Match the iframe's aspect ratio
-    var mesh = new THREE.Mesh(geometry, material);
+    const geometry = new THREE.PlaneGeometry(720, 640); // Match the iframe's aspect ratio
+    const mesh = new THREE.Mesh(geometry, material);
     mesh.position.copy(domObject.position);
     mesh.rotation.copy(domObject.rotation);
     mesh.scale.copy(domObject.scale);
     scene.add(mesh);
+
+    //webgl plane for screen like glass effect
+    // var material1 = new THREE.MeshBasicMaterial();
+    // material1.side = THREE.DoubleSide;
+    // material1.opacity = 0.9;
+    // material1.transparent = true;
+    // material1.blending = THREE.NoBlending;
+
+    // var geometry1 = new THREE.PlaneGeometry(720, 640); // Match the iframe's aspect ratio
+    // var mesh1 = new THREE.Mesh(geometry, material);
+    // mesh1.position.copy(domObject.position);
+    // mesh1.rotation.copy(domObject.rotation);
+    // mesh1.scale.copy(domObject.scale);
+    // scene.add(mesh1);
 
     // Animation loop for CSS3D rendering
     const animate = () => {
@@ -62,7 +73,8 @@ function CSS3DScene() {
     return () => {
         cancelAnimationFrame(ref.current);
         document.body.removeChild(cssRenderer.domElement);
-        scene.remove(domObject);
+        scene2.remove(domObject);
+        scene.remove(mesh);
     };
 }, [camera, scene, gl]);
 
