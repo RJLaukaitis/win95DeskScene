@@ -1,16 +1,19 @@
 import { useEffect, useRef } from 'react';
-import { extend, useThree } from '@react-three/fiber';
+import { extend, useThree, useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
-import './CSS3DScene.css';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { Environment } from '@react-three/drei';
 
-// Extend @react-three/fiber to recognize CSS3DRenderer
 extend({ CSS3DRenderer });
 
 function CSS3DScene() {
-    const { scene, camera, gl } = useThree();
+    const { scene, gl, camera } = useThree();
+    const cssScene = new THREE.Scene();
     const ref = useRef();
-    let cssscene;
+    const cssRendererRef = useRef();
+    const deskGltf = useLoader(GLTFLoader, "../Assets/DeskScene.glb");
 
     useEffect(() => {
         // Setup the CSS3DRenderer
@@ -22,31 +25,50 @@ function CSS3DScene() {
         cssRenderer.domElement.style.zIndex = '0';
         document.body.appendChild(cssRenderer.domElement);
 
+        cssRendererRef.current = cssRenderer;
+
         gl.domElement.style.position = "absolute";
         gl.domElement.style.top = "0";
         gl.domElement.style.zIndex = "10";
 
+        // ORBIT CONTROLS
+        const controls = new OrbitControls(camera, gl.domElement);
+        const controlsCss = new OrbitControls(camera, cssRenderer.domElement);
+
+        // LIGHTING
+        scene.add(<Environment preset = "warehouse"/>);
+        const ambientLight = new THREE.AmbientLight(0x404040, 1); // Soft white light
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(5, 10, 5);
+        scene.add(ambientLight, directionalLight);
+
         // Create the iframe element
         const element = document.createElement("iframe");
-        element.style.width = "720px"; // Adjusted to a standard video size
-        element.style.height = "640px"; // Adjusted to a standard video size
-        element.src = "https://www.Bing.com";
+        element.style.width = "720px";
+        element.style.height = "640px";
+        element.src = "https://www.bing.com";
         element.style.border = 'none';
 
         const domObject = new CSS3DObject(element);
-        domObject.position.set(-0.15, 2.98, 0.12); // Positioned to be visible in front of the camera
-        domObject.rotation.y = Math.PI / 2; // Correct the rotation to face the camera
+        domObject.position.set(-0.15, 2.98, 0.12);
+        domObject.rotation.y = Math.PI / 2;
         domObject.scale.set(0.0012, 0.0012, 0.0011);
-        scene.add(domObject);
+        cssScene.add(domObject);
+
+        // Add the Desk model
+        deskGltf.scene.position.set(0, 0, 0); // Adjust this position as needed
+        scene.add(deskGltf.scene);
 
         // WebGL plane for occluding CSS plane
         const createOccludingPlane = () => {
-            const geometry = new THREE.PlaneGeometry(720, 640); // Match the iframe's aspect ratio
-            const material = new THREE.MeshLambertMaterial({
-                side: THREE.DoubleSide,
+            const geometry = new THREE.PlaneGeometry(720, 640);
+            const material = new THREE.MeshBasicMaterial({
+                color: 0x000000,
                 opacity: 0,
                 transparent: true,
-                blending: THREE.NoBlending,
+                depthTest: true,
+                depthWrite: true,
+                blending: THREE.NoBlending
             });
 
             const mesh = new THREE.Mesh(geometry, material);
@@ -59,11 +81,24 @@ function CSS3DScene() {
         const occlusionMesh = createOccludingPlane();
         scene.add(occlusionMesh);
 
+        // Adjust Desk Materials
+        // deskGltf.scene.traverse((object) => {
+        //     if (object.isMesh) {
+        //         object.material = new THREE.MeshStandardMaterial({
+        //             color: 0xffffff,
+        //             roughness: 0.5,
+        //             metalness: 0.5
+        //         });
+        //     }
+        // });
+
         // Animation loop for CSS3D rendering
         const animate = () => {
             ref.current = requestAnimationFrame(animate);
             gl.render(scene, camera);
-            cssRenderer.render(scene, camera);
+            cssRenderer.render(cssScene, camera);
+            controls.update();
+            controlsCss.update();
         };
         animate();
 
@@ -71,12 +106,13 @@ function CSS3DScene() {
         return () => {
             cancelAnimationFrame(ref.current);
             document.body.removeChild(cssRenderer.domElement);
-            scene.remove(domObject);
+            cssScene.remove(domObject);
             scene.remove(occlusionMesh);
+            scene.remove(deskGltf.scene);
         };
-    }, [camera, scene, gl]);
+    }, [camera, scene, gl, deskGltf.scene]);
 
-    return null; // As this component does not render anything directly
+    return null;
 }
 
 export default CSS3DScene;
