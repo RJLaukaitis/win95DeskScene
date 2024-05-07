@@ -1,10 +1,11 @@
 import { useEffect, useRef } from 'react';
-import { extend, useThree, useLoader } from '@react-three/fiber';
+import { extend, useThree, useLoader, render } from '@react-three/fiber';
 import * as THREE from 'three';
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Environment } from '@react-three/drei';
+import { makeItGrain } from './GrainShader';
 
 extend({ CSS3DRenderer });
 
@@ -31,6 +32,9 @@ function CSS3DScene() {
         gl.domElement.style.top = "0";
         gl.domElement.style.zIndex = "10";
 
+
+        //post processing for film grain
+        makeItGrain(camera);
         // ORBIT CONTROLS
         const controls = new OrbitControls(camera, gl.domElement);
         const controlsCss = new OrbitControls(camera, cssRenderer.domElement);
@@ -99,6 +103,7 @@ function CSS3DScene() {
             cssRenderer.render(cssScene, camera);
             controls.update();
             controlsCss.update();
+            //composer.render();
         };
         animate();
 
