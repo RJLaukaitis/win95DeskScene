@@ -5,7 +5,9 @@ import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRe
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Environment } from '@react-three/drei';
-import { makeItGrain } from './GrainShader';
+import { FilmPass} from 'three/examples/jsm/postprocessing/FilmPass.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 
 extend({ CSS3DRenderer });
 
@@ -32,17 +34,27 @@ function CSS3DScene() {
         gl.domElement.style.top = "0";
         gl.domElement.style.zIndex = "10";
 
+        //film grain
+        const composer = new EffectComposer(gl);
+        const renderPass = new RenderPass(scene, camera);
+        const filmPass = new FilmPass(
+            0.1,   // noise intensity
+            0.025,  // scanline intensity
+            0,    // scanline count
+            false   // grayscale (set to true if you want grayscale)
+        );
 
-        //post processing for film grain
-        makeItGrain(camera);
+        composer.addPass(renderPass);
+        composer.addPass(filmPass);
+
         // ORBIT CONTROLS
         const controls = new OrbitControls(camera, gl.domElement);
         const controlsCss = new OrbitControls(camera, cssRenderer.domElement);
 
         // LIGHTING
-        scene.add(<Environment preset = "warehouse"/>);
-        const ambientLight = new THREE.AmbientLight(0x404040, 1); // Soft white light
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        //scene.add(<Environment preset = "warehouse"/>);
+        const ambientLight = new THREE.AmbientLight(0x404040, 3); // Soft white light
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
         directionalLight.position.set(5, 10, 5);
         scene.add(ambientLight, directionalLight);
 
@@ -99,11 +111,11 @@ function CSS3DScene() {
         // Animation loop for CSS3D rendering
         const animate = () => {
             ref.current = requestAnimationFrame(animate);
-            gl.render(scene, camera);
+            composer.render();  // use composer instead of gl.render
+            //gl.render(scene, camera);
             cssRenderer.render(cssScene, camera);
             controls.update();
             controlsCss.update();
-            //composer.render();
         };
         animate();
 
