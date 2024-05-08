@@ -40,7 +40,7 @@ function CSS3DScene() {
         const filmPass = new FilmPass(
             0.1,   // noise intensity
             0.025,  // scanline intensity
-            0,    // scanline count
+            648,    // scanline count
             false   // grayscale (set to true if you want grayscale)
         );
 
@@ -51,12 +51,38 @@ function CSS3DScene() {
         const controls = new OrbitControls(camera, gl.domElement);
         const controlsCss = new OrbitControls(camera, cssRenderer.domElement);
 
-        // LIGHTING
-        //scene.add(<Environment preset = "warehouse"/>);
+        //LIGHTING
+        scene.add(<Environment preset = "warehouse"/>);
         const ambientLight = new THREE.AmbientLight(0x404040, 3); // Soft white light
         const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
         directionalLight.position.set(5, 10, 5);
         scene.add(ambientLight, directionalLight);
+
+        //white box for containing elements
+        // Box geometry
+            const boxGeometry = new THREE.BoxGeometry(45, 45, 45); // Dimensions might need adjusting
+            const material = new THREE.MeshStandardMaterial({
+            color: 0xffffff, // White color
+            roughness: 0.5, // Soften the material
+            metalness: 0.1,
+            side: THREE.BackSide // Render the inside of the box
+            });
+            const box = new THREE.Mesh(boxGeometry, material);
+            box.position.set(0, 22.5, 0); // Adjust position as needed
+            scene.add(box);
+
+            // Soft edges can be simulated with a slight ambient light
+            const ambientLight1 = new THREE.AmbientLight(0xffffff, .8);
+            scene.add(ambientLight1);
+
+            // Additional directional light
+            const directionalLight1 = new THREE.DirectionalLight(0xffffff,.8);
+            directionalLight1.position.set(10, 20, 10);
+            scene.add(directionalLight1);
+
+
+
+
 
         // Create the iframe element
         const element = document.createElement("iframe");
@@ -111,9 +137,9 @@ function CSS3DScene() {
         // Animation loop for CSS3D rendering
         const animate = () => {
             ref.current = requestAnimationFrame(animate);
-            composer.render();  // use composer instead of gl.render
-            //gl.render(scene, camera);
+            gl.render(scene, camera);
             cssRenderer.render(cssScene, camera);
+            composer.render();  // use composer instead of gl.render
             controls.update();
             controlsCss.update();
         };
