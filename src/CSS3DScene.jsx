@@ -80,91 +80,59 @@ function CSS3DScene() {
             directionalLight1.position.set(15, 25, 0);
             scene.add(directionalLight1);
 
+            // Add the Desk model
+            deskGltf.scene.position.set(0, 0, 0); // Adjust this position as needed
+            scene.add(deskGltf.scene);
 
+            
+            //container
+            const container = document.createElement('div');
+            container.style.width = "720px"
+            container.style.height = "640px"
+            container.style.opacity = '1';
+            container.style.background = '#1d2e2f';
 
+            //creating iframe
+            const iframe = document.createElement('iframe');
 
+            //setting iframe settings
+            iframe.src = "https://bing.com";
+            iframe.style.width = "720px";
+            iframe.style.height = "640px";
+            iframe.style.padding = "32px";
+            iframe.style.boxSizing = 'border-box';
+            iframe.style.opacity = '1';
+            iframe.className = 'jitter';
+            iframe.id = 'computer-screen';
+            iframe.title = 'LaukaitisOS';
 
-        // Create the iframe element
-        const element = document.createElement("iframe");
-        element.style.width = "720px";
-        element.style.height = "640px";
-        element.src = "https://www.bing.com";
-        element.style.border = 'none';
+            container.appendChild(iframe);
 
-        const domObject = new CSS3DObject(element);
-        domObject.position.set(-.05, 2.98, 0.12);
-        domObject.rotation.y = Math.PI / 2;
-        domObject.scale.set(0.01, 0.01, 0.011);
-        cssScene.add(domObject);
+            //creating css3dobject
+            const object = new CSS3DObject(container);
+            object.position.set(-.2, 2.98, 0.12); // Set appropriate values
+            object.rotation.y = Math.PI / 2;
+            object.scale.set(0.001, .001, .001);    // Set appropriate values
+            cssScene.add(object);
 
-        // Add the Desk model
-        deskGltf.scene.position.set(0, 0, 0); // Adjust this position as needed
-        scene.add(deskGltf.scene);
+            //creating GL plane for occlusion
+            const mat = new THREE.MeshLambertMaterial();
+            mat.side = THREE.DoubleSide;
+            mat.opacity = 0;
+            mat.transparent = true;
+            // NoBlending allows the GL plane to occlude the CSS plane
+            mat.blending = THREE.NoBlending;
 
-        
-        //creating css object
-        const container = document.createElement('div');
-        const object = new CSS3DObject(container);
-        object.position.copy(domObject.position);
-        object.rotation.copy(domObject.rotation);
+            const geometry = new THREE.PlaneGeometry(720,640);
 
-        //adding to CSS scene
-        cssScene.add(object);
+            //creating plane
+            const mesh = new THREE.Mesh(geometry, mat);
+            mesh.position.copy(object.position);
+            mesh.rotation.copy(object.rotation);
+            mesh.scale.copy(object.scale);
+            
+            scene.add(mesh);
 
-        //create GL plane
-        const mat = new THREE.MeshLambertMaterial();
-        mat.side = THREE.DoubleSide;
-        mat.opacity = 0.5;
-        mat.depthTest = true,
-        mat.depthWrite = true,
-        mat.color= "black";
-        mat.transparent = true;
-        
-        //makes it occlude css 
-        mat.blending = THREE.NoBlending
-
-        const geo = new THREE.PlaneGeometry(750, 640);
-
-        //creating gl plane mesh
-        const mesh = new THREE.Mesh(geo,mat);
-        mesh.position.set(.01, 2.98, 0.12);
-        mesh.rotation.copy(domObject.rotation);
-        mesh.scale.copy(domObject.scale);
-
-        scene.add(mesh);
-
-        // WebGL plane for occluding CSS plane
-        // const createOccludingPlane = () => {
-        //     const geometry = new THREE.PlaneGeometry(720, 640);
-        //     const material = new THREE.MeshBasicMaterial({
-        //         color: 0x000000,
-        //         opacity: 0,
-        //         transparent: true,
-        //         depthTest: true,
-        //         depthWrite: true,
-        //         blending: THREE.NoBlending
-        //     });
-
-        //     const mesh = new THREE.Mesh(geometry, material);
-        //     mesh.position.copy(domObject.position);
-        //     mesh.rotation.copy(domObject.rotation);
-        //     mesh.scale.copy(domObject.scale);
-        //     return mesh;
-        // }
-
-        // const occlusionMesh = createOccludingPlane();
-        // scene.add(occlusionMesh);
-
-        // Adjust Desk Materials
-        // deskGltf.scene.traverse((object) => {
-        //     if (object.isMesh) {
-        //         object.material = new THREE.MeshStandardMaterial({
-        //             color: 0xffffff,
-        //             roughness: 0.5,
-        //             metalness: 0.5
-        //         });
-        //     }
-        // });
 
         // Animation loop for CSS3D rendering
         const animate = () => {
@@ -182,7 +150,7 @@ function CSS3DScene() {
             cancelAnimationFrame(ref.current);
             document.body.removeChild(cssRenderer.domElement);
             cssScene.remove(domObject);
-            scene.remove(occlusionMesh);
+            scene.remove(mesh);
             scene.remove(deskGltf.scene);
         };
     }, [camera, scene, gl, deskGltf.scene]);
