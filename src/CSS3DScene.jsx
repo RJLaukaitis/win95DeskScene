@@ -72,12 +72,12 @@ function CSS3DScene() {
             scene.add(box);
 
             // Soft edges can be simulated with a slight ambient light
-            const ambientLight1 = new THREE.AmbientLight(0xffffff, .8);
+            const ambientLight1 = new THREE.AmbientLight(0xffffff, .2);
             scene.add(ambientLight1);
 
             // Additional directional light
-            const directionalLight1 = new THREE.DirectionalLight(0xffffff,.8);
-            directionalLight1.position.set(10, 20, 10);
+            const directionalLight1 = new THREE.DirectionalLight(0xffffff,.3);
+            directionalLight1.position.set(15, 25, 0);
             scene.add(directionalLight1);
 
 
@@ -92,36 +92,68 @@ function CSS3DScene() {
         element.style.border = 'none';
 
         const domObject = new CSS3DObject(element);
-        domObject.position.set(-0.15, 2.98, 0.12);
+        domObject.position.set(-.05, 2.98, 0.12);
         domObject.rotation.y = Math.PI / 2;
-        domObject.scale.set(0.0012, 0.0012, 0.0011);
+        domObject.scale.set(0.01, 0.01, 0.011);
         cssScene.add(domObject);
 
         // Add the Desk model
         deskGltf.scene.position.set(0, 0, 0); // Adjust this position as needed
         scene.add(deskGltf.scene);
 
+        
+        //creating css object
+        const container = document.createElement('div');
+        const object = new CSS3DObject(container);
+        object.position.copy(domObject.position);
+        object.rotation.copy(domObject.rotation);
+
+        //adding to CSS scene
+        cssScene.add(object);
+
+        //create GL plane
+        const mat = new THREE.MeshLambertMaterial();
+        mat.side = THREE.DoubleSide;
+        mat.opacity = 0.5;
+        mat.depthTest = true,
+        mat.depthWrite = true,
+        mat.color= "black";
+        mat.transparent = true;
+        
+        //makes it occlude css 
+        mat.blending = THREE.NoBlending
+
+        const geo = new THREE.PlaneGeometry(750, 640);
+
+        //creating gl plane mesh
+        const mesh = new THREE.Mesh(geo,mat);
+        mesh.position.set(.01, 2.98, 0.12);
+        mesh.rotation.copy(domObject.rotation);
+        mesh.scale.copy(domObject.scale);
+
+        scene.add(mesh);
+
         // WebGL plane for occluding CSS plane
-        const createOccludingPlane = () => {
-            const geometry = new THREE.PlaneGeometry(720, 640);
-            const material = new THREE.MeshBasicMaterial({
-                color: 0x000000,
-                opacity: 0,
-                transparent: true,
-                depthTest: true,
-                depthWrite: true,
-                blending: THREE.NoBlending
-            });
+        // const createOccludingPlane = () => {
+        //     const geometry = new THREE.PlaneGeometry(720, 640);
+        //     const material = new THREE.MeshBasicMaterial({
+        //         color: 0x000000,
+        //         opacity: 0,
+        //         transparent: true,
+        //         depthTest: true,
+        //         depthWrite: true,
+        //         blending: THREE.NoBlending
+        //     });
 
-            const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.copy(domObject.position);
-            mesh.rotation.copy(domObject.rotation);
-            mesh.scale.copy(domObject.scale);
-            return mesh;
-        }
+        //     const mesh = new THREE.Mesh(geometry, material);
+        //     mesh.position.copy(domObject.position);
+        //     mesh.rotation.copy(domObject.rotation);
+        //     mesh.scale.copy(domObject.scale);
+        //     return mesh;
+        // }
 
-        const occlusionMesh = createOccludingPlane();
-        scene.add(occlusionMesh);
+        // const occlusionMesh = createOccludingPlane();
+        // scene.add(occlusionMesh);
 
         // Adjust Desk Materials
         // deskGltf.scene.traverse((object) => {
