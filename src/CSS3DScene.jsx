@@ -12,30 +12,39 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 extend({ CSS3DRenderer });
 
 function CSS3DScene() {
-    const { scene, gl, camera } = useThree();
+    const { scene, camera } = useThree();
     const cssScene = new THREE.Scene();
     const ref = useRef();
+    const rendererRef = useRef();
     const cssRendererRef = useRef();
     const deskGltf = useLoader(GLTFLoader, "../Assets/DeskScene.glb");
 
     useEffect(() => {
+        //setting up gl renderer
+        const renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            alpha: true,
+         });
+        renderer.shadowMap.enabled = true;
+        renderer.domElement.style.position= 'absolute';
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        rendererRef.current = renderer;
+        renderer.domElement.style.zIndex='1';
+
+
         // Setup the CSS3DRenderer
         const cssRenderer = new CSS3DRenderer();
         cssRenderer.setSize(window.innerWidth, window.innerHeight);
-        cssRenderer.domElement.style.position = 'absolute';
-        cssRenderer.domElement.style.top = '0';
-        cssRenderer.domElement.style.left = '0';
-        cssRenderer.domElement.style.zIndex = '0';
-        document.body.appendChild(cssRenderer.domElement);
-
         cssRendererRef.current = cssRenderer;
+        document.body.appendChild(cssRenderer.domElement);
+        cssRenderer.domElement.style.position = 'absolute';
+        cssRenderer.domElement.style.zIndex = '0';
 
-        gl.domElement.style.position = "absolute";
-        gl.domElement.style.top = "0";
-        gl.domElement.style.zIndex = "10";
+
+        cssRenderer.domElement.appendChild(renderer.domElement);
 
         //film grain
-        const composer = new EffectComposer(gl);
+        const composer = new EffectComposer(renderer);
         const renderPass = new RenderPass(scene, camera);
         const filmPass = new FilmPass(
             0.1,   // noise intensity
@@ -48,7 +57,7 @@ function CSS3DScene() {
         composer.addPass(filmPass);
 
         // ORBIT CONTROLS
-        const controls = new OrbitControls(camera, gl.domElement);
+        //const controls = new OrbitControls(camera, renderer.domElement);
         const controlsCss = new OrbitControls(camera, cssRenderer.domElement);
 
         //LIGHTING
@@ -80,67 +89,68 @@ function CSS3DScene() {
             directionalLight1.position.set(15, 25, 0);
             scene.add(directionalLight1);
 
-            // Add the Desk model
-            deskGltf.scene.position.set(0, 0, 0); // Adjust this position as needed
-            scene.add(deskGltf.scene);
+           // Add the Desk model
+           deskGltf.scene.position.set(0, 0, 0); // Adjust this position as needed
+           scene.add(deskGltf.scene);
 
-            
-            //container
-            const container = document.createElement('div');
-            container.style.width = "720px"
-            container.style.height = "640px"
-            container.style.opacity = '1';
-            container.style.background = '#1d2e2f';
 
-            //creating iframe
-            const iframe = document.createElement('iframe');
+           //container
+           const container = document.createElement('div');
+           container.style.width = "720px"
+           container.style.height = "640px"
+           container.style.opacity = '1';
+           container.style.background = '#1d2e2f';
 
-            //setting iframe settings
-            iframe.src = "https://bing.com";
-            iframe.style.width = "720px";
-            iframe.style.height = "640px";
-            iframe.style.padding = "32px";
-            iframe.style.boxSizing = 'border-box';
-            iframe.style.opacity = '1';
-            iframe.className = 'jitter';
-            iframe.id = 'computer-screen';
-            iframe.title = 'LaukaitisOS';
+           //creating iframe
+           const iframe = document.createElement('iframe');
 
-            container.appendChild(iframe);
+           //setting iframe settings
+           iframe.src = "https://bing.com";
+           iframe.style.width = "720px";
+           iframe.style.height = "640px";
+           iframe.style.padding = "32px";
+           iframe.style.boxSizing = 'border-box';
+           iframe.style.opacity = '1';
+           iframe.className = 'jitter';
+           iframe.id = 'computer-screen';
+           iframe.title = 'LaukaitisOS';
 
-            //creating css3dobject
-            const object = new CSS3DObject(container);
-            object.position.set(-.2, 2.98, 0.12); // Set appropriate values
-            object.rotation.y = Math.PI / 2;
-            object.scale.set(0.001, .001, .001);    // Set appropriate values
-            cssScene.add(object);
+           container.appendChild(iframe);
 
-            //creating GL plane for occlusion
-            const mat = new THREE.MeshLambertMaterial();
-            mat.side = THREE.DoubleSide;
-            mat.opacity = 0;
-            mat.transparent = true;
-            // NoBlending allows the GL plane to occlude the CSS plane
-            mat.blending = THREE.NoBlending;
+           //creating css3dobject
+           const object = new CSS3DObject(container);
+           object.position.set(-.2, 2.98, 0.12); // Set appropriate values
+           object.rotation.y = Math.PI / 2;
+           object.scale.set(0.001, .001, .001);    // Set appropriate values
+           cssScene.add(object);
 
-            const geometry = new THREE.PlaneGeometry(720,640);
+           //creating GL plane for occlusion
+           const mat = new THREE.MeshLambertMaterial();
+           mat.side = THREE.DoubleSide;
+           mat.opacity = 0.5;
+           mat.transparent = true;
+           // NoBlending allows the GL plane to occlude the CSS plane
+           mat.blending = THREE.NoBlending;
 
-            //creating plane
-            const mesh = new THREE.Mesh(geometry, mat);
-            mesh.position.copy(object.position);
-            mesh.rotation.copy(object.rotation);
-            mesh.scale.copy(object.scale);
-            
-            scene.add(mesh);
+           const geometry = new THREE.PlaneGeometry(720,640);
+
+           //creating plane
+           const mesh = new THREE.Mesh(geometry, mat);
+           mesh.position.copy(object.position);
+           mesh.rotation.copy(object.rotation);
+           mesh.scale.copy(object.scale);
+
+
+           scene.add(mesh);
 
 
         // Animation loop for CSS3D rendering
         const animate = () => {
             ref.current = requestAnimationFrame(animate);
-            gl.render(scene, camera);
-            cssRenderer.render(cssScene, camera);
             composer.render();  // use composer instead of gl.render
-            controls.update();
+            renderer.render(scene, camera);
+            cssRenderer.render(cssScene, camera);
+            //controls.update();
             controlsCss.update();
         };
         animate();
@@ -153,7 +163,7 @@ function CSS3DScene() {
             scene.remove(mesh);
             scene.remove(deskGltf.scene);
         };
-    }, [camera, scene, gl, deskGltf.scene]);
+    }, [camera, scene, deskGltf.scene]);
 
     return null;
 }
