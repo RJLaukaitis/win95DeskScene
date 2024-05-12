@@ -15,33 +15,25 @@ function CSS3DScene() {
     const { scene, camera } = useThree();
     const cssScene = new THREE.Scene();
     const ref = useRef();
-    const rendererRef = useRef();
-    const cssRendererRef = useRef();
-    const deskGltf = useLoader(GLTFLoader, "../Assets/DeskScene.glb");
 
     useEffect(() => {
         //setting up gl renderer
+        const glcontainer = document.createElement('div');
+        glcontainer.id = '#webgl'
         const renderer = new THREE.WebGLRenderer({
             antialias: true,
             alpha: true,
          });
         renderer.shadowMap.enabled = true;
-        renderer.domElement.style.position= 'absolute';
         renderer.setSize(window.innerWidth, window.innerHeight);
-        rendererRef.current = renderer;
-        renderer.domElement.style.zIndex='1';
-
+        glcontainer.appendChild(renderer.domElement);
 
         // Setup the CSS3DRenderer
         const cssRenderer = new CSS3DRenderer();
         cssRenderer.setSize(window.innerWidth, window.innerHeight);
-        cssRendererRef.current = cssRenderer;
-        document.body.appendChild(cssRenderer.domElement);
         cssRenderer.domElement.style.position = 'absolute';
-        cssRenderer.domElement.style.zIndex = '0';
-
-
-        cssRenderer.domElement.appendChild(renderer.domElement);
+        cssRenderer.domElement.style.top = 0;
+        document.body.appendChild(cssRenderer.domElement);
 
         //film grain
         const composer = new EffectComposer(renderer);
@@ -57,8 +49,8 @@ function CSS3DScene() {
         composer.addPass(filmPass);
 
         // ORBIT CONTROLS
-        //const controls = new OrbitControls(camera, renderer.domElement);
         const controlsCss = new OrbitControls(camera, cssRenderer.domElement);
+        controlsCss.enableDamping= true;
 
         //LIGHTING
         scene.add(<Environment preset = "warehouse"/>);
@@ -90,8 +82,12 @@ function CSS3DScene() {
             scene.add(directionalLight1);
 
            // Add the Desk model
-           deskGltf.scene.position.set(0, 0, 0); // Adjust this position as needed
-           scene.add(deskGltf.scene);
+           const loader = new GLTFLoader();
+           loader.load('../Assets/DeskScene.glb', function(glb){
+            const model = glb.scene;
+            model.scale.set(1,1,1);
+            scene.add(model);
+           })
 
 
            //container
@@ -100,26 +96,17 @@ function CSS3DScene() {
            container.style.height = "640px"
            container.style.opacity = '1';
            container.style.background = '#1d2e2f';
-
-           //creating iframe
            const iframe = document.createElement('iframe');
-
-           //setting iframe settings
-           iframe.src = "https://bing.com";
+           iframe.src = "https://google.com";
            iframe.style.width = "720px";
            iframe.style.height = "640px";
-           iframe.style.padding = "32px";
            iframe.style.boxSizing = 'border-box';
            iframe.style.opacity = '1';
-           iframe.className = 'jitter';
-           iframe.id = 'computer-screen';
-           iframe.title = 'LaukaitisOS';
-
            container.appendChild(iframe);
 
            //creating css3dobject
            const object = new CSS3DObject(container);
-           object.position.set(-.2, 2.98, 0.12); // Set appropriate values
+           object.position.set(-.4, 2.98, 0.12); // Set appropriate values
            object.rotation.y = Math.PI / 2;
            object.scale.set(0.001, .001, .001);    // Set appropriate values
            cssScene.add(object);
@@ -127,43 +114,40 @@ function CSS3DScene() {
            //creating GL plane for occlusion
            const mat = new THREE.MeshLambertMaterial();
            mat.side = THREE.DoubleSide;
-           mat.opacity = 0.5;
+           mat.opacity = 0;
            mat.transparent = true;
            // NoBlending allows the GL plane to occlude the CSS plane
            mat.blending = THREE.NoBlending;
 
-           const geometry = new THREE.PlaneGeometry(720,640);
-
+           const geometry = new THREE.PlaneGeometry(800,800);
            //creating plane
            const mesh = new THREE.Mesh(geometry, mat);
-           mesh.position.copy(object.position);
+           mesh.position.set(-.15, 2.98, 0.12);
            mesh.rotation.copy(object.rotation);
            mesh.scale.copy(object.scale);
-
-
            scene.add(mesh);
 
 
         // Animation loop for CSS3D rendering
-        const animate = () => {
-            ref.current = requestAnimationFrame(animate);
-            composer.render();  // use composer instead of gl.render
+        const render = () => {
+            controlsCss.update();
             renderer.render(scene, camera);
             cssRenderer.render(cssScene, camera);
-            //controls.update();
-            controlsCss.update();
+            //composer.render();  // use composer instead of gl.render
+            requestAnimationFrame(render);
+
         };
-        animate();
+        render();
 
         // Cleanup
         return () => {
             cancelAnimationFrame(ref.current);
             document.body.removeChild(cssRenderer.domElement);
-            cssScene.remove(domObject);
             scene.remove(mesh);
+            cssScene.remove(domObject);
             scene.remove(deskGltf.scene);
         };
-    }, [camera, scene, deskGltf.scene]);
+    }, [camera, scene]);
 
     return null;
 }
