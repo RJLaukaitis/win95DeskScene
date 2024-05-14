@@ -73,13 +73,6 @@ function CSS3DScene() {
         box.position.set(0, 22.5, 0); // Adjust position as needed
         scene.add(box);
 
-        // Additional lighting
-        const ambientLight1 = new THREE.AmbientLight(0xffffff, 0.2);
-        scene.add(ambientLight1);
-        const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.3);
-        directionalLight1.position.set(15, 25, 0);
-        scene.add(directionalLight1);
-
         // Add the Desk model
         const loader = new GLTFLoader();
         loader.load('../Assets/DeskScene.glb', function (glb) {
@@ -104,9 +97,9 @@ function CSS3DScene() {
 
         // Creating CSS3DObject
         const object = new CSS3DObject(container);
-        object.position.set(-0.2, 2.98, 0.12); // Set appropriate values
-        object.rotation.y =-Math.PI / 2;
-        object.scale.set(0.01, 0.01, 0.01); // Set appropriate values
+        object.position.set(-0.2, 3, 0.12); // Set appropriate values
+        object.rotation.y = (Math.PI/2);
+        object.scale.set(0.001, 0.001, 0.001); // Set appropriate values
         cssScene.add(object);
 
         // Creating GL plane for occlusion
@@ -119,7 +112,7 @@ function CSS3DScene() {
         const geometry = new THREE.PlaneGeometry(720, 640);
         const mesh = new THREE.Mesh(geometry, mat);
         mesh.position.copy(object.position);
-        mesh.rotation.copy(object.rotation);
+        mesh.rotation.copy(object.rotation); // Copy rotation of CSS3DObject
         mesh.scale.copy(object.scale);
         scene.add(mesh);
 
