@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
-import { extend, useThree, useLoader } from '@react-three/fiber';
+import React, { useEffect, useRef } from 'react';
+import { useThree, useLoader, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { OrbitControls, Html, Environment } from '@react-three/drei';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 
 function DeskModel() {
   const gltf = useLoader(GLTFLoader, '../Assets/DeskScene.glb');
@@ -24,16 +24,20 @@ function CSS3DScene() {
     composer.addPass(renderPass);
     composer.addPass(filmPass);
 
-    const render = () => {
+    const animate = () => {
       composer.render();
-      requestAnimationFrame(render);
+      requestAnimationFrame(animate);
     };
-    render();
+    animate();
 
     return () => {
-      cancelAnimationFrame(render);
+      cancelAnimationFrame(animate);
     };
   }, [camera, scene, gl]);
+
+  useFrame(() => {
+    gl.render(scene, camera);
+  });
 
   return (
     <>
@@ -51,12 +55,20 @@ function CSS3DScene() {
           side={THREE.BackSide}
         />
       </mesh>
-      <mesh position={[0, 1.5, 0]}>
+      {/* Transparent plane for occlusion */}
+      <mesh position={[-0.4, 2.98, 0.12]} rotation={[0, Math.PI / 2, 0]}>
         <planeGeometry args={[7.2, 6.4]} />
-        <meshBasicMaterial opacity={0} transparent={true} depthWrite={true} depthTest={true} blending={THREE.NoBlending} />
-        <Html transform>
+        <meshBasicMaterial
+          color={0x000000}
+          opacity={0}
+          transparent={true}
+          depthWrite={true}
+          depthTest={true}
+          blending={THREE.NoBlending}
+        />
+        <Html position={[0, 0, 0]} rotation={[0, 0, 0]} scale={[0.5, 0.5, 0.5]} transform occlude>
           <iframe
-            src="https://henryheffernan-os.vercel.app/about"
+            src="https://bing.com"
             width="720"
             height="640"
             style={{ border: 'none' }}
