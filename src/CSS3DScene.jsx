@@ -61,13 +61,14 @@ function CSS3DScene() {
         directionalLight.position.set(5, 10, 5);
         scene.add(ambientLight, directionalLight);
 
-        // White box for containing elements
+         //white box for containing elements
+        // Box geometry
         const boxGeometry = new THREE.BoxGeometry(45, 45, 45); // Dimensions might need adjusting
         const material = new THREE.MeshStandardMaterial({
-            color: 0xffffff, // White color
-            roughness: 0.5, // Soften the material
-            metalness: 0.1,
-            side: THREE.BackSide // Render the inside of the box
+        color: 0xffffff, // White color
+        roughness: 0.5, // Soften the material
+        metalness: 0.1,
+        side: THREE.BackSide // Render the inside of the box
         });
         const box = new THREE.Mesh(boxGeometry, material);
         box.position.set(0, 22.5, 0); // Adjust position as needed
@@ -97,9 +98,9 @@ function CSS3DScene() {
 
         // Creating CSS3DObject
         const object = new CSS3DObject(container);
-        object.position.set(-0.2, 3, 0.12); // Set appropriate values
-        object.rotation.y = (Math.PI/2);
-        object.scale.set(0.001, 0.001, 0.001); // Set appropriate values
+        object.position.set(-0.15, 3, 0.12); // Set appropriate values
+        object.rotation.y = Math.PI;
+        object.scale.set(0.00125, 0.0012, 0.002); // Set appropriate values
         cssScene.add(object);
 
         // Creating GL plane for occlusion
@@ -121,7 +122,7 @@ function CSS3DScene() {
             controls.update();
             renderer.render(scene, camera);
             cssRenderer.render(cssScene, camera);
-            //composer.render(); // use composer instead of gl.render
+            composer.render(); // use composer instead of gl.render
             requestAnimationFrame(renderLoop);
         };
         renderLoop();
