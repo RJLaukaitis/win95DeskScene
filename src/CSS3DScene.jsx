@@ -49,15 +49,16 @@ function CSS3DScene() {
         );
 
         composer.addPass(renderPass);
-        composer.addPass(filmPass);
+        //composer.addPass(filmPass);
 
         // ORBIT CONTROLS
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
 
         // LIGHTING
+        scene.add(<Environment preset = "warehouse"/>);
         const ambientLight = new THREE.AmbientLight(0x404040, 3); // Soft white light
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
         directionalLight.position.set(5, 10, 5);
         scene.add(ambientLight, directionalLight);
 
@@ -73,6 +74,14 @@ function CSS3DScene() {
         const box = new THREE.Mesh(boxGeometry, material);
         box.position.set(0, 22.5, 0); // Adjust position as needed
         scene.add(box);
+
+        // Soft edges can be simulated with a slight ambient light
+        // const ambientLight1 = new THREE.AmbientLight(0xffffff, .2);
+        // scene.add(ambientLight1);
+        // // Additional directional light
+        // const directionalLight1 = new THREE.DirectionalLight(0xffffff,.3);
+        // directionalLight1.position.set(15, 25, 0);
+        // scene.add(directionalLight1);
 
         // Add the Desk model
         const loader = new GLTFLoader();
@@ -98,8 +107,9 @@ function CSS3DScene() {
 
         // Creating CSS3DObject
         const object = new CSS3DObject(container);
-        object.position.set(-0.15, 3, 0.12); // Set appropriate values
-        object.rotation.y = Math.PI;
+        object.position.set(1, 3, 0.12); // Set appropriate values .15 originally
+        object.rotation.y = 0;
+
         object.scale.set(0.00125, 0.0012, 0.002); // Set appropriate values
         cssScene.add(object);
 
@@ -113,7 +123,8 @@ function CSS3DScene() {
         const geometry = new THREE.PlaneGeometry(720, 640);
         const mesh = new THREE.Mesh(geometry, mat);
         mesh.position.copy(object.position);
-        mesh.rotation.copy(object.rotation); // Copy rotation of CSS3DObject
+        mesh.rotation.copy(object.rotation);// Copy rotation of CSS3DObject
+        mesh.rotation.x = Math.PI;
         mesh.scale.copy(object.scale);
         scene.add(mesh);
 
