@@ -88,6 +88,7 @@ function CSS3DScene() {
         loader.load('../Assets/DeskScene.glb', function (glb) {
             const model = glb.scene;
             model.scale.set(1, 1, 1);
+            model.rotation.y = Math.PI/2;
             scene.add(model);
         });
 
@@ -98,7 +99,7 @@ function CSS3DScene() {
         container.style.opacity = '1';
         container.style.background = '#1d2e2f';
         const iframe = document.createElement('iframe');
-        iframe.src = "https://bing.com";
+        iframe.src = "";
         iframe.style.width = "720px";
         iframe.style.height = "640px";
         iframe.style.boxSizing = 'border-box';
@@ -107,10 +108,10 @@ function CSS3DScene() {
 
         // Creating CSS3DObject
         const object = new CSS3DObject(container);
-        object.position.set(1, 3, 0.12); // Set appropriate values .15 originally
-        object.rotation.y = 0;
+        object.position.set(.11, 3, 0.15); // Set appropriate values .15 originally
+        object.rotation.y = Math.PI;
 
-        object.scale.set(0.00125, 0.0012, 0.002); // Set appropriate values
+        object.scale.set(0.00125, 0.0012, 0.003); // Set appropriate values
         cssScene.add(object);
 
         // Creating GL plane for occlusion
@@ -122,9 +123,8 @@ function CSS3DScene() {
 
         const geometry = new THREE.PlaneGeometry(720, 640);
         const mesh = new THREE.Mesh(geometry, mat);
-        mesh.position.copy(object.position);
+        mesh.position.set(.11,3,0.12);
         mesh.rotation.copy(object.rotation);// Copy rotation of CSS3DObject
-        mesh.rotation.x = Math.PI;
         mesh.scale.copy(object.scale);
         scene.add(mesh);
 
