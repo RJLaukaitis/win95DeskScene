@@ -75,17 +75,17 @@ function CSS3DScene() {
         box.position.set(0, 22.5, 0); // Adjust position as needed
         scene.add(box);
 
-        // Soft edges can be simulated with a slight ambient light
-        // const ambientLight1 = new THREE.AmbientLight(0xffffff, .2);
-        // scene.add(ambientLight1);
-        // // Additional directional light
-        // const directionalLight1 = new THREE.DirectionalLight(0xffffff,.3);
-        // directionalLight1.position.set(15, 25, 0);
-        // scene.add(directionalLight1);
+        //Soft edges can be simulated with a slight ambient light
+        const ambientLight1 = new THREE.AmbientLight(0xffffff, .2);
+        scene.add(ambientLight1);
+        // Additional directional light
+        const directionalLight1 = new THREE.DirectionalLight(0xffffff,.3);
+        directionalLight1.position.set(15, 25, 0);
+        scene.add(directionalLight1);
 
         // Add the Desk model
         const loader = new GLTFLoader();
-        loader.load('../Assets/DeskScene.glb', function (glb) {
+        loader.load('../Assets/DeskScene2.glb', function (glb) {
             const model = glb.scene;
             model.scale.set(1, 1, 1);
             model.rotation.y = Math.PI/2;
@@ -99,7 +99,7 @@ function CSS3DScene() {
         container.style.opacity = '1';
         container.style.background = '#1d2e2f';
         const iframe = document.createElement('iframe');
-        iframe.src = "";
+        iframe.src = "https://bing.com";
         iframe.style.width = "720px";
         iframe.style.height = "640px";
         iframe.style.boxSizing = 'border-box';
@@ -117,7 +117,7 @@ function CSS3DScene() {
         // Creating GL plane for occlusion
         const mat = new THREE.MeshLambertMaterial();
         mat.side = THREE.DoubleSide;
-        mat.opacity = 0;
+        mat.opacity = 0.1;
         mat.transparent = true;
         mat.blending = THREE.NoBlending;
 
