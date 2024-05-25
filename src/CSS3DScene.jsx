@@ -8,7 +8,7 @@ import { Environment } from '@react-three/drei';
 import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import dusttex from "../Assets/Textures/MonitorOverlay/dust.jpg";
+import dust from "../Assets/Textures/MonitorOverlay/dust.jpg";
 import vignette from "../Assets/Textures/MonitorOverlay/vignette.png";
 import './CSS3DScene.css';
 
@@ -155,6 +155,26 @@ function CSS3DScene() {
              vmesh.scale.copy(object.scale); // Copy scale of CSS3DObject
              scene.add(vmesh);
          });
+
+          // Creating dust plate
+          const dustloader = new THREE.TextureLoader();
+          const dustTexture = texloader.load(dust, () => {
+              const dmat = new THREE.MeshBasicMaterial({
+                  map: dustTexture,
+                  side: THREE.DoubleSide,
+                  transparent: true,
+                  opacity: 0.05,
+                  blending: THREE.NormalBlending
+              });
+  
+              const dgeometry = new THREE.PlaneGeometry(1000, 900);
+              const dmesh = new THREE.Mesh(dgeometry, dmat);
+              dmesh.position.set(.8, 3.13, 0.37); // Position it slightly in front of the iframe
+              dmesh.rotation.copy(object.rotation); // Copy rotation of CSS3DObject
+              dmesh.scale.copy(object.scale); // Copy scale of CSS3DObject
+              scene.add(dmesh);
+          });
+  
  
 
 
