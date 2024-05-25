@@ -9,7 +9,7 @@ import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import dust from "../Assets/Textures/MonitorOverlay/dust.jpg";
-import vignette from "../Assets/Textures/MonitorOverlay/vignette.png";
+import vignette from "../Assets/Textures/MonitorOverlay/vignette2.png";
 import './CSS3DScene.css';
 
 extend({ CSS3DRenderer });
