@@ -9,7 +9,7 @@ import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import dusttex from "../Assets/Textures/MonitorOverlay/dust.jpg";
-import vignette from "../Assets/Textures/MonitorOverlay/monitorVignette.png";
+import vignette from "../Assets/Textures/MonitorOverlay/vignette.png";
 import './CSS3DScene.css';
 
 extend({ CSS3DRenderer });
@@ -137,20 +137,26 @@ function CSS3DScene() {
         mesh.scale.copy(object.scale);
         scene.add(mesh);
 
+         // Creating vignette plate
+         const texloader = new THREE.TextureLoader();
+         const vignetteTexture = texloader.load(vignette, () => {
+             const vmat = new THREE.MeshBasicMaterial({
+                 map: vignetteTexture,
+                 side: THREE.DoubleSide,
+                 transparent: true,
+                 opacity: 1,
+                 blending: THREE.NormalBlending
+             });
+ 
+             const vgeometry = new THREE.PlaneGeometry(1000, 900);
+             const vmesh = new THREE.Mesh(vgeometry, vmat);
+             vmesh.position.set(.8, 3.13, 0.36); // Position it slightly in front of the iframe
+             vmesh.rotation.copy(object.rotation); // Copy rotation of CSS3DObject
+             vmesh.scale.copy(object.scale); // Copy scale of CSS3DObject
+             scene.add(vmesh);
+         });
+ 
 
-
-        //creating vignette plate
-        const vignettemat = new THREE.MeshBasicMaterial();
-        vignettemat.side= THREE.DoubleSide;
-        vignettemat.transparent=true;
-        vignettemat.opacity = 1;
-        const vgeometry = new THREE.PlaneGeometry(1000,900);
-        const vmesh = new THREE.Mesh(vgeometry,vignettemat);
-        mesh.position.set(.8,3.13,0.37);
-        mesh.rotation.copy(object.rotation);// Copy rotation of CSS3DObject
-        mesh.scale.set(0.00125, 0.0012, 0.003);
-        //scene.add(vmesh);
-        
 
 
 
@@ -170,6 +176,7 @@ function CSS3DScene() {
             document.body.removeChild(cssRenderer.domElement);
             document.body.removeChild(glcontainer);
             scene.remove(mesh);
+            scene.remove(vmesh);
             cssScene.remove(object);
         };
     }, [camera, scene]);
