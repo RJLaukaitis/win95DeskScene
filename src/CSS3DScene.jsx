@@ -8,6 +8,8 @@ import { Environment } from '@react-three/drei';
 import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import dusttex from "../Assets/Textures/MonitorOverlay/dust.jpg";
+import vignette from "../Assets/Textures/MonitorOverlay/monitorVignette.png";
 import './CSS3DScene.css';
 
 extend({ CSS3DRenderer });
@@ -103,10 +105,10 @@ function CSS3DScene() {
         container.style.background = '#1d2e2f';
         const iframe = document.createElement('iframe');
         //iframe.src = "https://bing.com";
-        iframe.style.width = "850px";
+        iframe.style.width = "890px";
         iframe.style.height = "820px";
         iframe.style.marginTop = "30px";
-        iframe.style.marginLeft = "50px"
+        iframe.style.marginLeft = "30px"
         iframe.style.boxSizing = 'border-box';
         iframe.style.opacity = '1';
         //iframe.style.margin = 'auto'; // Ensures iframe is centered within the container
@@ -124,7 +126,7 @@ function CSS3DScene() {
         // Creating GL plane for occlusion
         const mat = new THREE.MeshLambertMaterial();
         mat.side = THREE.DoubleSide;
-        mat.opacity = 0;
+        mat.opacity = 0.1;
         mat.transparent = true;
         mat.blending = THREE.NoBlending;
 
@@ -134,6 +136,23 @@ function CSS3DScene() {
         mesh.rotation.copy(object.rotation);// Copy rotation of CSS3DObject
         mesh.scale.copy(object.scale);
         scene.add(mesh);
+
+
+
+        //creating vignette plate
+        const vignettemat = new THREE.MeshBasicMaterial();
+        vignettemat.side= THREE.DoubleSide;
+        vignettemat.transparent=true;
+        vignettemat.opacity = 1;
+        const vgeometry = new THREE.PlaneGeometry(1000,900);
+        const vmesh = new THREE.Mesh(vgeometry,vignettemat);
+        mesh.position.set(.8,3.13,0.37);
+        mesh.rotation.copy(object.rotation);// Copy rotation of CSS3DObject
+        mesh.scale.set(0.00125, 0.0012, 0.003);
+        //scene.add(vmesh);
+        
+
+
 
         // Animation loop for CSS3D rendering
         const renderLoop = () => {
