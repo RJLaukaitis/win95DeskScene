@@ -57,10 +57,10 @@ function CSS3DScene() {
 
         // LIGHTING
         scene.add(<Environment preset = "warehouse"/>);
-        const ambientLight = new THREE.AmbientLight(0x404040, 3); // Soft white light
+        //const ambientLight = new THREE.AmbientLight(0x404040, 3); // Soft white light
         const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
         directionalLight.position.set(5, 10, 5);
-        scene.add(ambientLight, directionalLight);
+        scene.add(directionalLight);
 
          //white box for containing elements
         // Box geometry
@@ -76,12 +76,12 @@ function CSS3DScene() {
         scene.add(box);
 
         //Soft edges can be simulated with a slight ambient light
-        const ambientLight1 = new THREE.AmbientLight(0xffffff, .2);
-        scene.add(ambientLight1);
-        // Additional directional light
-        const directionalLight1 = new THREE.DirectionalLight(0xffffff,.3);
-        directionalLight1.position.set(15, 25, 0);
-        scene.add(directionalLight1);
+        // const ambientLight1 = new THREE.AmbientLight(0xffffff, .2);
+        // scene.add(ambientLight1);
+        // // Additional directional light
+        // const directionalLight1 = new THREE.DirectionalLight(0xffffff,.3);
+        // directionalLight1.position.set(15, 25, 0);
+        // scene.add(directionalLight1);
 
         // Add the Desk model
         const loader = new GLTFLoader();
@@ -94,21 +94,28 @@ function CSS3DScene() {
 
         // Container for iframe
         const container = document.createElement('div');
-        container.style.width = "720px";
-        container.style.height = "640px";
+        container.style.width = "1000px";
+        container.style.height = "900px";
         container.style.opacity = '1';
+        container.style.display = "flex";
+        container.style.alignItems = "center";
+        container.style.justifyContent = "center";
         container.style.background = '#1d2e2f';
         const iframe = document.createElement('iframe');
-        iframe.src = "https://bing.com";
-        iframe.style.width = "720px";
-        iframe.style.height = "640px";
+        //iframe.src = "https://bing.com";
+        iframe.style.width = "850px";
+        iframe.style.height = "820px";
+        iframe.style.marginTop = "30px";
+        iframe.style.marginLeft = "50px"
         iframe.style.boxSizing = 'border-box';
         iframe.style.opacity = '1';
+        //iframe.style.margin = 'auto'; // Ensures iframe is centered within the container
+
         container.appendChild(iframe);
 
         // Creating CSS3DObject
         const object = new CSS3DObject(container);
-        object.position.set(.11, 3, 0.15); // Set appropriate values .15 originally
+        object.position.set(.73,3.1,0.37); // Set appropriate values .15 originally
         object.rotation.y = Math.PI;
 
         object.scale.set(0.00125, 0.0012, 0.003); // Set appropriate values
@@ -117,13 +124,13 @@ function CSS3DScene() {
         // Creating GL plane for occlusion
         const mat = new THREE.MeshLambertMaterial();
         mat.side = THREE.DoubleSide;
-        mat.opacity = 0.1;
+        mat.opacity = 0;
         mat.transparent = true;
         mat.blending = THREE.NoBlending;
 
-        const geometry = new THREE.PlaneGeometry(720, 640);
+        const geometry = new THREE.PlaneGeometry(1000, 900);
         const mesh = new THREE.Mesh(geometry, mat);
-        mesh.position.set(.11,3,0.12);
+        mesh.position.set(.8,3.13,0.37);
         mesh.rotation.copy(object.rotation);// Copy rotation of CSS3DObject
         mesh.scale.copy(object.scale);
         scene.add(mesh);
