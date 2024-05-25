@@ -192,12 +192,22 @@ function CSS3DScene() {
               smesh.scale.copy(object.scale); // Copy scale of CSS3DObject
               scene.add(smesh);
           });
-  
- 
 
+          //creating glass plate
+            const gmat = new THREE.MeshBasicMaterial({
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: .1,
+                blending: THREE.NoBlending,
+            });
 
-
-
+            const ggeometry = new THREE.SphereGeometry(2.5,18,16,0,1.1,1.18318,1);
+            const gmesh = new THREE.Mesh(ggeometry, gmat);
+            gmesh.position.set(.8,3.2,1.35); //1.4
+            gmesh.scale.set(.5,.5,.5); // Copy scale of CSS3DObject
+            gmesh.rotation.y = 10.5;
+            scene.add(gmesh);
+         
         // Animation loop for CSS3D rendering
         const renderLoop = () => {
             controls.update();
@@ -215,6 +225,8 @@ function CSS3DScene() {
             document.body.removeChild(glcontainer);
             scene.remove(mesh);
             scene.remove(vmesh);
+            scene.remove(gmesh);
+            scene.remove(smesh);
             cssScene.remove(object);
         };
     }, [camera, scene]);
