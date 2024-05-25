@@ -9,6 +9,7 @@ import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import dust from "../Assets/Textures/MonitorOverlay/dust.jpg";
+import smudges from "../Assets/Textures/MonitorOverlay/smudge.jpg"
 import vignette from "../Assets/Textures/MonitorOverlay/vignette2.png";
 import './CSS3DScene.css';
 
@@ -157,7 +158,6 @@ function CSS3DScene() {
          });
 
           // Creating dust plate
-          const dustloader = new THREE.TextureLoader();
           const dustTexture = texloader.load(dust, () => {
               const dmat = new THREE.MeshBasicMaterial({
                   map: dustTexture,
@@ -173,6 +173,24 @@ function CSS3DScene() {
               dmesh.rotation.copy(object.rotation); // Copy rotation of CSS3DObject
               dmesh.scale.copy(object.scale); // Copy scale of CSS3DObject
               scene.add(dmesh);
+          });
+
+          // Creating smudge plate
+          const smudgeTexture = texloader.load(smudges, () => {
+              const smat = new THREE.MeshBasicMaterial({
+                  map: smudgeTexture,
+                  side: THREE.DoubleSide,
+                  opacity: .1,
+                  transparent:true,
+                  blending: THREE.NormalBlending
+              });
+  
+              const sgeometry = new THREE.PlaneGeometry(1000, 900);
+              const smesh = new THREE.Mesh(sgeometry, smat);
+              smesh.position.set(.8, 3.13, 0.32); // Position it slightly in front of the iframe
+              smesh.rotation.copy(object.rotation); // Copy rotation of CSS3DObject
+              smesh.scale.copy(object.scale); // Copy scale of CSS3DObject
+              scene.add(smesh);
           });
   
  
