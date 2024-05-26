@@ -97,7 +97,7 @@ function CSS3DScene() {
         container.style.justifyContent = "center";
         container.style.background = '#1d2e2f';
         const iframe = document.createElement('iframe');
-        //iframe.src = "https://bing.com";
+        iframe.src = "https://bing.com";
         iframe.style.width = "890px";
         iframe.style.height = "820px";
         iframe.style.marginTop = "30px";
@@ -137,7 +137,7 @@ function CSS3DScene() {
                  map: vignetteTexture,
                  side: THREE.DoubleSide,
                  transparent: true,
-                 opacity: 1,
+                 opacity: 0.85,
                  blending: THREE.NormalBlending
              });
  
