@@ -29,6 +29,7 @@ function CSS3DScene() {
             antialias: true,
             alpha: true,
         });
+
         renderer.shadowMap.enabled = true;
         renderer.setSize(window.innerWidth, window.innerHeight);
         glcontainer.appendChild(renderer.domElement);
@@ -90,17 +91,20 @@ function CSS3DScene() {
         container.style.alignItems = "center";
         container.style.justifyContent = "center";
         container.style.background = '#1d2e2f';
+        container.style.pointerEvents = 'auto'; // Ensure the container allows pointer events
+        container.style.zIndex = '10';
         //container.style.filter = 'brightness(1.5)'; // Increase brightness
 
         const iframe = document.createElement('iframe');
-        iframe.src = "https://bing.com";
+        iframe.src = "https://henryheffernan-os.vercel.app/about";
         iframe.style.width = "890px";
         iframe.style.height = "820px";
         iframe.style.marginTop = "30px";
         iframe.style.marginLeft = "30px"
         iframe.style.boxSizing = 'border-box';
         iframe.style.opacity = '1';
-        iframe.style.filter = "brightness(1)";
+        iframe.style.zIndex = '10';
+        iframe.style.filter = "brightness(1.2)";
         iframe.style.overflow = "hidden"; // Hide scroll bars
         //iframe.style.margin = 'auto'; // Ensures iframe is centered within the container
 
@@ -108,7 +112,7 @@ function CSS3DScene() {
 
         // Creating CSS3DObject
         const object = new CSS3DObject(container);
-        object.position.set(.73,3.1,0.37); // Set appropriate values .15 originally
+        object.position.set(.73,3.1,.38); // Set appropriate values .15 originally
         object.rotation.y = Math.PI;
 
         object.scale.set(0.00125, 0.0012, 0.003); // Set appropriate values
@@ -123,7 +127,7 @@ function CSS3DScene() {
 
         const geometry = new THREE.PlaneGeometry(1000, 900);
         const mesh = new THREE.Mesh(geometry, mat);
-        mesh.position.set(.8,3.13,0.37);
+        mesh.position.set(.8,3.13,.38);
         mesh.rotation.copy(object.rotation);// Copy rotation of CSS3DObject
         mesh.scale.copy(object.scale);
         scene.add(mesh);
@@ -212,7 +216,7 @@ function CSS3DScene() {
             map: crtTexture,
             side: THREE.DoubleSide,
             transparent:true,
-            opacity:.35,
+            opacity:.4,
             blending: THREE.AdditiveBlending
         });
         const crtgeometry = new THREE.PlaneGeometry(1000, 900);
@@ -237,7 +241,7 @@ function CSS3DScene() {
             map: vhsTexture,
             side: THREE.DoubleSide,
             transparent:true,
-            opacity:.2,
+            opacity:.3,
             blending: THREE.AdditiveBlending
         });
         const vhsgeometry = new THREE.PlaneGeometry(1000, 900);

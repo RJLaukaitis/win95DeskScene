@@ -12,7 +12,8 @@ root.render(
       fov: 39,
       near: 0.1,
       far: 2000,
-      position: [20, 9, 0]
+      position: [3, 7, -6],
+      // lookAt: [0,0,0],
     }}
   >
     <CSS3DScene />
