@@ -8,6 +8,7 @@ import { Environment } from '@react-three/drei';
 import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
 import dust from "../Assets/Textures/MonitorOverlay/dust.jpg";
 import smudges from "../Assets/Textures/MonitorOverlay/smudge.jpg"
 import vignette from "../Assets/Textures/MonitorOverlay/vignette2.png";
@@ -58,31 +59,24 @@ function CSS3DScene() {
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
 
-        // LIGHTING
-        scene.add(<Environment preset = "warehouse"/>);
-        //const ambientLight = new THREE.AmbientLight(0x404040, 3); // Soft white light
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
-        directionalLight.position.set(5, 10, 5);
-        scene.add(directionalLight);
+        // ENVIRONMENT
+        const environment = new RoomEnvironment();
+        const pmremGenerator = new THREE.PMREMGenerator( renderer );
+		scene.environment = pmremGenerator.fromScene( environment ).texture;
 
-         //white box for containing elements
-        // Box geometry
-        const boxGeometry = new THREE.BoxGeometry(45, 45, 45); // Dimensions might need adjusting
-        const material = new THREE.MeshStandardMaterial({
-        color: 0xffffff, // White color
-        roughness: 0.5, // Soften the material
-        metalness: 0.1,
-        side: THREE.BackSide // Render the inside of the box
-        });
-        const box = new THREE.Mesh(boxGeometry, material);
-        box.position.set(0, 22.5, 0); // Adjust position as needed
-        scene.add(box);
+        //FOG
+        const fogColor = 0xf9f9f9;
+        const fogdensity = 0.02;
+        scene.fog = new THREE.FogExp2(fogColor,fogdensity);
+        
+
 
         // Add the Desk model
         const loader = new GLTFLoader();
-        loader.load('../Assets/DeskScene2.glb', function (glb) {
+        loader.load('../Assets/DeskSceneLIGHT.glb', function (glb) {
             const model = glb.scene;
             model.scale.set(1, 1, 1);
+            model.side = THREE.DoubleSide;
             model.rotation.y = Math.PI/2;
             scene.add(model);
         });
