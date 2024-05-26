@@ -78,14 +78,6 @@ function CSS3DScene() {
         box.position.set(0, 22.5, 0); // Adjust position as needed
         scene.add(box);
 
-        //Soft edges can be simulated with a slight ambient light
-        // const ambientLight1 = new THREE.AmbientLight(0xffffff, .2);
-        // scene.add(ambientLight1);
-        // // Additional directional light
-        // const directionalLight1 = new THREE.DirectionalLight(0xffffff,.3);
-        // directionalLight1.position.set(15, 25, 0);
-        // scene.add(directionalLight1);
-
         // Add the Desk model
         const loader = new GLTFLoader();
         loader.load('../Assets/DeskScene2.glb', function (glb) {
@@ -175,24 +167,6 @@ function CSS3DScene() {
               scene.add(dmesh);
           });
 
-          // Creating smudge plate
-        //   const smudgeTexture = texloader.load(smudges, () => {
-        //       const smat = new THREE.MeshBasicMaterial({
-        //           map: smudgeTexture,
-        //           side: THREE.DoubleSide,
-        //           opacity: .1,
-        //           transparent:true,
-        //           blending: THREE.NormalBlending
-        //       });
-  
-        //       const sgeometry = new THREE.PlaneGeometry(1000, 900);
-        //       const smesh = new THREE.Mesh(sgeometry, smat);
-        //       smesh.position.set(.8, 3.13, 0.32); 
-        //       smesh.rotation.copy(object.rotation); 
-        //       smesh.scale.copy(object.scale); 
-        //       scene.add(smesh);
-        //   });
-
           //creating curved glass screen
           const planeGeometry = new THREE.PlaneGeometry(1000, 900, 55, 55); // Increased segments for smooth curve
             const curveAmount = 20; // Adjust the amount of curvature
@@ -210,8 +184,6 @@ function CSS3DScene() {
                 // Update the vertex position
                 planeGeometry.attributes.position.setXYZ(i, vertex.x, vertex.y, vertex.z);
             }
-
-
             const smudgeTexture = texloader.load(smudges, () => {
                 const smat = new THREE.MeshBasicMaterial({
                     map: smudgeTexture,
@@ -226,7 +198,57 @@ function CSS3DScene() {
             convexPlane.scale.copy(object.scale); 
             scene.add(convexPlane);
         });
-         
+
+        //Video textures for screen effects
+        const video = document.createElement('video');
+        video.src = "../Assets/Textures/MonitorOverlay/VHS2.mp4"
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true;
+        video.play();
+        document.body.appendChild(video);
+
+        const crtTexture = new THREE.VideoTexture(video);
+
+        const videoMaterial = new THREE.MeshBasicMaterial({
+            map: crtTexture,
+            side: THREE.DoubleSide,
+            transparent:true,
+            opacity:.3,
+            blending: THREE.AdditiveBlending
+        });
+        const crtgeometry = new THREE.PlaneGeometry(1000, 900);
+        const crtmesh = new THREE.Mesh(crtgeometry, videoMaterial);
+        crtmesh.position.set(0.8, 3.13, .35);
+        crtmesh.scale.copy(object.scale); 
+        scene.add(crtmesh);
+
+        //second video to add more depth
+        const vhsvideo = document.createElement('video');
+        vhsvideo.src = "../Assets/Textures/MonitorOverlay/VHS1.mp4"
+        vhsvideo.autoplay = true;
+        vhsvideo.loop = true;
+        vhsvideo.muted = true;
+        video.play();
+        document.body.appendChild(vhsvideo);
+
+        const vhsTexture = new THREE.VideoTexture(vhsvideo);
+
+        const vhsmaterial = new THREE.MeshBasicMaterial({
+            map: vhsTexture,
+            side: THREE.DoubleSide,
+            transparent:true,
+            opacity:.4,
+            blending: THREE.AdditiveBlending
+        });
+        const vhsgeometry = new THREE.PlaneGeometry(1000, 900);
+        const vhsmesh = new THREE.Mesh(vhsgeometry, vhsmaterial);
+        vhsmesh.position.set(0.8, 3.13, .33);
+        vhsmesh.scale.copy(object.scale); 
+        scene.add(vhsmesh);
+
+
+
         // Animation loop for CSS3D rendering
         const renderLoop = () => {
             controls.update();
