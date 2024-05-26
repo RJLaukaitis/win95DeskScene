@@ -12,6 +12,10 @@ body {
     width: 100%;
     height: 100%;
   }
+
+  .iframe{
+    filter: brightness(1.5);
+  }
   
   #webgl {
     z-index: 1;
