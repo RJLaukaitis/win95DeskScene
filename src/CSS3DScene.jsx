@@ -59,6 +59,11 @@ function CSS3DScene() {
         // ORBIT CONTROLS
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
+        controls.autoRotate=true;
+        controls.autoRotateSpeed=1.5;
+        //controls.maxPolarAngle=0;
+        controls.maxZoom=0;
+        controls.maxAzimuthAngle=Math.PI/2;
 
         // ENVIRONMENT
         const environment = new RoomEnvironment();
