@@ -16,6 +16,14 @@ body {
   .iframe{
     filter: brightness(1.5);
   }
+
+  .overlay{
+    pointer-events: none;
+  }
+
+  #video{
+    pointer-events: none;
+  }
   
   #webgl {
     z-index: 1;

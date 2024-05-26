@@ -93,14 +93,15 @@ function CSS3DScene() {
         //container.style.filter = 'brightness(1.5)'; // Increase brightness
 
         const iframe = document.createElement('iframe');
-        iframe.src = "https://dexscreener.com/new-pairs";
+        iframe.src = "https://bing.com";
         iframe.style.width = "890px";
         iframe.style.height = "820px";
         iframe.style.marginTop = "30px";
         iframe.style.marginLeft = "30px"
         iframe.style.boxSizing = 'border-box';
         iframe.style.opacity = '1';
-        iframe.style.filter = "brightness(5)";
+        iframe.style.filter = "brightness(1)";
+        iframe.style.overflow = "hidden"; // Hide scroll bars
         //iframe.style.margin = 'auto'; // Ensures iframe is centered within the container
 
         container.appendChild(iframe);
@@ -134,7 +135,7 @@ function CSS3DScene() {
                  map: vignetteTexture,
                  side: THREE.DoubleSide,
                  transparent: true,
-                 opacity: 0.3,
+                 opacity: 0.5,
                  blending: THREE.NormalBlending
              });
  
@@ -192,7 +193,7 @@ function CSS3DScene() {
 
             const convexPlane = new THREE.Mesh(planeGeometry,smat);
             convexPlane.position.set(0.8, 3.13, 0.2);
-            convexPlane.scale.copy(object.scale); 
+            convexPlane.scale.copy(object.scale);
             scene.add(convexPlane);
         });
 
@@ -211,14 +212,14 @@ function CSS3DScene() {
             map: crtTexture,
             side: THREE.DoubleSide,
             transparent:true,
-            opacity:.45,
+            opacity:.35,
             blending: THREE.AdditiveBlending
         });
         const crtgeometry = new THREE.PlaneGeometry(1000, 900);
         const crtmesh = new THREE.Mesh(crtgeometry, videoMaterial);
         crtmesh.position.set(0.8, 3.13, .35);
         crtmesh.scale.copy(object.scale);
-        crtmesh.rotation.z = Math.PI;
+        crtmesh.rotation.y = Math.PI;
         scene.add(crtmesh);
 
         //second video to add more depth
@@ -236,7 +237,7 @@ function CSS3DScene() {
             map: vhsTexture,
             side: THREE.DoubleSide,
             transparent:true,
-            opacity:.4,
+            opacity:.2,
             blending: THREE.AdditiveBlending
         });
         const vhsgeometry = new THREE.PlaneGeometry(1000, 900);
