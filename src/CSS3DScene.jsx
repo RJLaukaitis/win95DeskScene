@@ -176,37 +176,56 @@ function CSS3DScene() {
           });
 
           // Creating smudge plate
-          const smudgeTexture = texloader.load(smudges, () => {
-              const smat = new THREE.MeshBasicMaterial({
-                  map: smudgeTexture,
-                  side: THREE.DoubleSide,
-                  opacity: .1,
-                  transparent:true,
-                  blending: THREE.NormalBlending
-              });
+        //   const smudgeTexture = texloader.load(smudges, () => {
+        //       const smat = new THREE.MeshBasicMaterial({
+        //           map: smudgeTexture,
+        //           side: THREE.DoubleSide,
+        //           opacity: .1,
+        //           transparent:true,
+        //           blending: THREE.NormalBlending
+        //       });
   
-              const sgeometry = new THREE.PlaneGeometry(1000, 900);
-              const smesh = new THREE.Mesh(sgeometry, smat);
-              smesh.position.set(.8, 3.13, 0.32); // Position it slightly in front of the iframe
-              smesh.rotation.copy(object.rotation); // Copy rotation of CSS3DObject
-              smesh.scale.copy(object.scale); // Copy scale of CSS3DObject
-              scene.add(smesh);
-          });
+        //       const sgeometry = new THREE.PlaneGeometry(1000, 900);
+        //       const smesh = new THREE.Mesh(sgeometry, smat);
+        //       smesh.position.set(.8, 3.13, 0.32); 
+        //       smesh.rotation.copy(object.rotation); 
+        //       smesh.scale.copy(object.scale); 
+        //       scene.add(smesh);
+        //   });
 
-          //creating glass plate
-            const gmat = new THREE.MeshBasicMaterial({
-                side: THREE.DoubleSide,
-                transparent: true,
-                opacity: .1,
-                blending: THREE.NoBlending,
-            });
+          //creating curved glass screen
+          const planeGeometry = new THREE.PlaneGeometry(1000, 900, 55, 55); // Increased segments for smooth curve
+            const curveAmount = 20; // Adjust the amount of curvature
+            for (let i = 0; i < planeGeometry.attributes.position.count; i++) {
+                const vertex = new THREE.Vector3();
+                vertex.fromBufferAttribute(planeGeometry.attributes.position, i);
+                
+                // Apply a quadratic formula for convex curvature
+                const distX = (vertex.x / 500) ** 2; // Normalize and square the X position
+                const distY = (vertex.y / 450) ** 2; // Normalize and square the Y position
+                const dist = Math.sqrt(distX + distY); // Combine distances
+                
+                vertex.z = curveAmount * dist; // Apply curvature
 
-            const ggeometry = new THREE.SphereGeometry(2.5,18,16,0,1.1,1.18318,1);
-            const gmesh = new THREE.Mesh(ggeometry, gmat);
-            gmesh.position.set(.8,3.2,1.35); //1.4
-            gmesh.scale.set(.5,.5,.5); // Copy scale of CSS3DObject
-            gmesh.rotation.y = 10.5;
-            scene.add(gmesh);
+                // Update the vertex position
+                planeGeometry.attributes.position.setXYZ(i, vertex.x, vertex.y, vertex.z);
+            }
+
+
+            const smudgeTexture = texloader.load(smudges, () => {
+                const smat = new THREE.MeshBasicMaterial({
+                    map: smudgeTexture,
+                    side: THREE.DoubleSide,
+                    opacity: .1,
+                    transparent:true,
+                    blending: THREE.NormalBlending
+                });
+
+            const convexPlane = new THREE.Mesh(planeGeometry,smat);
+            convexPlane.position.set(0.8, 3.13, 0.2);
+            convexPlane.scale.copy(object.scale); 
+            scene.add(convexPlane);
+        });
          
         // Animation loop for CSS3D rendering
         const renderLoop = () => {
