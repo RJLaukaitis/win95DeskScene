@@ -12,6 +12,7 @@ import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.j
 import dust from "../Assets/Textures/MonitorOverlay/dust.jpg";
 import smudges from "../Assets/Textures/MonitorOverlay/smudge.jpg"
 import vignette from "../Assets/Textures/MonitorOverlay/vignette2.png";
+import gsap from 'gsap';
 import './CSS3DScene.css';
 
 extend({ CSS3DRenderer });
@@ -22,6 +23,8 @@ function CSS3DScene() {
     const ref = useRef();
 
     useEffect(() => {
+
+
         // Setting up gl renderer
         const glcontainer = document.createElement('div');
         glcontainer.id = 'webgl';
@@ -57,13 +60,12 @@ function CSS3DScene() {
         //composer.addPass(filmPass);
 
         // ORBIT CONTROLS
-        const controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.autoRotate=true;
-        controls.autoRotateSpeed=1.5;
-        //controls.maxPolarAngle=0;
-        controls.maxZoom=0;
-        controls.maxAzimuthAngle=Math.PI/2;
+        //const controls = new OrbitControls(camera, renderer.domElement);
+        // controls.enableDamping = true;
+        // //controls.maxPolarAngle=0;
+        // controls.maxZoom=0;
+
+
 
         // ENVIRONMENT
         const environment = new RoomEnvironment();
@@ -87,6 +89,19 @@ function CSS3DScene() {
             scene.add(model);
         });
 
+        //setting up camera animation
+        camera.lookAt(3,2,0);
+        const adjustCamera = () => {
+        gsap.to(camera.position,{
+            x: .8,y:3.1,z:-1.2,duration:1.5,onUpdate:function() {
+                camera.lookAt(2,2.6,15);
+                camera.lookAt(0,3.1,30);
+            }
+        })
+        camera.updateProjectionMatrix();
+    }
+    window.addEventListener('mousedown', adjustCamera);
+
         // Container for iframe
         const container = document.createElement('div');
         container.style.width = "1000px";
@@ -97,18 +112,18 @@ function CSS3DScene() {
         container.style.justifyContent = "center";
         container.style.background = '#1d2e2f';
         container.style.pointerEvents = 'auto'; // Ensure the container allows pointer events
-        container.style.zIndex = '10';
+        //container.style.zIndex = '10';
         //container.style.filter = 'brightness(1.5)'; // Increase brightness
 
         const iframe = document.createElement('iframe');
-        iframe.src = "https://henryheffernan-os.vercel.app/about";
+        iframe.src = "http://localhost:3000/home";
         iframe.style.width = "890px";
         iframe.style.height = "820px";
         iframe.style.marginTop = "30px";
         iframe.style.marginLeft = "30px"
         iframe.style.boxSizing = 'border-box';
         iframe.style.opacity = '1';
-        iframe.style.zIndex = '10';
+        //iframe.style.zIndex = '10';
         iframe.style.filter = "brightness(1.2)";
         iframe.style.overflow = "hidden"; // Hide scroll bars
         //iframe.style.margin = 'auto'; // Ensures iframe is centered within the container
@@ -255,11 +270,9 @@ function CSS3DScene() {
         vhsmesh.scale.copy(object.scale); 
         scene.add(vhsmesh);
 
-
-
         // Animation loop for CSS3D rendering
         const renderLoop = () => {
-            controls.update();
+            //controls.update();
             renderer.render(scene, camera);
             cssRenderer.render(cssScene, camera);
             composer.render(); // use composer instead of gl.render
