@@ -13,6 +13,7 @@ const playMouseClick = () => {
         let source = audioContext.createBufferSource();
         source.buffer = clickBuffer;
         source.connect(audioContext.destination);
+        source.setVolume(.2);
         source.start(0);
     }
 };

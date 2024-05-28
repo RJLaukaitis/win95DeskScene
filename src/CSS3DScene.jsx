@@ -11,7 +11,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
 import dust from "../Assets/Textures/MonitorOverlay/dust.jpg";
 import smudges from "../Assets/Textures/MonitorOverlay/smudge.jpg"
-import vignette from "../Assets/Textures/MonitorOverlay/vignette2.png";
+import vignette from "../Assets/Textures/MonitorOverlay/vignette2.png";;
 import gsap from 'gsap';
 import './Audio.jsx';
 import './CSS3DScene.css';
@@ -77,6 +77,18 @@ function CSS3DScene() {
         const fogColor = 0xf9f9f9;
         const fogdensity = 0.02;
         scene.fog = new THREE.FogExp2(fogColor,fogdensity);
+
+        //AMBIENCE
+        const listener = new THREE.AudioListener();
+        camera.add( listener );
+        const ambience = new THREE.Audio(listener)
+        const audioLoader = new THREE.AudioLoader();
+        audioLoader.load("../Assets/Audio/Ambience.mp3", function( buffer) {
+            ambience.setBuffer( buffer );
+            ambience.setLoop( true );
+            ambience.setVolume(.2);
+            ambience.play();
+        })
         
 
 
@@ -118,7 +130,7 @@ function CSS3DScene() {
         //container.style.filter = 'brightness(1.5)'; // Increase brightness
 
         const iframe = document.createElement('iframe');
-        iframe.src = "http://bing.com";
+        iframe.src = "http://localhost:3000/home";
         iframe.style.width = "890px";
         iframe.style.height = "820px";
         iframe.style.marginTop = "30px";
