@@ -13,6 +13,7 @@ import dust from "../Assets/Textures/MonitorOverlay/dust.jpg";
 import smudges from "../Assets/Textures/MonitorOverlay/smudge.jpg"
 import vignette from "../Assets/Textures/MonitorOverlay/vignette2.png";
 import gsap from 'gsap';
+import './Audio.jsx';
 import './CSS3DScene.css';
 
 extend({ CSS3DRenderer });
@@ -100,6 +101,7 @@ function CSS3DScene() {
         })
         camera.updateProjectionMatrix();
     }
+
     window.addEventListener('mousedown', adjustCamera);
 
         // Container for iframe
@@ -116,7 +118,7 @@ function CSS3DScene() {
         //container.style.filter = 'brightness(1.5)'; // Increase brightness
 
         const iframe = document.createElement('iframe');
-        iframe.src = "http://localhost:3000/home";
+        iframe.src = "http://bing.com";
         iframe.style.width = "890px";
         iframe.style.height = "820px";
         iframe.style.marginTop = "30px";
@@ -126,7 +128,6 @@ function CSS3DScene() {
         //iframe.style.zIndex = '10';
         iframe.style.filter = "brightness(1.2)";
         iframe.style.overflow = "hidden"; // Hide scroll bars
-        //iframe.style.margin = 'auto'; // Ensures iframe is centered within the container
 
         container.appendChild(iframe);
 
@@ -227,6 +228,7 @@ function CSS3DScene() {
         video.autoplay = true;
         video.loop = true;
         video.muted = true;
+        video.style.pointerEvents = 'none'; 
         video.play();
         document.body.appendChild(video);
 
@@ -252,6 +254,7 @@ function CSS3DScene() {
         vhsvideo.autoplay = true;
         vhsvideo.loop = true;
         vhsvideo.muted = true;
+        vhsvideo.style.pointerEvents = 'none'; 
         video.play();
         document.body.appendChild(vhsvideo);
 
@@ -261,7 +264,7 @@ function CSS3DScene() {
             map: vhsTexture,
             side: THREE.DoubleSide,
             transparent:true,
-            opacity:.3,
+            opacity:.25,
             blending: THREE.AdditiveBlending
         });
         const vhsgeometry = new THREE.PlaneGeometry(1000, 900);
