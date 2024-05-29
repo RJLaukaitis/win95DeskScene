@@ -78,19 +78,6 @@ function CSS3DScene() {
         const fogdensity = 0.02;
         scene.fog = new THREE.FogExp2(fogColor,fogdensity);
 
-        //AMBIENCE
-        const listener = new THREE.AudioListener();
-        camera.add( listener );
-        const ambience = new THREE.Audio(listener)
-        const audioLoader = new THREE.AudioLoader();
-        audioLoader.load("../Assets/Audio/Ambience.mp3", function( buffer) {
-            ambience.setBuffer( buffer );
-            ambience.setLoop( true );
-            ambience.setVolume(.2);
-            ambience.play();
-        })
-        
-
 
         // Add the Desk model
         const loader = new GLTFLoader();
