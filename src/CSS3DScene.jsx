@@ -13,7 +13,6 @@ import dust from "../Assets/Textures/MonitorOverlay/dust.jpg";
 import smudges from "../Assets/Textures/MonitorOverlay/smudge.jpg"
 import vignette from "../Assets/Textures/MonitorOverlay/vignette2.png";;
 import gsap from 'gsap';
-import './Audio.jsx';
 import './CSS3DScene.css';
 
 extend({ CSS3DRenderer });
@@ -210,7 +209,7 @@ function CSS3DScene() {
                 const smat = new THREE.MeshBasicMaterial({
                     map: smudgeTexture,
                     side: THREE.DoubleSide,
-                    opacity: .1,
+                    opacity: .05,
                     transparent:true,
                     blending: THREE.NormalBlending
                 });
@@ -263,7 +262,7 @@ function CSS3DScene() {
             map: vhsTexture,
             side: THREE.DoubleSide,
             transparent:true,
-            opacity:.25,
+            opacity:0.15,
             blending: THREE.AdditiveBlending
         });
         const vhsgeometry = new THREE.PlaneGeometry(1000, 900);
