@@ -50,9 +50,9 @@ function CSS3DScene() {
         const composer = new EffectComposer(renderer);
         const renderPass = new RenderPass(scene, camera);
         const filmPass = new FilmPass(
-            0.1,   // noise intensity
-            0.025, // scanline intensity
-            648,   // scanline count
+            0.2,   // noise intensity
+            0.01, // scanline intensity
+            600,   // scanline count
             false  // grayscale (set to true if you want grayscale)
         );
 
@@ -74,13 +74,13 @@ function CSS3DScene() {
 
         //FOG
         const fogColor = 0xf9f9f9;
-        const fogdensity = 0.02;
+        const fogdensity = 0.027;
         scene.fog = new THREE.FogExp2(fogColor,fogdensity);
 
 
         // Add the Desk model
         const loader = new GLTFLoader();
-        loader.load('../Assets/DeskSceneLIGHT.glb', function (glb) {
+        loader.load('../Assets/DeskSceneREVISED.glb', function (glb) {
             const model = glb.scene;
             model.scale.set(1, 1, 1);
             model.side = THREE.DoubleSide;
@@ -93,7 +93,8 @@ function CSS3DScene() {
         const adjustCamera = () => {
         gsap.to(camera.position,{
             x: .8,y:3.1,z:-1.2,duration:1.5,onUpdate:function() {
-                camera.lookAt(2,2.6,15);
+                camera.lookAt(2,2.3,7);
+                camera.lookAt(1,2.6,15);
                 camera.lookAt(0,3.1,30);
             }
         })
@@ -158,7 +159,7 @@ function CSS3DScene() {
                  map: vignetteTexture,
                  side: THREE.DoubleSide,
                  transparent: true,
-                 opacity: 0.5,
+                 opacity: 0.4,
                  blending: THREE.NormalBlending
              });
  
@@ -209,7 +210,7 @@ function CSS3DScene() {
                 const smat = new THREE.MeshBasicMaterial({
                     map: smudgeTexture,
                     side: THREE.DoubleSide,
-                    opacity: .05,
+                    opacity: .01,
                     transparent:true,
                     blending: THREE.NormalBlending
                 });
