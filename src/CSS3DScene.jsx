@@ -62,12 +62,6 @@ function CSS3DScene() {
         composer.addPass(renderPass);
         //composer.addPass(filmPass);
 
-        // ORBIT CONTROLS
-        //const controls = new OrbitControls(camera, renderer.domElement);
-        // controls.enableDamping = true;
-        // //controls.maxPolarAngle=0;
-        // controls.maxZoom=0;
-
 
 
         // ENVIRONMENT
@@ -76,14 +70,18 @@ function CSS3DScene() {
 		scene.environment = pmremGenerator.fromScene( environment ).texture;
 
         //spotlight
-        const light = new THREE.DirectionalLight(0xffffff,1,100);
-        light.position.set(0,15,0);
+        const light = new THREE.DirectionalLight(0xffffff,0.5,100);
+        light.position.set(0,10,0);
         light.castShadow = true;
         light.shadow.mapSize.width = 2048; // default
         light.shadow.mapSize.height = 2048; // default
-        light.shadow.camera.near = 0.5; // default
+        light.shadow.camera.near = 0.1; // default
+        light.shadow.camera.top = 10;
+        light.shadow.camera.bottom = -10;
+        light.shadow.camera.left = -10;
+        light.shadow.camera.right = 10;
         light.shadow.camera.far = 500; // default
-        light.shadow.bias = -0.0001; // Adjust the bias to reduce shadow acne
+        light.shadow.bias = -0.001;
         scene.add(light);
 
         //FOG
@@ -97,7 +95,7 @@ function CSS3DScene() {
         loader.load('../Assets/DeskSceneREVISED.glb', function (glb) {
             const model = glb.scene;
             model.scale.set(1, 1, 1);
-            model.traverse((node) => {
+            model.traverse(function(node) {
                 if (node.isMesh) {
                     node.castShadow = true;
                     node.receiveShadow = true;
@@ -107,15 +105,6 @@ function CSS3DScene() {
             model.rotation.y = Math.PI/2;
             scene.add(model);
         });
-
-        const groundMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
-        const groundGeometry = new THREE.PlaneGeometry(1000, 1000);
-        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-        ground.position.set(0,0,0);
-        ground.rotation.x = -Math.PI / 2;
-        ground.position.y = 0;
-        ground.receiveShadow = true;
-        scene.add(ground);
 
         //setting up camera animation
         camera.lookAt(3,2,0);
