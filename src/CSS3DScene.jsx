@@ -91,15 +91,49 @@ function CSS3DScene() {
         //setting up camera animation
         camera.lookAt(3,2,0);
         const adjustCamera = () => {
-        gsap.to(camera.position,{
-            x: .8,y:3.1,z:-1.2,duration:1.5,onUpdate:function() {
-                camera.lookAt(2,2.3,7);
-                camera.lookAt(1,2.6,15);
-                camera.lookAt(0,3.1,30);
-            }
-        })
-        camera.updateProjectionMatrix();
-    }
+            // Define the start and end positions for the camera
+            const startPosition = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
+            const endPosition = { x: 0.8, y: 3.1, z: -1.2 };
+        
+            // Define the start and end positions for the lookAt target
+            const startLookAt = { x: 3, y: 2, z: 0 };
+            const endLookAt = { x: 0, y: 3.1, z: 30 };
+        
+            // Create a proxy object for the lookAt target
+            const lookAtProxy = { x: startLookAt.x, y: startLookAt.y, z: startLookAt.z };
+        
+            // Animate the camera position
+            gsap.to(camera.position, {
+                x: endPosition.x,
+                y: endPosition.y,
+                z: endPosition.z,
+                ease: 'power3.inOut',
+                duration: 1,
+                onUpdate: function () {
+                    // Update the camera's lookAt target during the animation
+                    camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
+                },
+                onComplete: function () {
+                    // Ensure the final lookAt position is accurate
+                    camera.lookAt(endLookAt.x, endLookAt.y, endLookAt.z);
+                }
+            });
+        
+            // Animate the lookAt proxy object
+            gsap.to(lookAtProxy, {
+                x: endLookAt.x,
+                y: endLookAt.y,
+                z: endLookAt.z,
+                ease: 'power3.inOut',
+                duration: 1,
+                onUpdate: function () {
+                    // Update the camera's lookAt target during the animation
+                    camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
+                }
+            });
+        
+            camera.updateProjectionMatrix();
+        }
 
     window.addEventListener('mousedown', adjustCamera);
 
