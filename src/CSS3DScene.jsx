@@ -33,7 +33,10 @@ function CSS3DScene() {
             alpha: true,
         });
 
+        //initializing shadows
         renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
         renderer.setSize(window.innerWidth, window.innerHeight);
         glcontainer.appendChild(renderer.domElement);
         document.body.appendChild(glcontainer);
@@ -72,21 +75,47 @@ function CSS3DScene() {
         const pmremGenerator = new THREE.PMREMGenerator( renderer );
 		scene.environment = pmremGenerator.fromScene( environment ).texture;
 
+        //spotlight
+        const light = new THREE.DirectionalLight(0xffffff,1,100);
+        light.position.set(0,15,0);
+        light.castShadow = true;
+        light.shadow.mapSize.width = 2048; // default
+        light.shadow.mapSize.height = 2048; // default
+        light.shadow.camera.near = 0.5; // default
+        light.shadow.camera.far = 500; // default
+        light.shadow.bias = -0.0001; // Adjust the bias to reduce shadow acne
+        scene.add(light);
+
         //FOG
         const fogColor = 0xf9f9f9;
         const fogdensity = 0.027;
         scene.fog = new THREE.FogExp2(fogColor,fogdensity);
 
 
-        // Add the Desk model
+        // Add the Desk scene
         const loader = new GLTFLoader();
         loader.load('../Assets/DeskSceneREVISED.glb', function (glb) {
             const model = glb.scene;
             model.scale.set(1, 1, 1);
+            model.traverse((node) => {
+                if (node.isMesh) {
+                    node.castShadow = true;
+                    node.receiveShadow = true;
+                }
+            });
             model.side = THREE.DoubleSide;
             model.rotation.y = Math.PI/2;
             scene.add(model);
         });
+
+        const groundMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        const groundGeometry = new THREE.PlaneGeometry(1000, 1000);
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.position.set(0,0,0);
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = 0;
+        ground.receiveShadow = true;
+        scene.add(ground);
 
         //setting up camera animation
         camera.lookAt(3,2,0);
