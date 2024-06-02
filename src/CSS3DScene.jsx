@@ -23,8 +23,6 @@ function CSS3DScene() {
     const ref = useRef();
 
     useEffect(() => {
-
-
         // Setting up gl renderer
         const glcontainer = document.createElement('div');
         glcontainer.id = 'webgl';
@@ -71,7 +69,7 @@ function CSS3DScene() {
 
         //spotlight
         const light = new THREE.DirectionalLight(0xffffff,0.5,100);
-        light.position.set(0,10,0);
+        light.position.set(2,10,2);
         light.castShadow = true;
         light.shadow.mapSize.width = 2048; // default
         light.shadow.mapSize.height = 2048; // default
@@ -86,7 +84,7 @@ function CSS3DScene() {
 
         //FOG
         const fogColor = 0xf9f9f9;
-        const fogdensity = 0.027;
+        const fogdensity = 0.037;
         scene.fog = new THREE.FogExp2(fogColor,fogdensity);
 
 
