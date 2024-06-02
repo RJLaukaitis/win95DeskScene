@@ -84,11 +84,11 @@ function CSS3DScene() {
 
         //FOG
         const fogColor = 0xf9f9f9;
-        const fogdensity = 0.037;
+        const fogdensity = 0.027;
         scene.fog = new THREE.FogExp2(fogColor,fogdensity);
 
 
-        // Add the Desk scene
+        // Add the models
         const loader = new GLTFLoader();
         loader.load('../Assets/DeskSceneREVISED.glb', function (glb) {
             const model = glb.scene;
@@ -102,6 +102,27 @@ function CSS3DScene() {
             model.side = THREE.DoubleSide;
             model.rotation.y = Math.PI/2;
             scene.add(model);
+        });
+
+        //idle camera flyover
+        // GSAP Camera Animation for orbiting
+        const startPosition = { x: 7, y: 9, z: -14 };
+        const endPosition = { x: -8, y: 7, z: -14 };
+
+        camera.position.set(startPosition.x, startPosition.y, startPosition.z);
+        camera.lookAt(0, 0, 0);
+
+        gsap.to(camera.position, {
+            x: endPosition.x,
+            y: endPosition.y,
+            z: endPosition.z,
+            duration: 15,
+            repeat: -1, // Infinite repetition
+            yoyo: true,
+            ease: 'power1.inOut',
+            onUpdate: () => {
+                camera.lookAt(0, 0, 0);
+            }
         });
 
         //setting up camera animation
