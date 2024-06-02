@@ -106,17 +106,17 @@ function CSS3DScene() {
 
         //idle camera flyover
         // GSAP Camera Animation for orbiting
-        const startPosition = { x: 7, y: 9, z: -14 };
-        const endPosition = { x: -8, y: 7, z: -14 };
+        const startPosition = { x: 7, y: 9, z: -12 };
+        const endPosition = { x: -10, y: 7, z: -12 };
 
         camera.position.set(startPosition.x, startPosition.y, startPosition.z);
-        camera.lookAt(0, 0, 0);
+        camera.lookAt(0, 2, 0);
 
         gsap.to(camera.position, {
             x: endPosition.x,
             y: endPosition.y,
             z: endPosition.z,
-            duration: 15,
+            duration: 12,
             repeat: -1, // Infinite repetition
             yoyo: true,
             ease: 'power1.inOut',
