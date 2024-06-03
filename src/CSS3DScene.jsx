@@ -61,6 +61,18 @@ function CSS3DScene() {
         //composer.addPass(filmPass);
 
 
+        //OfficeAudio
+        const listener = new THREE.AudioListener();
+        camera.add(listener);
+
+        const officeSound = new THREE.Audio(listener);
+        const audioLoader = new THREE.AudioLoader();
+        audioLoader.load('../Assets/Audio/office.mp3', function(buffer){
+            officeSound.setBuffer(buffer);
+            officeSound.setLoop(true);
+            officeSound.setVolume(.5);
+            officeSound.play();
+        });
 
         // ENVIRONMENT
         const environment = new RoomEnvironment();
@@ -112,7 +124,7 @@ function CSS3DScene() {
         camera.position.set(startPosition.x, startPosition.y, startPosition.z);
         camera.lookAt(0, 2, 0);
 
-        gsap.to(camera.position, {
+        let orbitAnimation = gsap.to(camera.position, {
             x: endPosition.x,
             y: endPosition.y,
             z: endPosition.z,
@@ -129,6 +141,8 @@ function CSS3DScene() {
         camera.lookAt(3,2,0);
         const adjustCamera = () => {
             // Define the start and end positions for the camera
+            orbitAnimation.kill();
+            //officeSound.pause();
             const startPosition = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
             const endPosition = { x: 0.8, y: 3.1, z: -1.2 };
         
