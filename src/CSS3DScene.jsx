@@ -47,6 +47,7 @@ function CSS3DScene() {
         cssRenderer.domElement.id = 'css3d';
         document.body.appendChild(cssRenderer.domElement);
 
+
         // Film grain
         const composer = new EffectComposer(renderer);
         const renderPass = new RenderPass(scene, camera);
@@ -70,8 +71,7 @@ function CSS3DScene() {
         audioLoader.load('../Assets/Audio/office.mp3', function(buffer){
             officeSound.setBuffer(buffer);
             officeSound.setLoop(true);
-            officeSound.setVolume(.5);
-            officeSound.play();
+            officeSound.setVolume(.1);
         });
 
         // ENVIRONMENT
@@ -142,7 +142,6 @@ function CSS3DScene() {
         const adjustCamera = () => {
             // Define the start and end positions for the camera
             orbitAnimation.kill();
-            //officeSound.pause();
             const startPosition = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
             const endPosition = { x: 0.8, y: 3.1, z: -1.2 };
         

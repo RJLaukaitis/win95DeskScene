@@ -16,6 +16,7 @@
     "gsap": "^3.12.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "t.js": "^0.0.0",
     "three": "^0.149.0"
   },
   "devDependencies": {
