@@ -1,13 +1,13 @@
 import React from 'react';
-import './WelcomePage.css'; // Create and import your CSS file for styling
+import "./WelcomePage.css";
 
 const WelcomePage = ({ onEnter }) => {
-    return (
-        <div id="welcomeScreen">
-            <h1>Welcome to My Site</h1>
-            <button id="enterButton" onClick={onEnter}>Enter</button>
-        </div>
-    );
+  return (
+    <div className="welcome-page">
+      <h1>Welcome to My Portfolio</h1>
+      <button onClick={onEnter}>Enter</button>
+    </div>
+  );
 };
 
 export default WelcomePage;

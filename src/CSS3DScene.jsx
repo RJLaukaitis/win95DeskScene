@@ -62,7 +62,7 @@ function CSS3DScene() {
         //composer.addPass(filmPass);
 
 
-        //OfficeAudio
+        //Audio
         const listener = new THREE.AudioListener();
         camera.add(listener);
 
@@ -71,8 +71,15 @@ function CSS3DScene() {
         audioLoader.load('../Assets/Audio/office.mp3', function(buffer){
             officeSound.setBuffer(buffer);
             officeSound.setLoop(true);
-            officeSound.setVolume(.1);
+            officeSound.setVolume(0.05);
             officeSound.play();
+        });
+
+        const startUpSound = new THREE.Audio(listener);
+        audioLoader.load('../Assets/Audio/startup.mp3',function(buffer){
+            startUpSound.setBuffer(buffer);
+            startUpSound.setVolume(0.1);
+            startUpSound.play();
         });
 
         // ENVIRONMENT
@@ -97,7 +104,7 @@ function CSS3DScene() {
 
         //FOG
         const fogColor = 0xf9f9f9;
-        const fogdensity = 0.027;
+        const fogdensity = 0.028;
         scene.fog = new THREE.FogExp2(fogColor,fogdensity);
 
 
@@ -118,12 +125,11 @@ function CSS3DScene() {
         });
 
         //idle camera flyover
-        // GSAP Camera Animation for orbiting
-        const startPosition = { x: 7, y: 9, z: -12 };
-        const endPosition = { x: -10, y: 7, z: -12 };
+        const startPosition = { x: 7, y: 9, z: -10 };
+        const endPosition = { x: -7, y: 7, z: -7 };
 
         camera.position.set(startPosition.x, startPosition.y, startPosition.z);
-        camera.lookAt(0, 2, 0);
+        camera.lookAt(0, 3, 0);
 
         let orbitAnimation = gsap.to(camera.position, {
             x: endPosition.x,
@@ -161,11 +167,9 @@ function CSS3DScene() {
                 ease: 'power3.inOut',
                 duration: 1,
                 onUpdate: function () {
-                    // Update the camera's lookAt target during the animation
                     camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
                 },
                 onComplete: function () {
-                    // Ensure the final lookAt position is accurate
                     camera.lookAt(endLookAt.x, endLookAt.y, endLookAt.z);
                 }
             });
@@ -262,7 +266,7 @@ function CSS3DScene() {
                   map: dustTexture,
                   side: THREE.DoubleSide,
                   transparent: true,
-                  opacity: 0.08,
+                  opacity: 0.001,
                   blending: THREE.NormalBlending
               });
   
@@ -295,7 +299,7 @@ function CSS3DScene() {
                 const smat = new THREE.MeshBasicMaterial({
                     map: smudgeTexture,
                     side: THREE.DoubleSide,
-                    opacity: .01,
+                    opacity: .03,
                     transparent:true,
                     blending: THREE.NormalBlending
                 });

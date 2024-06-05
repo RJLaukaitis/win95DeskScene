@@ -1,4 +1,3 @@
-// App.js
 import React, { useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import ReactDOM from 'react-dom/client';
@@ -15,7 +14,9 @@ const App = () => {
 
   return (
     <>
-      {showWelcome ? <WelcomePage onEnter={handleEnter} /> : (
+      {showWelcome ? (
+        <WelcomePage onEnter={handleEnter} />
+      ) : (
         <Canvas
           camera={{
             fov: 39,

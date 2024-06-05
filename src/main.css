@@ -1,21 +1,3 @@
-#mainContainer {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-  
-  canvas {
-    position: absolute;
-    top: 100vh;
-    width: 100%;
-    height: 100%;
-    transition: top 1s; 
-  }
-  
-  canvas.visible {
-    top: 0; 
-  }
 
 html,
 body,
@@ -33,4 +15,35 @@ body,
   height: 580px;
   border: none;
   border-radius: 10px;
+}
+
+.welcome-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #1d2e2f;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 2em;
+  z-index: 1000; /* Ensure it's on top of other elements */
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
+}
+#webgl, #css3d {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
 }
