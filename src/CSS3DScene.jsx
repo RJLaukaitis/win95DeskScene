@@ -72,6 +72,7 @@ function CSS3DScene() {
             officeSound.setBuffer(buffer);
             officeSound.setLoop(true);
             officeSound.setVolume(.1);
+            officeSound.play();
         });
 
         // ENVIRONMENT
@@ -197,7 +198,7 @@ function CSS3DScene() {
         container.style.justifyContent = "center";
         container.style.background = '#1d2e2f';
         container.style.pointerEvents = 'auto'; // Ensure the container allows pointer events
-        //container.style.zIndex = '10';
+        container.style.zIndex = '10';
         //container.style.filter = 'brightness(1.5)'; // Increase brightness
 
         const iframe = document.createElement('iframe');
