@@ -1,0 +1,36 @@
+#mainContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  canvas {
+    position: absolute;
+    top: 100vh;
+    width: 100%;
+    height: 100%;
+    transition: top 1s; 
+  }
+  
+  canvas.visible {
+    top: 0; 
+  }
+
+html,
+body,
+#root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: ivory;
+}
+
+.computer iframe{
+  width: 690px;
+  height: 580px;
+  border: none;
+  border-radius: 10px;
+}
