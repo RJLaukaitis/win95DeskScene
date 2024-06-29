@@ -207,10 +207,10 @@ function CSS3DScene() {
 
         const iframe = document.createElement('iframe');
         iframe.src = "http://localhost:3000/home";
-        iframe.style.width = "890px";
-        iframe.style.height = "820px";
-        iframe.style.marginTop = "30px";
-        iframe.style.marginLeft = "30px"
+        iframe.style.width = "910px";
+        iframe.style.height = "840px";
+        iframe.style.marginTop = "20px";
+        iframe.style.marginLeft = "20px"
         iframe.style.boxSizing = 'border-box';
         iframe.style.opacity = '1';
         //iframe.style.zIndex = '10';
