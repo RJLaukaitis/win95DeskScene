@@ -13,6 +13,8 @@ import dust from "../Assets/Textures/MonitorOverlay/dust.jpg";
 import smudges from "../Assets/Textures/MonitorOverlay/smudge.jpg"
 import vignette from "../Assets/Textures/MonitorOverlay/vignette2.png";;
 import gsap from 'gsap';
+import Dimmer from './dimmer';
+
 import './CSS3DScene.css';
 
 extend({ CSS3DRenderer });
@@ -110,7 +112,7 @@ function CSS3DScene() {
 
         // Add the models
         const loader = new GLTFLoader();
-        loader.load('../Assets/DeskSceneREVISED.glb', function (glb) {
+        loader.load('../Assets/DeskSceneFINAL2.glb', function (glb) {
             const model = glb.scene;
             model.scale.set(1, 1, 1);
             model.traverse(function(node) {
@@ -194,8 +196,8 @@ function CSS3DScene() {
 
         // Container for iframe
         const container = document.createElement('div');
-        container.style.width = "1000px";
-        container.style.height = "900px";
+        container.style.width = "1400px";
+        container.style.height = "1000px";
         container.style.opacity = '1';
         container.style.display = "flex";
         container.style.alignItems = "center";
@@ -207,10 +209,10 @@ function CSS3DScene() {
 
         const iframe = document.createElement('iframe');
         iframe.src = "http://localhost:3000/home";
-        iframe.style.width = "910px";
+        iframe.style.width = "1190px";
         iframe.style.height = "840px";
-        iframe.style.marginTop = "20px";
-        iframe.style.marginLeft = "20px"
+        iframe.style.marginTop = "80px";
+        iframe.style.marginLeft = "135px";
         iframe.style.boxSizing = 'border-box';
         iframe.style.opacity = '1';
         //iframe.style.zIndex = '10';
@@ -221,7 +223,7 @@ function CSS3DScene() {
 
         // Creating CSS3DObject
         const object = new CSS3DObject(container);
-        object.position.set(.73,3.1,.38); // Set appropriate values .15 originally
+        object.position.set(.73,3.1,.38); //3.1 for y
         object.rotation.y = Math.PI;
 
         object.scale.set(0.00125, 0.0012, 0.003); // Set appropriate values
@@ -234,9 +236,9 @@ function CSS3DScene() {
         mat.transparent = true;
         mat.blending = THREE.NoBlending;
 
-        const geometry = new THREE.PlaneGeometry(1000, 900);
+        const geometry = new THREE.PlaneGeometry(1400, 1000);
         const mesh = new THREE.Mesh(geometry, mat);
-        mesh.position.set(.8,3.13,.38);
+        mesh.position.set(.80,3.1,.38);
         mesh.rotation.copy(object.rotation);// Copy rotation of CSS3DObject
         mesh.scale.copy(object.scale);
         scene.add(mesh);
@@ -252,7 +254,7 @@ function CSS3DScene() {
                  blending: THREE.NormalBlending
              });
  
-             const vgeometry = new THREE.PlaneGeometry(1000, 900);
+             const vgeometry = new THREE.PlaneGeometry(1400, 1000);
              const vmesh = new THREE.Mesh(vgeometry, vmat);
              vmesh.position.set(.8, 3.13, 0.36); // Position it slightly in front of the iframe
              vmesh.rotation.copy(object.rotation); // Copy rotation of CSS3DObject
@@ -270,7 +272,7 @@ function CSS3DScene() {
                   blending: THREE.NormalBlending
               });
   
-              const dgeometry = new THREE.PlaneGeometry(1000, 900);
+              const dgeometry = new THREE.PlaneGeometry(1400, 1000);
               const dmesh = new THREE.Mesh(dgeometry, dmat);
               dmesh.position.set(.8, 3.13, 0.37); // Position it slightly in front of the iframe
               dmesh.rotation.copy(object.rotation); // Copy rotation of CSS3DObject
@@ -279,7 +281,7 @@ function CSS3DScene() {
           });
 
           //creating curved glass screen
-          const planeGeometry = new THREE.PlaneGeometry(1000, 900, 55, 55); // Increased segments for smooth curve
+          const planeGeometry = new THREE.PlaneGeometry(1300, 1000, 55, 55); // Increased segments for smooth curve
             const curveAmount = 20; // Adjust the amount of curvature
             for (let i = 0; i < planeGeometry.attributes.position.count; i++) {
                 const vertex = new THREE.Vector3();
@@ -329,7 +331,7 @@ function CSS3DScene() {
             opacity:.4,
             blending: THREE.AdditiveBlending
         });
-        const crtgeometry = new THREE.PlaneGeometry(1000, 900);
+        const crtgeometry = new THREE.PlaneGeometry(1400, 1000);
         const crtmesh = new THREE.Mesh(crtgeometry, videoMaterial);
         crtmesh.position.set(0.8, 3.13, .35);
         crtmesh.scale.copy(object.scale);
@@ -355,15 +357,24 @@ function CSS3DScene() {
             opacity:0.15,
             blending: THREE.AdditiveBlending
         });
-        const vhsgeometry = new THREE.PlaneGeometry(1000, 900);
+        const vhsgeometry = new THREE.PlaneGeometry(1400, 1000);
         const vhsmesh = new THREE.Mesh(vhsgeometry, vhsmaterial);
         vhsmesh.position.set(0.8, 3.13, .33);
         vhsmesh.scale.copy(object.scale); 
         scene.add(vhsmesh);
 
+        const screenSize = { width: 1000, height: 900 };
+        const position = new THREE.Vector3(0.8, 3.13, 0.35);
+        const rotation = Math.PI
+
+        const dimmerplate = new Dimmer(scene, camera, screenSize, position, rotation);
+        dimmerplate.createPerspectiveDimmer(10);
+        scene.add(dimmerplate)
+        
+
         // Animation loop for CSS3D rendering
         const renderLoop = () => {
-            //controls.update();
+            dimmerplate.update();
             renderer.render(scene, camera);
             cssRenderer.render(cssScene, camera);
             composer.render(); // use composer instead of gl.render
