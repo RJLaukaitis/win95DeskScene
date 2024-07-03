@@ -301,13 +301,13 @@ function CSS3DScene() {
                 const smat = new THREE.MeshBasicMaterial({
                     map: smudgeTexture,
                     side: THREE.DoubleSide,
-                    opacity: .03,
+                    opacity: .07,
                     transparent:true,
                     blending: THREE.NormalBlending
                 });
 
             const convexPlane = new THREE.Mesh(planeGeometry,smat);
-            convexPlane.position.set(0.8, 3.13, 0.2);
+            convexPlane.position.set(0.7, 3.13, 0.2);
             convexPlane.scale.copy(object.scale);
             scene.add(convexPlane);
         });
