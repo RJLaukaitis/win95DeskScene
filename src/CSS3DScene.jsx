@@ -208,7 +208,7 @@ function CSS3DScene() {
         //container.style.filter = 'brightness(1.5)'; // Increase brightness
 
         const iframe = document.createElement('iframe');
-        iframe.src = "http://localhost:3000/home";
+        iframe.src = "https://laukaitisos.netlify.app/";
         iframe.style.width = "1190px";
         iframe.style.height = "840px";
         iframe.style.marginTop = "80px";
@@ -301,7 +301,7 @@ function CSS3DScene() {
                 const smat = new THREE.MeshBasicMaterial({
                     map: smudgeTexture,
                     side: THREE.DoubleSide,
-                    opacity: .07,
+                    opacity: .02,
                     transparent:true,
                     blending: THREE.NormalBlending
                 });
@@ -354,7 +354,7 @@ function CSS3DScene() {
             map: vhsTexture,
             side: THREE.DoubleSide,
             transparent:true,
-            opacity:0.15,
+            opacity:0.2,
             blending: THREE.AdditiveBlending
         });
         const vhsgeometry = new THREE.PlaneGeometry(1400, 1000);
