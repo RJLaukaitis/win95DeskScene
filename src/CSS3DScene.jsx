@@ -85,9 +85,13 @@ function CSS3DScene() {
         });
 
         // ENVIRONMENT
-        const environment = new RoomEnvironment();
-        const pmremGenerator = new THREE.PMREMGenerator( renderer );
-		scene.environment = pmremGenerator.fromScene( environment ).texture;
+        const light1 = new THREE.PointLight(0xffffff,1,100)
+        light1.position.set(5,35,5)
+        scene.add(light1)
+
+        const light2 = new THREE.PointLight(0xffffff,1,100)
+        light2.position.set(-5,35,-5)
+        scene.add(light2)
 
         //spotlight
         const light = new THREE.DirectionalLight(0xffffff,0.5,100);
@@ -112,7 +116,7 @@ function CSS3DScene() {
 
         // Add the models
         const loader = new GLTFLoader();
-        loader.load('../Assets/DeskSceneV2.glb', function (glb) {
+        loader.load('../Assets/DeskScenev3glb.glb', function (glb) {
             const model = glb.scene;
             model.scale.set(1, 1, 1);
             model.traverse(function(node) {
