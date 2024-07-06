@@ -110,13 +110,13 @@ function CSS3DScene() {
 
         //FOG
         const fogColor = 0xf9f9f9;
-        const fogdensity = 0.028;
+        const fogdensity = 0.030;
         scene.fog = new THREE.FogExp2(fogColor,fogdensity);
 
 
         // Add the models
         const loader = new GLTFLoader();
-        loader.load('../Assets/DeskScenev3glb.glb', function (glb) {
+        loader.load('../Assets/DeskScenebigPC2.glb', function (glb) {
             const model = glb.scene;
             model.scale.set(1, 1, 1);
             model.traverse(function(node) {
@@ -272,7 +272,7 @@ function CSS3DScene() {
                   map: dustTexture,
                   side: THREE.DoubleSide,
                   transparent: true,
-                  opacity: 0.001,
+                  opacity: 0.01,
                   blending: THREE.NormalBlending
               });
   
@@ -305,7 +305,7 @@ function CSS3DScene() {
                 const smat = new THREE.MeshBasicMaterial({
                     map: smudgeTexture,
                     side: THREE.DoubleSide,
-                    opacity: .02,
+                    opacity: .015,
                     transparent:true,
                     blending: THREE.NormalBlending
                 });
@@ -358,7 +358,7 @@ function CSS3DScene() {
             map: vhsTexture,
             side: THREE.DoubleSide,
             transparent:true,
-            opacity:0.2,
+            opacity:0.1,
             blending: THREE.AdditiveBlending
         });
         const vhsgeometry = new THREE.PlaneGeometry(1400, 1000);
