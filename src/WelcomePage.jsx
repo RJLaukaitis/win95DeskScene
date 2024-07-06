@@ -3,7 +3,7 @@ import "./WelcomePage.css";
 
 const WelcomePage = ({ onEnter }) => {
   const infoRef = useRef(null);
-  const [showButton, setShowButton] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const mainSystemInfo = [
@@ -27,6 +27,12 @@ const WelcomePage = ({ onEnter }) => {
       "Starting services..."
     ];
 
+    const moreMessages = [
+      "Initializing network...",
+      "Cleaning up...",
+      "Starting services..."
+    ]
+
     const displayInfo = (messages, delay, callback) => {
       messages.forEach((info, index) => {
         setTimeout(() => {
@@ -41,9 +47,10 @@ const WelcomePage = ({ onEnter }) => {
     const displayMessages = async () => {
       await new Promise(resolve => {
         displayInfo(mainSystemInfo, 200, resolve);
+        displayInfo(moreMessages, 1000,resolve);
       });
-      displayInfo(additionalMessages, 700, () => {
-        setShowButton(true);
+      displayInfo(additionalMessages, 800, () => {
+        setShowModal(true);
       });
     };
 
@@ -52,13 +59,9 @@ const WelcomePage = ({ onEnter }) => {
 
   return (
     <div className="splash-screen">
-      <pre className="Header">
-        <p>
-        "Laukaitis OS [Version 2.5.4]"
-        </p>
-        <p>
-        "(C) Laukaitis Corporation. All rights reserved."
-        </p>
+      <pre className="header">
+        <p>"Laukaitis OS [Version 2.5.4]"</p>
+        <p>"(C) Laukaitis Corporation. All rights reserved."</p>
       </pre>
       <pre className="logo">
         {`
@@ -73,7 +76,15 @@ const WelcomePage = ({ onEnter }) => {
       <div className="system-info">
         <pre ref={infoRef} className="tasks"></pre>
       </div>
-      {showButton && <button onClick={onEnter}>Enter</button>}
+      {showModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <p>All systems ready.</p>
+            <p> Note: Best experienced on a desktop!</p>
+            <button onClick={onEnter}>Enter</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

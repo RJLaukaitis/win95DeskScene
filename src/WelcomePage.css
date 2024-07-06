@@ -9,6 +9,11 @@ body {
   align-items: flex-start;
 }
 
+.Header {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
 .splash-screen {
   background-color: black;
   width: 100%;
@@ -48,4 +53,24 @@ button {
 button:hover {
   background-color: white;
   color: black;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: black;
+  border: 1px solid white;
+  padding: 20px;
+  text-align: center;
+  color: white;
 }
