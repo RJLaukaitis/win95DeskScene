@@ -85,13 +85,25 @@ function CSS3DScene() {
         });
 
         // ENVIRONMENT
-        const light1 = new THREE.PointLight(0xffffff,1,100)
-        light1.position.set(5,35,5)
-        scene.add(light1)
+        // Add Directional Light (like the sun)
+// const directionalLight = new THREE.DirectionalLight(0xffffff, .5);
+// directionalLight.position.set(50, 50, 50).normalize();
+// scene.add(directionalLight);
 
-        const light2 = new THREE.PointLight(0xffffff,1,100)
-        light2.position.set(-5,35,-5)
-        scene.add(light2)
+
+
+// Add Point Lights for more dynamic lighting
+    // const light1 = new THREE.PointLight(0xffffff, .5, 100);
+    // light1.position.set(5, 35, 5);
+    // scene.add(light1);
+
+    // const light2 = new THREE.PointLight(0xffffff, .5, 100);
+    // light2.position.set(-5, 35, -5);
+    // scene.add(light2);
+
+    // const light3 = new THREE.PointLight(0xffffff, .5, 100);
+    // light3.position.set(0.55, 10, -4);
+    // scene.add(light3);
 
         //spotlight
         const light = new THREE.DirectionalLight(0xffffff,0.5,100);
@@ -116,7 +128,7 @@ function CSS3DScene() {
 
         // Add the models
         const loader = new GLTFLoader();
-        loader.load('../Assets/DeskScenebake.glb', function (glb) {
+        loader.load('../Assets/DeskScenebaking.glb', function (glb) {
             const model = glb.scene;
             model.scale.set(1, 1, 1);
             model.traverse(function(node) {

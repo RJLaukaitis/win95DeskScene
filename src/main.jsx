@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 import CSS3DScene from './CSS3DScene';
 import WelcomePage from './WelcomePage';
 import './app.css';
+import { Environment } from '@react-three/drei';
 
 const App = () => {
   const [showWelcome, setShowWelcome] = useState(true);
@@ -26,6 +27,7 @@ const App = () => {
           }}
         >
           <CSS3DScene />
+          <Environment preset = "city"/>
         </Canvas>
       )}
     </>
