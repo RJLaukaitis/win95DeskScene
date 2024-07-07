@@ -116,7 +116,7 @@ function CSS3DScene() {
 
         // Add the models
         const loader = new GLTFLoader();
-        loader.load('../Assets/DeskScenebigPC2.glb', function (glb) {
+        loader.load('../Assets/DeskScenebake.glb', function (glb) {
             const model = glb.scene;
             model.scale.set(1, 1, 1);
             model.traverse(function(node) {
