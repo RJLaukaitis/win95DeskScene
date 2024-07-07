@@ -60,8 +60,8 @@ const WelcomePage = ({ onEnter }) => {
   return (
     <div className="splash-screen">
       <pre className="header">
-        <p>"Laukaitis OS [Version 2.5.4]"</p>
-        <p>"(C) Laukaitis Corporation. All rights reserved."</p>
+        <p>Laukaitis OS [Version 2.5.4]</p>
+        <p>(C) Laukaitis Corporation. All rights reserved.</p>
       </pre>
       <pre className="logo">
         {`
