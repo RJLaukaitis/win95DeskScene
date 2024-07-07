@@ -10,8 +10,8 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
 import dust from "../Assets/Textures/MonitorOverlay/dust.jpg";
-import smudges from "../Assets/Textures/MonitorOverlay/smudge.jpg"
-import vignette from "../Assets/Textures/MonitorOverlay/vignette2.png";;
+import smudges from "../Assets/Textures/MonitorOverlay/smudge.png"
+import vignette from "../Assets/Textures/MonitorOverlay/vignette1.png";;
 import gsap from 'gsap';
 import Dimmer from './dimmer';
 
@@ -132,7 +132,7 @@ function CSS3DScene() {
 
         //idle camera flyover
         const startPosition = { x: 14, y: 9, z: -12 };
-        const endPosition = { x: -14, y: 9, z: -12 };
+        const endPosition = { x: -14, y: 9, z: -9 };
 
         camera.position.set(startPosition.x, startPosition.y, startPosition.z);
         camera.lookAt(0, 3, 0);
@@ -156,7 +156,7 @@ function CSS3DScene() {
             // Define the start and end positions for the camera
             orbitAnimation.kill();
             const startPosition = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
-            const endPosition = { x: 0.8, y: 3.1, z: -1.2 };
+            const endPosition = { x: 0.55, y: 3, z: -4 };
         
             // Define the start and end positions for the lookAt target
             const startLookAt = { x: 3, y: 2, z: 0 };
@@ -254,7 +254,7 @@ function CSS3DScene() {
                  map: vignetteTexture,
                  side: THREE.DoubleSide,
                  transparent: true,
-                 opacity: 0.4,
+                 opacity: 1,
                  blending: THREE.NormalBlending
              });
  
@@ -305,7 +305,7 @@ function CSS3DScene() {
                 const smat = new THREE.MeshBasicMaterial({
                     map: smudgeTexture,
                     side: THREE.DoubleSide,
-                    opacity: .015,
+                    opacity: .12,
                     transparent:true,
                     blending: THREE.NormalBlending
                 });
@@ -332,7 +332,7 @@ function CSS3DScene() {
             map: crtTexture,
             side: THREE.DoubleSide,
             transparent:true,
-            opacity:.4,
+            opacity:.5,
             blending: THREE.AdditiveBlending
         });
         const crtgeometry = new THREE.PlaneGeometry(1400, 1000);
