@@ -27,7 +27,7 @@ const App = () => {
           }}
         >
           <CSS3DScene />
-          <Environment preset = "city"/>
+          {/* <Environment preset = "lobby"/> */}
         </Canvas>
       )}
     </>

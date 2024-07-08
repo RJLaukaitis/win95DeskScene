@@ -85,40 +85,31 @@ function CSS3DScene() {
         });
 
         // ENVIRONMENT
-        // Add Directional Light (like the sun)
-// const directionalLight = new THREE.DirectionalLight(0xffffff, .5);
-// directionalLight.position.set(50, 50, 50).normalize();
-// scene.add(directionalLight);
+        const light1 = new THREE.PointLight(0xffffff,1,100)
+        light1.position.set(5,35,5)
+        scene.add(light1)
+
+        const light2 = new THREE.PointLight(0xffffff,1,100)
+        light2.position.set(-5,35,-5)
+        scene.add(light2)
 
 
 
-// Add Point Lights for more dynamic lighting
-    // const light1 = new THREE.PointLight(0xffffff, .5, 100);
-    // light1.position.set(5, 35, 5);
-    // scene.add(light1);
 
-    // const light2 = new THREE.PointLight(0xffffff, .5, 100);
-    // light2.position.set(-5, 35, -5);
-    // scene.add(light2);
-
-    // const light3 = new THREE.PointLight(0xffffff, .5, 100);
-    // light3.position.set(0.55, 10, -4);
-    // scene.add(light3);
-
-        //spotlight
-        const light = new THREE.DirectionalLight(0xffffff,0.5,100);
-        light.position.set(2,10,2);
-        light.castShadow = true;
-        light.shadow.mapSize.width = 2048; // default
-        light.shadow.mapSize.height = 2048; // default
-        light.shadow.camera.near = 0.1; // default
-        light.shadow.camera.top = 10;
-        light.shadow.camera.bottom = -10;
-        light.shadow.camera.left = -10;
-        light.shadow.camera.right = 10;
-        light.shadow.camera.far = 500; // default
-        light.shadow.bias = -0.001;
-        scene.add(light);
+        // //spotlight
+        // const light = new THREE.DirectionalLight(0xffffff,0.5,100);
+        // light.position.set(2,10,2);
+        // light.castShadow = true;
+        // light.shadow.mapSize.width = 2048; // default
+        // light.shadow.mapSize.height = 2048; // default
+        // light.shadow.camera.near = 0.1; // default
+        // light.shadow.camera.top = 10;
+        // light.shadow.camera.bottom = -10;
+        // light.shadow.camera.left = -10;
+        // light.shadow.camera.right = 10;
+        // light.shadow.camera.far = 500; // default
+        // light.shadow.bias = -0.001;
+        // scene.add(light);
 
         //FOG
         const fogColor = 0xf9f9f9;
@@ -128,7 +119,7 @@ function CSS3DScene() {
 
         // Add the models
         const loader = new GLTFLoader();
-        loader.load('../Assets/DeskScenebaking.glb', function (glb) {
+        loader.load('../Assets/DeskSceneBAKEprogress.glb', function (glb) {
             const model = glb.scene;
             model.scale.set(1, 1, 1);
             model.traverse(function(node) {
