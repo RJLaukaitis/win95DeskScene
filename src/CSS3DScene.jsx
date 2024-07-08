@@ -113,13 +113,13 @@ function CSS3DScene() {
 
         //FOG
         const fogColor = 0xf9f9f9;
-        const fogdensity = 0.030;
+        const fogdensity = 0.020;
         scene.fog = new THREE.FogExp2(fogColor,fogdensity);
 
 
         // Add the models
         const loader = new GLTFLoader();
-        loader.load('../Assets/DeskSceneBAKEprogress.glb', function (glb) {
+        loader.load('../Assets/DeskScenebaking.glb', function (glb) {
             const model = glb.scene;
             model.scale.set(1, 1, 1);
             model.traverse(function(node) {
