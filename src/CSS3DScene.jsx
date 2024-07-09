@@ -358,14 +358,60 @@ function CSS3DScene() {
         vhsmesh.scale.copy(object.scale); 
         scene.add(vhsmesh);
 
-        const screenSize = { width: 1000, height: 900 };
-        const position = new THREE.Vector3(0.8, 3.13, 0.35);
-        const rotation = Math.PI
+        //dimming plane
+            const dimmaterial = new THREE.MeshBasicMaterial({
+                side: THREE.DoubleSide,
+                color: 0x000000,
+                transparent:true,
+                opacity: 0.5, // Set initial opacity to make sure it's visible
+                blending: THREE.AdditiveBlending
+            });
+
+            const dimplane = new THREE.PlaneGeometry(1400,1000);
+            const dimMesh = new THREE.Mesh(dimplane,dimmaterial);
+            dimMesh.position.set(.8, 3.13,.2);
+            dimMesh.rotation.copy(object.rotation);
+            dimMesh.scale.copy(object.scale);
+            scene.add(dimMesh);
+
+        
         
 
         // Animation loop for CSS3D rendering
         const renderLoop = () => {
-            //dimmerplate.update();
+             // Dimming effect logic
+    if (dimMesh) {
+        const planeNormal = new THREE.Vector3(0, 0, 1);
+        const viewVector = new THREE.Vector3();
+        viewVector.copy(camera.position);
+        viewVector.sub(dimMesh.position);
+        viewVector.normalize();
+
+        const dot = viewVector.dot(planeNormal);
+
+        // Calculate the distance from the camera vector to the plane vector
+        const dimPos = dimMesh.position;
+        const camPos = camera.position;
+
+        const distance = Math.sqrt(
+            (camPos.x - dimPos.x) ** 2 +
+            (camPos.y - dimPos.y) ** 2 +
+            (camPos.z - dimPos.z) ** 2
+        );
+
+        const opacity = 1 / (distance / 10000);
+
+        const DIM_FACTOR = 0.7;
+
+        // Debugging logs
+
+        // Update the material opacity
+        dimMesh.material.opacity =
+            (1 - opacity) * DIM_FACTOR + (1 - dot) * DIM_FACTOR;
+    }
+
+
+
             renderer.render(scene, camera);
             cssRenderer.render(cssScene, camera);
             composer.render(); // use composer instead of gl.render
