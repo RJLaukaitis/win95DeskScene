@@ -23,7 +23,7 @@ const App = () => {
             fov: 39,
             near: 0.1,
             far: 2000,
-            position: [10, 9, -14], // Adjust as needed
+            position: [25, 9, -25], // Adjust as needed
           }}
         >
           <CSS3DScene />

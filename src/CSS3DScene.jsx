@@ -92,16 +92,17 @@ function CSS3DScene() {
 
 
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
-        scene.add(ambientLight);
+        //scene.add(ambientLight);
 
         // Add directional light
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1); 
+        const directionalLight = new THREE.DirectionalLight(0xffffff, .8); 
         directionalLight.position.set(0, 10, 10);
+        //scene.add(directionalLight)
 
 
         //FOG
         const fogColor = 0xf9f9f9;
-        const fogdensity = 0.030;
+        const fogdensity = 0.035;
         scene.fog = new THREE.FogExp2(fogColor,fogdensity);
 
 
@@ -121,73 +122,6 @@ function CSS3DScene() {
             scene.add(model);
         });
 
-        //idle camera flyover
-        const startPosition = { x: 14, y: 9, z: -12 };
-        const endPosition = { x: -14, y: 9, z: -9 };
-
-        camera.position.set(startPosition.x, startPosition.y, startPosition.z);
-        camera.lookAt(0, 3, 0);
-
-        let orbitAnimation = gsap.to(camera.position, {
-            x: endPosition.x,
-            y: endPosition.y,
-            z: endPosition.z,
-            duration: 70,
-            repeat: -1, // Infinite repetition
-            yoyo: true,
-            ease: 'none',
-            onUpdate: () => {
-                camera.lookAt(0, 0, 0);
-            }
-        });
-
-        //setting up camera animation
-        camera.lookAt(3,2,0);
-        const adjustCamera = () => {
-            // Define the start and end positions for the camera
-            orbitAnimation.kill();
-            const startPosition = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
-            const endPosition = { x: 0.55, y: 3, z: -4 };
-        
-            // Define the start and end positions for the lookAt target
-            const startLookAt = { x: 3, y: 2, z: 0 };
-            const endLookAt = { x: 0, y: 3.1, z: 30 };
-        
-            // Create a proxy object for the lookAt target
-            const lookAtProxy = { x: startLookAt.x, y: startLookAt.y, z: startLookAt.z };
-        
-            // Animate the camera position
-            gsap.to(camera.position, {
-                x: endPosition.x,
-                y: endPosition.y,
-                z: endPosition.z,
-                ease: 'power3.inOut',
-                duration: 1,
-                onUpdate: function () {
-                    camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
-                },
-                onComplete: function () {
-                    camera.lookAt(endLookAt.x, endLookAt.y, endLookAt.z);
-                }
-            });
-        
-            // Animate the lookAt proxy object
-            gsap.to(lookAtProxy, {
-                x: endLookAt.x,
-                y: endLookAt.y,
-                z: endLookAt.z,
-                ease: 'power3.inOut',
-                duration: 1,
-                onUpdate: function () {
-                    // Update the camera's lookAt target during the animation
-                    camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
-                }
-            });
-        
-            camera.updateProjectionMatrix();
-        }
-
-    window.addEventListener('mousedown', adjustCamera);
 
         // Container for iframe
         const container = document.createElement('div');
@@ -373,6 +307,87 @@ function CSS3DScene() {
             dimMesh.rotation.copy(object.rotation);
             dimMesh.scale.copy(object.scale);
             scene.add(dimMesh);
+
+
+
+                    //idle camera flyover
+// Initial flyover animation
+const startPosition = { x: 20, y: 9, z: -20 };
+const endPosition = { x: -14, y: 9, z: -9 };
+
+camera.position.set(startPosition.x, startPosition.y, startPosition.z);
+camera.lookAt(0, 3, 0);
+
+let orbitAnimation = gsap.to(camera.position, {
+    x: endPosition.x,
+    y: endPosition.y,
+    z: endPosition.z,
+    duration: 70,
+    repeat: -1, // Infinite repetition
+    yoyo: true,
+    ease: 'none',
+    onUpdate: () => {
+        camera.lookAt(0, 0, 0);
+    }
+});
+const zoomInPosition = {x:15,y:9,z:-20};
+
+
+// Function to adjust camera position and lookAt
+const adjustCamera = (endPos, endLookAt, duration = 1) => {
+        const startPos = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
+        const startLookAt = { x: 3, y: 2, z: 0 }; // Initial lookAt target
+        const lookAtProxy = { x: startLookAt.x, y: startLookAt.y, z: startLookAt.z };
+
+        gsap.to(camera.position, {
+            x: endPos.x,
+            y: endPos.y,
+            z: endPos.z,
+            ease: 'power3.inOut',
+            duration: duration,
+            onUpdate: () => {
+                camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
+            },
+            onComplete: () => {
+                camera.lookAt(endLookAt.x, endLookAt.y, endLookAt.z);
+            }
+        });
+
+        gsap.to(lookAtProxy, {
+            x: endLookAt.x,
+            y: endLookAt.y,
+            z: endLookAt.z,
+            ease: 'power3.inOut',
+            duration: duration,
+            onUpdate: () => {
+                camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
+            }
+        });
+
+        camera.updateProjectionMatrix();
+    };
+
+    adjustCamera(zoomInPosition,{ x: 3, y: 2, z: 0 },2);
+
+
+
+    // Event listener for click to zoom in
+    window.addEventListener('mousedown', () => {
+        orbitAnimation.kill(); // Stop the idle animation
+        adjustCamera({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 });
+    });
+
+    // Event listener for hover to zoom in
+    const computerScreen = document.querySelector('div'); // Replace with your screen selector
+    computerScreen.addEventListener('mouseover', () => {
+        orbitAnimation.kill(); // Stop the idle animation
+        adjustCamera({ x: 0.8, y: 3.1, z: -1.2 }, { x: 0, y: 3.1, z: 30 });
+    });
+
+    // Event listener to zoom out when mouse leaves the screen
+    computerScreen.addEventListener('mouseout', () => {
+        adjustCamera({ x: 14, y: 9, z: -12 }, { x: 0, y: 3, z: 0 }, 2); // Back to initial position and target
+    });
 
 // Animation loop for CSS3D rendering
 const renderLoop = () => {
