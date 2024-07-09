@@ -363,25 +363,22 @@ function CSS3DScene() {
                 side: THREE.DoubleSide,
                 color: 0x000000,
                 transparent:true,
-                opacity: 0.5, // Set initial opacity to make sure it's visible
-                blending: THREE.AdditiveBlending
+                blending: THREE.NormalBlending,
             });
 
-            const dimplane = new THREE.PlaneGeometry(1400,1000);
-            const dimMesh = new THREE.Mesh(dimplane,dimmaterial);
-            dimMesh.position.set(.8, 3.13,.2);
+            // Dimming plane geometry
+            const dimplane = new THREE.PlaneGeometry(1400, 1000);
+            const dimMesh = new THREE.Mesh(dimplane, dimmaterial);
+            dimMesh.position.set(0.8, 3.13, -2);
             dimMesh.rotation.copy(object.rotation);
             dimMesh.scale.copy(object.scale);
             scene.add(dimMesh);
 
-        
-        
-
-        // Animation loop for CSS3D rendering
-        const renderLoop = () => {
-             // Dimming effect logic
+// Animation loop for CSS3D rendering
+const renderLoop = () => {
+    // Dimming effect logic
     if (dimMesh) {
-        const planeNormal = new THREE.Vector3(0, 0, 1);
+        const planeNormal = new THREE.Vector3(0, 0, 1).applyQuaternion(dimMesh.quaternion); // Adjust plane normal by plane rotation
         const viewVector = new THREE.Vector3();
         viewVector.copy(camera.position);
         viewVector.sub(dimMesh.position);
@@ -393,21 +390,19 @@ function CSS3DScene() {
         const dimPos = dimMesh.position;
         const camPos = camera.position;
 
-        const distance = Math.sqrt(
-            (camPos.x - dimPos.x) ** 2 +
-            (camPos.y - dimPos.y) ** 2 +
-            (camPos.z - dimPos.z) ** 2
-        );
+        const distance = camPos.distanceTo(dimPos); // Use distanceTo method
 
-        const opacity = 1 / (distance / 10000);
+        const opacity = Math.min(1 / (distance / 1000), 1); // Ensure opacity does not exceed 1
 
-        const DIM_FACTOR = 0.7;
-
-        // Debugging logs
+        const DIM_FACTOR = 1.1;
 
         // Update the material opacity
-        dimMesh.material.opacity =
-            (1 - opacity) * DIM_FACTOR + (1 - dot) * DIM_FACTOR;
+        const newOpacity = (1 - opacity) * DIM_FACTOR + (1 - dot) * DIM_FACTOR;
+
+        // Update opacity only if there's a significant change
+        if (Math.abs(dimMesh.material.opacity - newOpacity) > 0.01) {
+            dimMesh.material.opacity = newOpacity;
+        }
     }
 
 
