@@ -369,7 +369,7 @@ function CSS3DScene() {
             // Dimming plane geometry
             const dimplane = new THREE.PlaneGeometry(1400, 1000);
             const dimMesh = new THREE.Mesh(dimplane, dimmaterial);
-            dimMesh.position.set(0.8, 3.13, -2);
+            dimMesh.position.set(0.8, 3.13, .32);
             dimMesh.rotation.copy(object.rotation);
             dimMesh.scale.copy(object.scale);
             scene.add(dimMesh);
@@ -390,26 +390,22 @@ const renderLoop = () => {
         const dimPos = dimMesh.position;
         const camPos = camera.position;
 
-        const distance = camPos.distanceTo(dimPos); // Use distanceTo method
+        const distance = camPos.distanceTo(dimPos);
 
-        const opacity = Math.min(1 / (distance / 1000), 1); // Ensure opacity does not exceed 1
+        const opacity = Math.min(1 / (distance / 10000), 1); // Ensure opacity does not exceed 1
 
-        const DIM_FACTOR = 1.1;
+        const DIM_FACTOR = 2;
 
         // Update the material opacity
         const newOpacity = (1 - opacity) * DIM_FACTOR + (1 - dot) * DIM_FACTOR;
-
-        // Update opacity only if there's a significant change
-        if (Math.abs(dimMesh.material.opacity - newOpacity) > 0.01) {
-            dimMesh.material.opacity = newOpacity;
-        }
+        dimMesh.material.opacity = newOpacity
     }
 
 
 
             renderer.render(scene, camera);
             cssRenderer.render(cssScene, camera);
-            composer.render(); // use composer instead of gl.render
+            composer.render();
             requestAnimationFrame(renderLoop);
         };
         renderLoop();
