@@ -254,7 +254,7 @@ function CSS3DScene() {
              vmesh.position.set(.8, 3.13, 0.36); // Position it slightly in front of the iframe
              vmesh.rotation.copy(object.rotation); // Copy rotation of CSS3DObject
              vmesh.scale.copy(object.scale); // Copy scale of CSS3DObject
-             //scene.add(vmesh);
+             scene.add(vmesh);
          });
 
           // Creating dust plate
@@ -304,7 +304,7 @@ function CSS3DScene() {
             const convexPlane = new THREE.Mesh(planeGeometry,smat);
             convexPlane.position.set(0.7, 3.13, 0.2);
             convexPlane.scale.copy(object.scale);
-            //scene.add(convexPlane);
+            scene.add(convexPlane);
         });
 
         //Video textures for screen effects
@@ -331,7 +331,7 @@ function CSS3DScene() {
         crtmesh.position.set(0.8, 3.13, .35);
         crtmesh.scale.copy(object.scale);
         crtmesh.rotation.y = Math.PI;
-        //scene.add(crtmesh);
+        scene.add(crtmesh);
 
         //second video to add more depth
         const vhsvideo = document.createElement('video');
@@ -356,7 +356,7 @@ function CSS3DScene() {
         const vhsmesh = new THREE.Mesh(vhsgeometry, vhsmaterial);
         vhsmesh.position.set(0.8, 3.13, .33);
         vhsmesh.scale.copy(object.scale); 
-        //scene.add(vhsmesh);
+        scene.add(vhsmesh);
 
         const screenSize = { width: 1000, height: 900 };
         const position = new THREE.Vector3(0.8, 3.13, 0.35);
