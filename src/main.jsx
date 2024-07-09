@@ -15,9 +15,9 @@ const App = () => {
 
   return (
     <>
-      {showWelcome ? (
+      {/* {showWelcome ? (
         <WelcomePage onEnter={handleEnter} />
-      ) : (
+      ) : ( */}
         <Canvas
           camera={{
             fov: 39,
@@ -28,7 +28,7 @@ const App = () => {
         >
           <CSS3DScene />
         </Canvas>
-      )}
+      {/* )} */}
     </>
   );
 };

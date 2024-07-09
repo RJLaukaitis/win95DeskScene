@@ -13,7 +13,8 @@ import dust from "../Assets/Textures/MonitorOverlay/dust.jpg";
 import smudges from "../Assets/Textures/MonitorOverlay/smudge.png"
 import vignette from "../Assets/Textures/MonitorOverlay/vignette1.png";;
 import gsap from 'gsap';
-import Dimmer from './dimmer';
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+
 
 import './CSS3DScene.css';
 
@@ -85,7 +86,12 @@ function CSS3DScene() {
         });
 
         // ENVIRONMENT
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        const pmremGenerator = new THREE.PMREMGenerator( renderer );
+        scene.environment = pmremGenerator.fromScene( new RoomEnvironment(), 0.04 ).texture;
+
+
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
         scene.add(ambientLight);
 
         // Add directional light
@@ -205,7 +211,7 @@ function CSS3DScene() {
         iframe.style.boxSizing = 'border-box';
         iframe.style.opacity = '1';
         //iframe.style.zIndex = '10';
-        iframe.style.filter = "brightness(0.6)";
+        //iframe.style.filter = "brightness(2)";
         iframe.style.overflow = "hidden"; // Hide scroll bars
 
         container.appendChild(iframe);
@@ -248,7 +254,7 @@ function CSS3DScene() {
              vmesh.position.set(.8, 3.13, 0.36); // Position it slightly in front of the iframe
              vmesh.rotation.copy(object.rotation); // Copy rotation of CSS3DObject
              vmesh.scale.copy(object.scale); // Copy scale of CSS3DObject
-             scene.add(vmesh);
+             //scene.add(vmesh);
          });
 
           // Creating dust plate
@@ -266,7 +272,7 @@ function CSS3DScene() {
               dmesh.position.set(.8, 3.13, 0.37); // Position it slightly in front of the iframe
               dmesh.rotation.copy(object.rotation); // Copy rotation of CSS3DObject
               dmesh.scale.copy(object.scale); // Copy scale of CSS3DObject
-              scene.add(dmesh);
+              //scene.add(dmesh);
           });
 
           //creating curved glass screen
@@ -298,7 +304,7 @@ function CSS3DScene() {
             const convexPlane = new THREE.Mesh(planeGeometry,smat);
             convexPlane.position.set(0.7, 3.13, 0.2);
             convexPlane.scale.copy(object.scale);
-            scene.add(convexPlane);
+            //scene.add(convexPlane);
         });
 
         //Video textures for screen effects
@@ -325,7 +331,7 @@ function CSS3DScene() {
         crtmesh.position.set(0.8, 3.13, .35);
         crtmesh.scale.copy(object.scale);
         crtmesh.rotation.y = Math.PI;
-        scene.add(crtmesh);
+        //scene.add(crtmesh);
 
         //second video to add more depth
         const vhsvideo = document.createElement('video');
@@ -350,20 +356,16 @@ function CSS3DScene() {
         const vhsmesh = new THREE.Mesh(vhsgeometry, vhsmaterial);
         vhsmesh.position.set(0.8, 3.13, .33);
         vhsmesh.scale.copy(object.scale); 
-        scene.add(vhsmesh);
+        //scene.add(vhsmesh);
 
         const screenSize = { width: 1000, height: 900 };
         const position = new THREE.Vector3(0.8, 3.13, 0.35);
         const rotation = Math.PI
-
-        const dimmerplate = new Dimmer(scene, camera, screenSize, position, rotation);
-        dimmerplate.createPerspectiveDimmer(10);
-        scene.add(dimmerplate)
         
 
         // Animation loop for CSS3D rendering
         const renderLoop = () => {
-            dimmerplate.update();
+            //dimmerplate.update();
             renderer.render(scene, camera);
             cssRenderer.render(cssScene, camera);
             composer.render(); // use composer instead of gl.render
