@@ -85,41 +85,23 @@ function CSS3DScene() {
         });
 
         // ENVIRONMENT
-        const light1 = new THREE.PointLight(0xffffff,1,100)
-        light1.position.set(5,35,5)
-        scene.add(light1)
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
 
-        const light2 = new THREE.PointLight(0xffffff,1,100)
-        light2.position.set(-5,35,-5)
-        scene.add(light2)
+        // Add directional light
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1); 
+        directionalLight.position.set(0, 10, 10);
 
-
-
-
-        // //spotlight
-        // const light = new THREE.DirectionalLight(0xffffff,0.5,100);
-        // light.position.set(2,10,2);
-        // light.castShadow = true;
-        // light.shadow.mapSize.width = 2048; // default
-        // light.shadow.mapSize.height = 2048; // default
-        // light.shadow.camera.near = 0.1; // default
-        // light.shadow.camera.top = 10;
-        // light.shadow.camera.bottom = -10;
-        // light.shadow.camera.left = -10;
-        // light.shadow.camera.right = 10;
-        // light.shadow.camera.far = 500; // default
-        // light.shadow.bias = -0.001;
-        // scene.add(light);
 
         //FOG
         const fogColor = 0xf9f9f9;
-        const fogdensity = 0.020;
+        const fogdensity = 0.030;
         scene.fog = new THREE.FogExp2(fogColor,fogdensity);
 
 
         // Add the models
         const loader = new GLTFLoader();
-        loader.load('../Assets/DeskScenebaking.glb', function (glb) {
+        loader.load('../Assets/CompleteBake.glb', function (glb) {
             const model = glb.scene;
             model.scale.set(1, 1, 1);
             model.traverse(function(node) {
@@ -223,7 +205,7 @@ function CSS3DScene() {
         iframe.style.boxSizing = 'border-box';
         iframe.style.opacity = '1';
         //iframe.style.zIndex = '10';
-        iframe.style.filter = "brightness(1.2)";
+        iframe.style.filter = "brightness(0.6)";
         iframe.style.overflow = "hidden"; // Hide scroll bars
 
         container.appendChild(iframe);
