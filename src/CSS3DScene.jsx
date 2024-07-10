@@ -93,7 +93,7 @@ function CSS3DScene() {
 
 
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
-        scene.add(ambientLight);
+        //scene.add(ambientLight);
 
         // Add directional light
         const directionalLight = new THREE.DirectionalLight(0xffffff, .8); 
