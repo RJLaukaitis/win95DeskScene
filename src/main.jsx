@@ -26,7 +26,7 @@ const App = () => {
             fov: 39,
             near: 0.1,
             far: 2000,
-            position: [25, 9, -25], // Adjust as needed
+            position: [30, 9, -30], // Adjust as needed
           }}
         >
           {model && <primitive object ={model} />}

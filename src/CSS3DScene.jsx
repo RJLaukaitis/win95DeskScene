@@ -86,9 +86,14 @@ function CSS3DScene() {
         scene.environment = pmremGenerator.fromScene( new RoomEnvironment(), 0.04 ).texture;
 
 
+        renderer.outputEncoding = THREE.LinearEncoding;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.physicallyCorrectLights = true;
+
 
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
-        //scene.add(ambientLight);
+        scene.add(ambientLight);
 
         // Add directional light
         const directionalLight = new THREE.DirectionalLight(0xffffff, .8); 
@@ -97,7 +102,7 @@ function CSS3DScene() {
 
         //FOG
         const fogColor = 0xf9f9f9;
-        const fogdensity = 0.035;
+        const fogdensity = 0.028;
         scene.fog = new THREE.FogExp2(fogColor,fogdensity);
 
 
@@ -307,7 +312,7 @@ let orbitAnimation = gsap.to(camera.position, {
         camera.lookAt(0, 3.1, 0);
     }
 });
-const zoomInPosition = {x:14,y:9,z:-15}; //initial zoom into the scene on page load
+const zoomInPosition = {x:20,y:9,z:-20}; //initial zoom into the scene on page load
 
 
 // Function to adjust camera position and lookAt
