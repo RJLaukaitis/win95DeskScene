@@ -83,21 +83,13 @@ function CSS3DScene() {
 
         // ENVIRONMENT
         const pmremGenerator = new THREE.PMREMGenerator( renderer );
-        scene.environment = pmremGenerator.fromScene( new RoomEnvironment(), 0.04 ).texture;
+        scene.environment = pmremGenerator.fromScene( new RoomEnvironment(), 0.01 ).texture;
 
 
         renderer.outputEncoding = THREE.LinearEncoding;
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         renderer.physicallyCorrectLights = true;
-
-
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
-        //scene.add(ambientLight);
-
-        // Add directional light
-        const directionalLight = new THREE.DirectionalLight(0xffffff, .8); 
-        directionalLight.position.set(0, 10, 10);
 
 
         //FOG
@@ -116,8 +108,6 @@ function CSS3DScene() {
         container.style.justifyContent = "center";
         container.style.background = '#1d2e2f';
         container.style.pointerEvents = 'auto'; // Ensure the container allows pointer events
-        container.style.zIndex = '10';
-        //container.style.filter = 'brightness(1.5)'; // Increase brightness
 
         const iframe = document.createElement('iframe');
         iframe.src = "https://laukaitisos.netlify.app/";
@@ -127,8 +117,8 @@ function CSS3DScene() {
         iframe.style.marginLeft = "135px";
         iframe.style.boxSizing = 'border-box';
         iframe.style.opacity = '1';
-        //iframe.style.zIndex = '10';
-        //iframe.style.filter = "brightness(2)";
+        iframe.style.zIndex = '10';
+        iframe.style.brightness = "0.1";
         iframe.style.overflow = "hidden"; // Hide scroll bars
 
         container.appendChild(iframe);
@@ -144,7 +134,7 @@ function CSS3DScene() {
         // Creating GL plane for occlusion
         const mat = new THREE.MeshLambertMaterial();
         mat.side = THREE.DoubleSide;
-        mat.opacity = 0.1;
+        mat.opacity = 0.01;
         mat.transparent = true;
         mat.blending = THREE.NoBlending;
 
@@ -266,7 +256,7 @@ function CSS3DScene() {
             map: vhsTexture,
             side: THREE.DoubleSide,
             transparent:true,
-            opacity:0.1,
+            opacity:0.4,
             blending: THREE.AdditiveBlending
         });
         const vhsgeometry = new THREE.PlaneGeometry(1400, 1000);
@@ -390,7 +380,7 @@ const renderLoop = () => {
 
         const opacity = Math.min(1 / (distance / 10000), 1); // Ensure opacity does not exceed 1
 
-        const DIM_FACTOR = 2;
+        const DIM_FACTOR = 3.1;
 
         // Update the material opacity
         const newOpacity = (1 - opacity) * DIM_FACTOR + (1 - dot) * DIM_FACTOR;

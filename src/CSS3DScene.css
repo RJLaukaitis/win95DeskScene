@@ -13,10 +13,6 @@ body {
     height: 100%;
   }
 
-  .iframe{
-    filter: brightness(1.5);
-  }
-
   #overlay{
     pointer-events: none;
   }
