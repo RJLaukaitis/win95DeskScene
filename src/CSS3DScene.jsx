@@ -304,10 +304,10 @@ let orbitAnimation = gsap.to(camera.position, {
     yoyo: true,
     ease: 'none',
     onUpdate: () => {
-        camera.lookAt(0, 3.1, 30);
+        camera.lookAt(0, 3.1, 0);
     }
 });
-const zoomInPosition = {x:20,y:9,z:-20}; //initial zoom into the scene on page load
+const zoomInPosition = {x:14,y:9,z:-15}; //initial zoom into the scene on page load
 
 
 // Function to adjust camera position and lookAt
@@ -344,7 +344,7 @@ const adjustCamera = (endPos, endLookAt, duration = 1) => {
         camera.updateProjectionMatrix();
     };
 
-    adjustCamera(zoomInPosition,{ x: 3, y: 2, z: 0 },2);
+    adjustCamera(zoomInPosition,{x:0, y:3.1, z:30},2);
 
 
     // Event listener for click to zoom in
