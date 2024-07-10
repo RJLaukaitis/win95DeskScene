@@ -92,7 +92,7 @@ function CSS3DScene() {
 
 
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
-        //scene.add(ambientLight);
+        scene.add(ambientLight);
 
         // Add directional light
         const directionalLight = new THREE.DirectionalLight(0xffffff, .8); 
@@ -104,23 +104,6 @@ function CSS3DScene() {
         const fogColor = 0xf9f9f9;
         const fogdensity = 0.035;
         scene.fog = new THREE.FogExp2(fogColor,fogdensity);
-
-
-        // Add the models
-        const loader = new GLTFLoader();
-        loader.load('../Assets/CompleteBake.glb', function (glb) {
-            const model = glb.scene;
-            model.scale.set(1, 1, 1);
-            model.traverse(function(node) {
-                if (node.isMesh) {
-                    node.castShadow = true;
-                    node.receiveShadow = true;
-                }
-            });
-            model.side = THREE.DoubleSide;
-            model.rotation.y = Math.PI/2;
-            scene.add(model);
-        });
 
 
         // Container for iframe
@@ -327,7 +310,7 @@ let orbitAnimation = gsap.to(camera.position, {
     yoyo: true,
     ease: 'none',
     onUpdate: () => {
-        camera.lookAt(0, 0, 0);
+        camera.lookAt(0, 3.1, 30);
     }
 });
 const zoomInPosition = {x:15,y:9,z:-20};
@@ -368,7 +351,6 @@ const adjustCamera = (endPos, endLookAt, duration = 1) => {
     };
 
     adjustCamera(zoomInPosition,{ x: 3, y: 2, z: 0 },2);
-
 
 
     // Event listener for click to zoom in

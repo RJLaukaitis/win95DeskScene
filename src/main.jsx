@@ -8,6 +8,9 @@ import { Environment } from '@react-three/drei';
 
 const App = () => {
   const [showWelcome, setShowWelcome] = useState(true);
+  const [model, setModel] = useState(null);
+
+
 
   const handleEnter = () => {
     setShowWelcome(false);
@@ -16,7 +19,7 @@ const App = () => {
   return (
     <>
       {showWelcome ? (
-        <WelcomePage onEnter={handleEnter} />
+        <WelcomePage onEnter={handleEnter} setModel={setModel} />
       ) : (
         <Canvas
           camera={{
@@ -25,7 +28,9 @@ const App = () => {
             far: 2000,
             position: [25, 9, -25], // Adjust as needed
           }}
+          onCreated={() => handleModelLoad()}
         >
+          {model && <primitive object ={model} />}
           <CSS3DScene />
         </Canvas>
       )}

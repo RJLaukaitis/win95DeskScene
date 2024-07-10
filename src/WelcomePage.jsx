@@ -1,9 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import "./WelcomePage.css";
+import { Html, useGLTF } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
-const WelcomePage = ({ onEnter }) => {
+
+const WelcomePage = ({ onEnter , setModel }) => {
   const infoRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
+  const [modelLoaded, setModelLoaded] = useState(false);
+
 
   useEffect(() => {
     const mainSystemInfo = [
@@ -50,12 +56,33 @@ const WelcomePage = ({ onEnter }) => {
         displayInfo(moreMessages, 1000,resolve);
       });
       displayInfo(additionalMessages, 800, () => {
-        setShowModal(true);
+        if (modelLoaded){
+          setShowModal(true);
+        }
       });
     };
 
     displayMessages();
-  }, []);
+
+    const loader = new GLTFLoader();
+    loader.load('../Assets/UpdatedBakes.glb', function (glb) {
+      const model = glb.scene;
+      model.scale.set(1, 1, 1);
+      model.traverse(function (node) {
+        if (node.isMesh) {
+          node.castShadow = true;
+          node.receiveShadow = true;
+        }
+      });
+      model.side = THREE.DoubleSide;
+      model.rotation.y = Math.PI / 2;
+      setModel(model);
+      setModelLoaded(true);
+    }, undefined, function (error) {
+      console.error('An error happened while loading the model', error);
+    });
+
+  }, [modelLoaded]);
 
   return (
     <div className="splash-screen">
