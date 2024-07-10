@@ -11,10 +11,10 @@ const App = () => {
   const [model, setModel] = useState(null);
 
 
-
   const handleEnter = () => {
     setShowWelcome(false);
   };
+
 
   return (
     <>
@@ -28,7 +28,6 @@ const App = () => {
             far: 2000,
             position: [25, 9, -25], // Adjust as needed
           }}
-          onCreated={() => handleModelLoad()}
         >
           {model && <primitive object ={model} />}
           <CSS3DScene />

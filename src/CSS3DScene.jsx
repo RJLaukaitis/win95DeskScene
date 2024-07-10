@@ -34,10 +34,6 @@ function CSS3DScene() {
             alpha: true,
         });
 
-        //initializing shadows
-        renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
         renderer.setSize(window.innerWidth, window.innerHeight);
         glcontainer.appendChild(renderer.domElement);
         document.body.appendChild(glcontainer);
@@ -92,12 +88,11 @@ function CSS3DScene() {
 
 
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
-        scene.add(ambientLight);
+        //scene.add(ambientLight);
 
         // Add directional light
         const directionalLight = new THREE.DirectionalLight(0xffffff, .8); 
         directionalLight.position.set(0, 10, 10);
-        //scene.add(directionalLight)
 
 
         //FOG
@@ -189,7 +184,7 @@ function CSS3DScene() {
               dmesh.position.set(.8, 3.13, 0.37); // Position it slightly in front of the iframe
               dmesh.rotation.copy(object.rotation); // Copy rotation of CSS3DObject
               dmesh.scale.copy(object.scale); // Copy scale of CSS3DObject
-              //scene.add(dmesh);
+              scene.add(dmesh);
           });
 
           //creating curved glass screen
@@ -293,7 +288,6 @@ function CSS3DScene() {
 
 
 
-                    //idle camera flyover
 // Initial flyover animation
 const startPosition = { x: 20, y: 9, z: -20 };
 const endPosition = { x: -14, y: 9, z: -9 };
@@ -313,7 +307,7 @@ let orbitAnimation = gsap.to(camera.position, {
         camera.lookAt(0, 3.1, 30);
     }
 });
-const zoomInPosition = {x:15,y:9,z:-20};
+const zoomInPosition = {x:20,y:9,z:-20}; //initial zoom into the scene on page load
 
 
 // Function to adjust camera position and lookAt

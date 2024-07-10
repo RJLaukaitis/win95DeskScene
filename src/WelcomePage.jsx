@@ -3,6 +3,7 @@ import "./WelcomePage.css";
 import { Html, useGLTF } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 
 
 const WelcomePage = ({ onEnter , setModel }) => {
@@ -65,7 +66,11 @@ const WelcomePage = ({ onEnter , setModel }) => {
     displayMessages();
 
     const loader = new GLTFLoader();
-    loader.load('../Assets/UpdatedBakes.glb', function (glb) {
+    const draco = new DRACOLoader();
+    draco.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
+    loader.setDRACOLoader(draco);
+
+    loader.load('../Assets/compressed.glb', function (glb) {
       const model = glb.scene;
       model.scale.set(1, 1, 1);
       model.traverse(function (node) {
