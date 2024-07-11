@@ -52,13 +52,13 @@ function CSS3DScene() {
         const renderPass = new RenderPass(scene, camera);
         const filmPass = new FilmPass(
             0.01,   // noise intensity
-            0.01, // scanline intensity
+            0.5, // scanline intensity
             1000,   // scanline count
             false  // grayscale (set to true if you want grayscale)
         );
 
         composer.addPass(renderPass);
-        composer.addPass(filmPass);
+        //composer.addPass(filmPass);
 
 
         //Audio
@@ -83,10 +83,7 @@ function CSS3DScene() {
 
         // ENVIRONMENT
         const pmremGenerator = new THREE.PMREMGenerator( renderer );
-        //scene.environment = pmremGenerator.fromScene( new RoomEnvironment(), 0.01 ).texture;
-
-        const light = new THREE.HemisphereLight( 0xffffff, 0x808080, 0.5 );
-        scene.add( light );
+        scene.environment = pmremGenerator.fromScene( new RoomEnvironment(), 0.1 ).texture;
 
         renderer.outputEncoding = THREE.LinearEncoding;
         renderer.shadowMap.enabled = true;
