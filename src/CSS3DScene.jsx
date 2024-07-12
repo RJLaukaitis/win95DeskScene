@@ -24,7 +24,6 @@ function CSS3DScene() {
     const { scene, camera } = useThree();
     const cssScene = new THREE.Scene();
     const ref = useRef();
-
     useEffect(() => {
         // Setting up gl renderer
         const glcontainer = document.createElement('div');
@@ -45,7 +44,6 @@ function CSS3DScene() {
         cssRenderer.domElement.style.top = 0;
         cssRenderer.domElement.id = 'css3d';
         document.body.appendChild(cssRenderer.domElement);
-
 
         //Audio
         const listener = new THREE.AudioListener();
@@ -268,82 +266,82 @@ function CSS3DScene() {
 
 
 
-// Initial flyover animation
-const startPosition = { x: 20, y: 9, z: -20 };
-const endPosition = { x: -14, y: 9, z: -9 };
+        // Initial flyover animation
+        const startPosition = { x: 20, y: 9, z: -20 };
+        const endPosition = { x: -14, y: 9, z: -9 };
 
-camera.position.set(startPosition.x, startPosition.y, startPosition.z);
-camera.lookAt(0, 3, 0);
+        camera.position.set(startPosition.x, startPosition.y, startPosition.z);
+        camera.lookAt(0, 3, 0);
 
-let orbitAnimation = gsap.to(camera.position, {
-    x: endPosition.x,
-    y: endPosition.y,
-    z: endPosition.z,
-    duration: 70,
-    repeat: -1, // Infinite repetition
-    yoyo: true,
-    ease: 'none',
-    onUpdate: () => {
-        camera.lookAt(0, 3.1, 0);
-    }
-});
-const zoomInPosition = {x:20,y:9,z:-20}; //initial zoom into the scene on page load
-
-
-// Function to adjust camera position and lookAt
-const adjustCamera = (endPos, endLookAt, duration = 1) => {
-        const startPos = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
-        const startLookAt = { x: 3, y: 2, z: 0 }; // Initial lookAt target
-        const lookAtProxy = { x: startLookAt.x, y: startLookAt.y, z: startLookAt.z };
-
-        gsap.to(camera.position, {
-            x: endPos.x,
-            y: endPos.y,
-            z: endPos.z,
-            ease: 'power3.inOut',
-            duration: duration,
+        let orbitAnimation = gsap.to(camera.position, {
+            x: endPosition.x,
+            y: endPosition.y,
+            z: endPosition.z,
+            duration: 70,
+            repeat: -1, // Infinite repetition
+            yoyo: true,
+            ease: 'none',
             onUpdate: () => {
-                camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
-            },
-            onComplete: () => {
-                camera.lookAt(endLookAt.x, endLookAt.y, endLookAt.z);
+                camera.lookAt(0, 3.1, 0);
             }
         });
-
-        gsap.to(lookAtProxy, {
-            x: endLookAt.x,
-            y: endLookAt.y,
-            z: endLookAt.z,
-            ease: 'power3.inOut',
-            duration: duration,
-            onUpdate: () => {
-                camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
-            }
-        });
-
-        camera.updateProjectionMatrix();
-    };
-
-    adjustCamera(zoomInPosition,{x:0, y:3.1, z:30},2);
+        const zoomInPosition = {x:20,y:9,z:-20}; //initial zoom into the scene on page load
 
 
-    // Event listener for click to zoom in
-    window.addEventListener('mousedown', () => {
-        orbitAnimation.kill(); // Stop the idle animation
-        adjustCamera({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 });
-    });
+        // Function to adjust camera position and lookAt
+        const adjustCamera = (endPos, endLookAt, duration = 1) => {
+                const startPos = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
+                const startLookAt = { x: 3, y: 2, z: 0 }; // Initial lookAt target
+                const lookAtProxy = { x: startLookAt.x, y: startLookAt.y, z: startLookAt.z };
 
-    // Event listener for hover to zoom in
-    const computerScreen = document.querySelector('div'); // Replace with your screen selector
-    computerScreen.addEventListener('mouseover', () => {
-        orbitAnimation.kill(); // Stop the idle animation
-        adjustCamera({ x: 0.8, y: 3.1, z: -1.2 }, { x: 0, y: 3.1, z: 30 });
-    });
+                gsap.to(camera.position, {
+                    x: endPos.x,
+                    y: endPos.y,
+                    z: endPos.z,
+                    ease: 'power3.inOut',
+                    duration: duration,
+                    onUpdate: () => {
+                        camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
+                    },
+                    onComplete: () => {
+                        camera.lookAt(endLookAt.x, endLookAt.y, endLookAt.z);
+                    }
+                });
 
-    // Event listener to zoom out when mouse leaves the screen
-    computerScreen.addEventListener('mouseout', () => {
-        adjustCamera({ x: 14, y: 9, z: -12 }, { x: 0, y: 3, z: 0 }, 2); // Back to initial position and target
-    });
+                gsap.to(lookAtProxy, {
+                    x: endLookAt.x,
+                    y: endLookAt.y,
+                    z: endLookAt.z,
+                    ease: 'power3.inOut',
+                    duration: duration,
+                    onUpdate: () => {
+                        camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
+                    }
+                });
+
+                camera.updateProjectionMatrix();
+            };
+
+            adjustCamera(zoomInPosition,{x:0, y:3.1, z:30},2);
+
+
+            // Event listener for click to zoom in
+            window.addEventListener('mousedown', () => {
+                orbitAnimation.kill(); // Stop the idle animation
+                adjustCamera({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 });
+            });
+
+            // Event listener for hover to zoom in
+            const computerScreen = document.querySelector('div'); // Replace with your screen selector
+            computerScreen.addEventListener('mouseover', () => {
+                orbitAnimation.kill(); // Stop the idle animation
+                adjustCamera({ x: 0.8, y: 3.1, z: -1.2 }, { x: 0, y: 3.1, z: 30 });
+            });
+
+            // Event listener to zoom out when mouse leaves the screen
+            computerScreen.addEventListener('mouseout', () => {
+                adjustCamera({ x: 14, y: 9, z: -12 }, { x: 0, y: 3, z: 0 }, 2); // Back to initial position and target
+            });
 
 // Animation loop for CSS3D rendering
 const renderLoop = () => {
@@ -388,14 +386,14 @@ const renderLoop = () => {
             scene.remove(listener);
             scene.remove(object);
             scene.remove(mesh);
-            scene.remove(dmesh);
-            scene.remove(vmesh);
-            scene.remove(gmesh);
-            scene.remove(crtmesh);
+            // scene.remove(dmesh);
+            // scene.remove(vmesh);
+            // scene.remove(gmesh);
+            // scene.remove(crtmesh);
             scene.remove(vhsmesh);
-            scene.remove(convexPlane);
+            // scene.remove(convexPlane);
             scene.remove(dimMesh);
-            scene.remove(smesh);
+            // scene.remove(smesh);
             cssScene.remove(object);
         };
     }, [camera, scene]);
