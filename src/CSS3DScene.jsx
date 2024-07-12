@@ -2,25 +2,17 @@ import { useEffect, useRef } from 'react';
 import { extend, useThree, useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { Environment } from '@react-three/drei';
-import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
 import dust from "../Assets/Textures/MonitorOverlay/dust.jpg";
 import smudges from "../Assets/Textures/MonitorOverlay/smudge.png"
 import vignette from "../Assets/Textures/MonitorOverlay/vignette1.png";;
 import gsap from 'gsap';
-import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
-
 
 import './CSS3DScene.css';
 
 extend({ CSS3DRenderer });
 
-function CSS3DScene() {
+const CSS3DScene = () => {
     const { scene, camera } = useThree();
     const cssScene = new THREE.Scene();
     const ref = useRef();
