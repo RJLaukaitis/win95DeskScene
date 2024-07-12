@@ -31,7 +31,7 @@ const App = () => {
         >
           {model && <primitive object ={model} />}
           <CSS3DScene />
-          <ambientLight intensity={1}/>
+          {/* <ambientLight intensity={1}/> */}
         </Canvas>
       )}
     </>

@@ -47,20 +47,6 @@ function CSS3DScene() {
         document.body.appendChild(cssRenderer.domElement);
 
 
-        // Film grain
-        const composer = new EffectComposer(renderer);
-        const renderPass = new RenderPass(scene, camera);
-        const filmPass = new FilmPass(
-            0.01,   // noise intensity
-            0.5, // scanline intensity
-            1000,   // scanline count
-            false  // grayscale (set to true if you want grayscale)
-        );
-
-        composer.addPass(renderPass);
-        //composer.addPass(filmPass);
-
-
         //Audio
         const listener = new THREE.AudioListener();
         camera.add(listener);
@@ -379,7 +365,7 @@ const renderLoop = () => {
 
         const opacity = Math.min(1 / (distance / 10000), 1); // Ensure opacity does not exceed 1
 
-        const DIM_FACTOR = 3.1;
+        const DIM_FACTOR = 2.2;
 
         // Update the material opacity
         const newOpacity = (1 - opacity) * DIM_FACTOR + (1 - dot) * DIM_FACTOR;
@@ -390,7 +376,6 @@ const renderLoop = () => {
 
             renderer.render(scene, camera);
             cssRenderer.render(cssScene, camera);
-            composer.render();
             requestAnimationFrame(renderLoop);
         };
         renderLoop();
@@ -400,9 +385,16 @@ const renderLoop = () => {
             cancelAnimationFrame(ref.current);
             document.body.removeChild(cssRenderer.domElement);
             document.body.removeChild(glcontainer);
+            scene.remove(listener);
+            scene.remove(object);
             scene.remove(mesh);
+            scene.remove(dmesh);
             scene.remove(vmesh);
             scene.remove(gmesh);
+            scene.remove(crtmesh);
+            scene.remove(vhsmesh);
+            scene.remove(convexPlane);
+            scene.remove(dimMesh);
             scene.remove(smesh);
             cssScene.remove(object);
         };
