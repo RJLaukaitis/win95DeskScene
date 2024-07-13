@@ -33,7 +33,6 @@ const App = () => {
         >
           {model && <primitive object ={model} />}
           <CSS3DScene />
-          <OverlayScreen />
         </Canvas>
       )}
     </>

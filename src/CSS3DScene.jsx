@@ -5,7 +5,8 @@ import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRe
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
 import dust from "../Assets/Textures/MonitorOverlay/dust.jpg";
 import smudges from "../Assets/Textures/MonitorOverlay/smudge.png"
-import vignette from "../Assets/Textures/MonitorOverlay/vignette1.png";;
+import vignette from "../Assets/Textures/MonitorOverlay/vignette1.png";
+import OverlayScreen from './grainShader/OverlayScreen';
 import gsap from 'gsap';
 
 import './CSS3DScene.css';
@@ -16,6 +17,8 @@ const CSS3DScene = () => {
     const { scene, camera } = useThree();
     const cssScene = new THREE.Scene();
     const ref = useRef();
+    const overlayRef = useRef();
+
     useEffect(() => {
         // Setting up gl renderer
         const glcontainer = document.createElement('div');
@@ -36,6 +39,11 @@ const CSS3DScene = () => {
         cssRenderer.domElement.style.top = 0;
         cssRenderer.domElement.id = 'css3d';
         document.body.appendChild(cssRenderer.domElement);
+
+
+        //adding film grain to scene
+        camera.add(overlayRef.current);
+
 
         //Audio
         const listener = new THREE.AudioListener();
@@ -355,7 +363,7 @@ const renderLoop = () => {
 
         const opacity = Math.min(1 / (distance / 10000), 1); // Ensure opacity does not exceed 1
 
-        const DIM_FACTOR = 2.2;
+        const DIM_FACTOR = 2.8;
 
         // Update the material opacity
         const newOpacity = (1 - opacity) * DIM_FACTOR + (1 - dot) * DIM_FACTOR;
@@ -378,6 +386,7 @@ const renderLoop = () => {
             scene.remove(listener);
             scene.remove(object);
             scene.remove(mesh);
+            camera.remove(overlayMesh);
             // scene.remove(dmesh);
             // scene.remove(vmesh);
             // scene.remove(gmesh);
