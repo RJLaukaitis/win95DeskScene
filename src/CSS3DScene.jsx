@@ -69,6 +69,9 @@ const CSS3DScene = () => {
         const pmremGenerator = new THREE.PMREMGenerator( renderer );
         scene.environment = pmremGenerator.fromScene( new RoomEnvironment(), 0.1 ).texture;
 
+        const light = new THREE.PointLight(0xffffff,1);
+        //scene.add(light);
+
         renderer.outputEncoding = THREE.LinearEncoding;
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
