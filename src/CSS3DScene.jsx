@@ -383,8 +383,8 @@ let isMouseDown = false;
 
 // Function to handle zooming into the screen
 const zoomIntoScreen = () => {
-    const zoomPosition = { x: 1, y: 3.2 , z: -2}; // Adjust as needed
-    adjustCamera(zoomPosition, { x: 1, y: 3.2, z: 0 });
+    const zoomPosition = { x: .7, y: 3.1 , z: -1.3}; // Adjust as needed
+    adjustCamera(zoomPosition, { x: .7, y: 3.1, z: 0 });
 };
 
 // Function to handle mouse move and check for intersections
