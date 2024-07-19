@@ -272,101 +272,144 @@ const CSS3DScene = () => {
             scene.add(dimMesh);
     
 
-    // Function to adjust camera position and lookAt
-        const adjustCamera = (endPos, endLookAt, duration = 1) => {
-            const startPos = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
-            const startLookAt = { x: 3, y: 2, z: 0 }; // Initial lookAt target
-            const lookAtProxy = { x: startLookAt.x, y: startLookAt.y, z: startLookAt.z };
+// Function to adjust camera position and lookAt
+const adjustCamera = (endPos, endLookAt, duration = 1) => {
+    const startPos = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
+    const startLookAt = { x: 3, y: 2, z: 0 }; // Initial lookAt target
+    const lookAtProxy = { x: startLookAt.x, y: startLookAt.y, z: startLookAt.z };
 
-            gsap.to(camera.position, {
-                x: endPos.x,
-                y: endPos.y,
-                z: endPos.z,
-                ease: 'power3.inOut',
-                duration: duration,
-                onUpdate: () => {
-                    camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
-                },
-                onComplete: () => {
-                    camera.lookAt(endLookAt.x, endLookAt.y, endLookAt.z);
-                }
-            });
+    gsap.to(camera.position, {
+        x: endPos.x,
+        y: endPos.y,
+        z: endPos.z,
+        ease: 'power3.inOut',
+        duration: duration,
+        onUpdate: () => {
+            camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
+        },
+        onComplete: () => {
+            camera.lookAt(endLookAt.x, endLookAt.y, endLookAt.z);
+        }
+    });
 
-            gsap.to(lookAtProxy, {
-                x: endLookAt.x,
-                y: endLookAt.y,
-                z: endLookAt.z,
-                ease: 'power3.inOut',
-                duration: duration,
-                onUpdate: () => {
-                    camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
-                }
-            });
+    gsap.to(lookAtProxy, {
+        x: endLookAt.x,
+        y: endLookAt.y,
+        z: endLookAt.z,
+        ease: 'power3.inOut',
+        duration: duration,
+        onUpdate: () => {
+            camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
+        }
+    });
 
-            camera.updateProjectionMatrix();
-        };
+    camera.updateProjectionMatrix();
+};
 
-        // Initial flyover animation
-        const zoomInPosition = { x: 15, y: 9, z: -20 }; // Initial zoom into the scene on page load
-        const startPosition = { x: 20, y: 9, z: -20 };
-        const endPosition = { x: -14, y: 9, z: -9 };
+// Initial flyover animation
+const zoomInPosition = { x: 15, y: 9, z: -20 }; // Initial zoom into the scene on page load
+const startPosition = { x: 20, y: 9, z: -20 };
+const endPosition = { x: -14, y: 9, z: -9 };
 
-        // Set the initial camera position
-        camera.position.set(startPosition.x, startPosition.y, startPosition.z);
+// Set the initial camera position
+camera.position.set(startPosition.x, startPosition.y, startPosition.z);
+camera.lookAt(0, 3.1, 0);
+
+// Create a GSAP timeline to sequence animations
+const tl = gsap.timeline();
+
+// Add the zoom-in animation to the timeline
+tl.to(camera.position, {
+    x: zoomInPosition.x,
+    y: zoomInPosition.y,
+    z: zoomInPosition.z,
+    ease: 'power3.inOut',
+    duration: 2,
+    onUpdate: () => {
         camera.lookAt(0, 3.1, 0);
+    },
+    onComplete: () => {
+        camera.lookAt(0, 3.1, 0);
+    }
+});
 
-        // Create a GSAP timeline to sequence animations
-        const tl = gsap.timeline();
+// Add the orbit animation to the timeline after the zoom-in
+const orbitAnimation = tl.to(camera.position, {
+    x: endPosition.x,
+    y: endPosition.y,
+    z: endPosition.z,
+    duration: 70,
+    repeat: -1, // Infinite repetition
+    yoyo: true,
+    ease: 'none',
+    onUpdate: () => {
+        camera.lookAt(0, 3.1, 0);
+    }
+}, '+=0'); // Start immediately after the zoom-in
 
-        // Add the zoom-in animation to the timeline
-        tl.to(camera.position, {
-            x: zoomInPosition.x,
-            y: zoomInPosition.y,
-            z: zoomInPosition.z,
-            ease: 'power3.inOut',
-            duration: 2,
-            onUpdate: () => {
-                camera.lookAt(0, 3.1, 0);
-            },
-            onComplete: () => {
-                camera.lookAt(0, 3.1, 0);
-            }
-        });
+camera.updateProjectionMatrix();
 
-        // Add the orbit animation to the timeline after the zoom-in
-        tl.to(camera.position, {
-            x: endPosition.x,
-            y: endPosition.y,
-            z: endPosition.z,
-            duration: 55,
-            repeat: -1, // Infinite repetition
-            yoyo: true,
-            ease: 'none',
-            onUpdate: () => {
-                camera.lookAt(0, 3.1, 0);
-            }
-        }, '+=0'); // Start immediately after the zoom-in
+// Event listener for mouse click to zoom in
+window.addEventListener('mousedown', () => {
+    orbitAnimation.kill(); // Stop the idle animation
+    isMouseDown = true;
+    adjustCamera({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 });
+});
 
-            camera.updateProjectionMatrix();
+window.addEventListener('mousemove', (event) => {
+    const parallaxFactor = 0.003; // Adjust the sensitivity of the parallax effect
+    const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+    const mouseY = -(event.clientY / window.innerHeight) * 2 - 1;
+
+    // Calculate the new lookAt target based on mouse position
+    const lookAtX = mouseX * parallaxFactor * 30;
+    const lookAtY = 3.1 + (mouseY * parallaxFactor * 30); // Adjust the factor for a subtle effect
+
+    camera.lookAt(lookAtX, lookAtY, 30);
+});
+
+// Ensure this is called after setting up animations and event listener
+camera.updateProjectionMatrix();
 
 
-            // Event listener for click to zoom in
-            window.addEventListener('mousedown', () => {
-                orbitAnimation.kill(); // Stop the idle animation
-                adjustCamera({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 });
-            });
 
-            // Event listener for hover to zoom in
-            const computerScreen = document.querySelector('div'); // Replace with your screen selector
-            computerScreen.addEventListener('mouseover', () => {
-                orbitAnimation.kill(); // Stop the idle animation
-                adjustCamera({ x: 0.8, y: 3.1, z: -1.2 }, { x: 0, y: 3.1, z: 30 });
-            });
+// Assuming 'screenObject' is the reference to your computer screen object
+let screenObject = vhsmesh;
 
-            // Event listener to zoom out when mouse leaves the screen
-            computerScreen.addEventListener('mouseout', () => {
-                adjustCamera({ x: 14, y: 9, z: -12 }, { x: 0, y: 3, z: 0 }, 2); // Back to initial position and target
-            });
+// Initialize raycaster and mouse vector
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let isMouseDown = false;
+
+// Function to handle zooming into the screen
+const zoomIntoScreen = () => {
+    const zoomPosition = { x: 1, y: 3.2 , z: -2}; // Adjust as needed
+    adjustCamera(zoomPosition, { x: 1, y: 3.2, z: 0 });
+};
+
+// Function to handle mouse move and check for intersections
+const handleMouseMove = (event) => {
+    if (!isMouseDown) return;
+
+    // Calculate mouse position in normalized device coordinates (-1 to +1) for both components
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    // Update the raycaster with the camera and mouse position
+    raycaster.setFromCamera(mouse, camera);
+
+    // Calculate objects intersecting the picking ray
+    const intersects = raycaster.intersectObject(screenObject);
+
+    if (intersects.length > 0) {
+        // If there's an intersection with the screen object, zoom into the screen
+        zoomIntoScreen();
+    }
+};
+
+// Event listener for mouse movement to check for intersections
+window.addEventListener('mousemove', handleMouseMove);
+
 
 // Animation loop for CSS3D rendering
 const renderLoop = () => {
