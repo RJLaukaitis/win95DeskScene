@@ -67,7 +67,11 @@ const CSS3DScene = () => {
 
         // ENVIRONMENT
         const pmremGenerator = new THREE.PMREMGenerator( renderer );
-        scene.environment = pmremGenerator.fromScene( new RoomEnvironment(), 0.1 ).texture;
+        const envMap = pmremGenerator.fromScene( new RoomEnvironment(), 1.0 ).texture;
+        scene.environment = envMap;
+
+
+
 
         const light = new THREE.PointLight(0xffffff,1);
         //scene.add(light);
@@ -216,7 +220,7 @@ const CSS3DScene = () => {
             map: crtTexture,
             side: THREE.DoubleSide,
             transparent:true,
-            opacity:.5,
+            opacity:.2,
             blending: THREE.AdditiveBlending
         });
         const crtgeometry = new THREE.PlaneGeometry(1400, 1000);
@@ -242,7 +246,7 @@ const CSS3DScene = () => {
             map: vhsTexture,
             side: THREE.DoubleSide,
             transparent:true,
-            opacity:0.4,
+            opacity:0.2,
             blending: THREE.AdditiveBlending
         });
         const vhsgeometry = new THREE.PlaneGeometry(1400, 1000);
@@ -266,66 +270,84 @@ const CSS3DScene = () => {
             dimMesh.rotation.copy(object.rotation);
             dimMesh.scale.copy(object.scale);
             scene.add(dimMesh);
+    
 
+    // Function to adjust camera position and lookAt
+        const adjustCamera = (endPos, endLookAt, duration = 1) => {
+            const startPos = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
+            const startLookAt = { x: 3, y: 2, z: 0 }; // Initial lookAt target
+            const lookAtProxy = { x: startLookAt.x, y: startLookAt.y, z: startLookAt.z };
 
+            gsap.to(camera.position, {
+                x: endPos.x,
+                y: endPos.y,
+                z: endPos.z,
+                ease: 'power3.inOut',
+                duration: duration,
+                onUpdate: () => {
+                    camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
+                },
+                onComplete: () => {
+                    camera.lookAt(endLookAt.x, endLookAt.y, endLookAt.z);
+                }
+            });
+
+            gsap.to(lookAtProxy, {
+                x: endLookAt.x,
+                y: endLookAt.y,
+                z: endLookAt.z,
+                ease: 'power3.inOut',
+                duration: duration,
+                onUpdate: () => {
+                    camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
+                }
+            });
+
+            camera.updateProjectionMatrix();
+        };
 
         // Initial flyover animation
+        const zoomInPosition = { x: 15, y: 9, z: -20 }; // Initial zoom into the scene on page load
         const startPosition = { x: 20, y: 9, z: -20 };
         const endPosition = { x: -14, y: 9, z: -9 };
 
+        // Set the initial camera position
         camera.position.set(startPosition.x, startPosition.y, startPosition.z);
-        camera.lookAt(0, 3, 0);
+        camera.lookAt(0, 3.1, 0);
 
-        let orbitAnimation = gsap.to(camera.position, {
+        // Create a GSAP timeline to sequence animations
+        const tl = gsap.timeline();
+
+        // Add the zoom-in animation to the timeline
+        tl.to(camera.position, {
+            x: zoomInPosition.x,
+            y: zoomInPosition.y,
+            z: zoomInPosition.z,
+            ease: 'power3.inOut',
+            duration: 2,
+            onUpdate: () => {
+                camera.lookAt(0, 3.1, 0);
+            },
+            onComplete: () => {
+                camera.lookAt(0, 3.1, 0);
+            }
+        });
+
+        // Add the orbit animation to the timeline after the zoom-in
+        tl.to(camera.position, {
             x: endPosition.x,
             y: endPosition.y,
             z: endPosition.z,
-            duration: 70,
+            duration: 55,
             repeat: -1, // Infinite repetition
             yoyo: true,
             ease: 'none',
             onUpdate: () => {
                 camera.lookAt(0, 3.1, 0);
             }
-        });
-        const zoomInPosition = {x:20,y:9,z:-20}; //initial zoom into the scene on page load
+        }, '+=0'); // Start immediately after the zoom-in
 
-
-        // Function to adjust camera position and lookAt
-        const adjustCamera = (endPos, endLookAt, duration = 1) => {
-                const startPos = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
-                const startLookAt = { x: 3, y: 2, z: 0 }; // Initial lookAt target
-                const lookAtProxy = { x: startLookAt.x, y: startLookAt.y, z: startLookAt.z };
-
-                gsap.to(camera.position, {
-                    x: endPos.x,
-                    y: endPos.y,
-                    z: endPos.z,
-                    ease: 'power3.inOut',
-                    duration: duration,
-                    onUpdate: () => {
-                        camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
-                    },
-                    onComplete: () => {
-                        camera.lookAt(endLookAt.x, endLookAt.y, endLookAt.z);
-                    }
-                });
-
-                gsap.to(lookAtProxy, {
-                    x: endLookAt.x,
-                    y: endLookAt.y,
-                    z: endLookAt.z,
-                    ease: 'power3.inOut',
-                    duration: duration,
-                    onUpdate: () => {
-                        camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
-                    }
-                });
-
-                camera.updateProjectionMatrix();
-            };
-
-            adjustCamera(zoomInPosition,{x:0, y:3.1, z:30},2);
+            camera.updateProjectionMatrix();
 
 
             // Event listener for click to zoom in
@@ -366,7 +388,7 @@ const renderLoop = () => {
 
         const opacity = Math.min(1 / (distance / 10000), 1); // Ensure opacity does not exceed 1
 
-        const DIM_FACTOR = 2.8;
+        const DIM_FACTOR = 3.5;
 
         // Update the material opacity
         const newOpacity = (1 - opacity) * DIM_FACTOR + (1 - dot) * DIM_FACTOR;
