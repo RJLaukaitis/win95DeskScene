@@ -88,12 +88,14 @@ const CSS3DScene = () => {
         iframe.style.brightness = "0.1";
         iframe.style.overflow = "hidden"; // Hide scroll bars
         container.appendChild(iframe);
+
         // Creating CSS3DObject
         const object = new CSS3DObject(container);
         object.position.set(.73,3.1,.38); //3.1 for y
         object.rotation.y = Math.PI;
         object.scale.set(0.00125, 0.0012, 0.003); // Set appropriate values
         cssScene.add(object);
+
         // Creating GL plane for occlusion
         const mat = new THREE.MeshLambertMaterial();
         mat.side = THREE.DoubleSide;
@@ -106,6 +108,20 @@ const CSS3DScene = () => {
         mesh.rotation.copy(object.rotation);// Copy rotation of CSS3DObject
         mesh.scale.copy(object.scale);
         scene.add(mesh);
+
+
+        //creating ref for hover zoom
+        const refmat = new THREE.MeshBasicMaterial();
+        refmat.side = THREE.DoubleSide;
+        refmat.transparent = true;
+        refmat.blending = THREE.NoBlending;
+        const refgeometry = new THREE.PlaneGeometry(1700, 1400);
+        const refmesh = new THREE.Mesh(geometry, mat);
+        refmesh.position.set(.80,3.1,.37);
+        refmesh.rotation.copy(object.rotation);// Copy rotation of CSS3DObject
+        refmesh.scale.copy(object.scale);
+        scene.add(refmesh);
+
          // Creating vignette plate
          const texloader = new THREE.TextureLoader();
          const vignetteTexture = texloader.load(vignette, () => {
@@ -207,7 +223,7 @@ const CSS3DScene = () => {
             map: vhsTexture,
             side: THREE.DoubleSide,
             transparent:true,
-            opacity:0.2,
+            opacity:0.4,
             blending: THREE.AdditiveBlending
         });
         const vhsgeometry = new THREE.PlaneGeometry(1400, 1000);
@@ -230,11 +246,22 @@ const CSS3DScene = () => {
             dimMesh.scale.copy(object.scale);
             scene.add(dimMesh);
     
+// Debounce function to limit the rate of function execution
+const debounce = (func, delay) => {
+    let timeoutId;
+    return (...args) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            func.apply(null, args);
+        }, delay);
+    };
+};
+
 // Function to adjust camera position and lookAt
 const adjustCamera = (endPos, endLookAt, duration = 1) => {
     const startPos = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
-    const startLookAt = { x: 3, y: 2, z: 0 }; // Initial lookAt target
-    const lookAtProxy = { x: startLookAt.x, y: startLookAt.y, z: startLookAt.z };
+    const lookAtProxy = new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z);
+
     gsap.to(camera.position, {
         x: endPos.x,
         y: endPos.y,
@@ -248,6 +275,7 @@ const adjustCamera = (endPos, endLookAt, duration = 1) => {
             camera.lookAt(endLookAt.x, endLookAt.y, endLookAt.z);
         }
     });
+
     gsap.to(lookAtProxy, {
         x: endLookAt.x,
         y: endLookAt.y,
@@ -255,20 +283,25 @@ const adjustCamera = (endPos, endLookAt, duration = 1) => {
         ease: 'power3.inOut',
         duration: duration,
         onUpdate: () => {
-            camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
+            camera.lookAt(lookAtProxy);
         }
     });
+
     camera.updateProjectionMatrix();
 };
+
 // Initial flyover animation
 const zoomInPosition = { x: 15, y: 9, z: -20 }; // Initial zoom into the scene on page load
 const startPosition = { x: 20, y: 9, z: -20 };
 const endPosition = { x: -14, y: 9, z: -9 };
+
 // Set the initial camera position
 camera.position.set(startPosition.x, startPosition.y, startPosition.z);
 camera.lookAt(0, 3.1, 0);
+
 // Create a GSAP timeline to sequence animations
 const tl = gsap.timeline();
+
 // Add the zoom-in animation to the timeline
 tl.to(camera.position, {
     x: zoomInPosition.x,
@@ -283,12 +316,13 @@ tl.to(camera.position, {
         camera.lookAt(0, 3.1, 0);
     }
 });
+
 // Add the orbit animation to the timeline after the zoom-in
 const orbitAnimation = tl.to(camera.position, {
     x: endPosition.x,
     y: endPosition.y,
     z: endPosition.z,
-    duration: 70,
+    duration: 40,
     repeat: -1, // Infinite repetition
     yoyo: true,
     ease: 'none',
@@ -296,55 +330,105 @@ const orbitAnimation = tl.to(camera.position, {
         camera.lookAt(0, 3.1, 0);
     }
 }, '+=0'); // Start immediately after the zoom-in
+
 camera.updateProjectionMatrix();
-// Event listener for mouse click to zoom in
+
+// Flags to control interactions
+let isMouseDown = false;
+let isZoomedIn = false;
+let isHoveringScreen = false;
+
+// Function to handle zooming into the front of the desk
+const zoomToFrontOfDesk = () => {
+    const deskFrontPosition = { x: 0.8, y: 3, z: -5 };
+    adjustCamera(deskFrontPosition, { x: 0, y: 3.1, z: 30 }, 2); // Increase the duration for smooth transition
+    isZoomedIn = true; // Set the flag to true after zooming in
+};
+
+// Event listener for mouse click to zoom to the front of the desk
 window.addEventListener('mousedown', () => {
-    orbitAnimation.kill(); // Stop the idle animation
-    isMouseDown = true;
-    adjustCamera({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 });
+    if (!isZoomedIn) {
+        orbitAnimation.kill(); // Stop the idle animation
+        gsap.to(camera.position, { // Smoothly interrupt the orbit animation
+            x: camera.position.x,
+            y: camera.position.y,
+            z: camera.position.z,
+            ease: 'power3.inOut',
+            duration: 0.5,
+            onComplete: zoomToFrontOfDesk
+        });
+    }
 });
-window.addEventListener('mousemove', (event) => {
-    const parallaxFactor = 0.003; // Adjust the sensitivity of the parallax effect
-    const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-    const mouseY = -(event.clientY / window.innerHeight) * 2 - 1;
-    // Calculate the new lookAt target based on mouse position
-    const lookAtX = mouseX * parallaxFactor * 30;
-    const lookAtY = 3.1 + (mouseY * parallaxFactor * 30); // Adjust the factor for a subtle effect
-    camera.lookAt(lookAtX, lookAtY, 30);
-});
+
+// Parallax effect
+window.addEventListener('mousemove', debounce((event) => {
+    if (!isZoomedIn) {
+        const parallaxFactor = 0.08; // Adjust the sensitivity of the parallax effect
+        const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+        const mouseY = -(event.clientY / window.innerHeight) * 2 - 1;
+
+        // Calculate the new lookAt target based on mouse position
+        const lookAtX = mouseX * parallaxFactor * 30;
+        const lookAtY = 3.1 + (mouseY * parallaxFactor * 30); // Adjust the factor for a subtle effect
+
+        camera.lookAt(lookAtX, lookAtY, 30);
+    }
+}, 50)); // 50ms debounce delay
+
 // Ensure this is called after setting up animations and event listener
 camera.updateProjectionMatrix();
-// Assuming 'screenObject' is the reference to your computer screen object
-let screenObject = vhsmesh;
-// Initialize raycaster and mouse vector
+
+let screenObject = refmesh;
+
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
-let isMouseDown = false;
 
 // Function to handle zooming into the screen
 const zoomIntoScreen = () => {
-    const zoomPosition = { x: .7, y: 3.1 , z: -1.3}; // Adjust as needed
-    adjustCamera(zoomPosition, { x: .7, y: 3.1, z: 0 });
+    const zoomPosition = { x: 0.7, y: 3.1, z: -1.3 };
+    adjustCamera(zoomPosition, { x: 0.7, y: 3.1, z: 0 }, 1); // Smooth transition to the screen
+    isHoveringScreen = true;
+};
+
+// Function to handle returning to desk view
+const returnToDeskView = () => {
+    const deskFrontPosition = { x: 0.8, y: 3, z: -5 };
+    adjustCamera(deskFrontPosition, { x: 0, y: 3.1, z: 30 }, 1); // Smooth transition back to the desk view
+    isHoveringScreen = false;
 };
 
 // Function to handle mouse move and check for intersections
-
-const handleMouseMove = (event) => {
-    if (!isMouseDown) return;
-    // Calculate mouse position in normalized device coordinates (-1 to +1) for both components
+const handleMouseMove = debounce((event) => {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-    // Update the raycaster with the camera and mouse position
+
     raycaster.setFromCamera(mouse, camera);
-    // Calculate objects intersecting the picking ray
+
     const intersects = raycaster.intersectObject(screenObject);
-    if (intersects.length > 0) {
-        // If there's an intersection with the screen object, zoom into the screen
-        zoomIntoScreen();
+
+    if (intersects.length > 0 && isZoomedIn) {
+        if (!isHoveringScreen) {
+            zoomIntoScreen();
+        }
+    } else {
+        if (isHoveringScreen) {
+            returnToDeskView();
+        }
     }
-};
+}, 50); // 50ms debounce delay
+
 // Event listener for mouse movement to check for intersections
 window.addEventListener('mousemove', handleMouseMove);
+
+// Reset flag on mouse up
+window.addEventListener('mouseup', () => {
+    isMouseDown = false;
+});
+
+
+
+
+
 // Animation loop for CSS3D rendering
 const renderLoop = () => {
     // Dimming effect logic
