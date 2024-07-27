@@ -8,13 +8,17 @@ import smudges from "../Assets/Textures/MonitorOverlay/smudge.png"
 import vignette from "../Assets/Textures/MonitorOverlay/vignette1.png";
 import OverlayScreen from './grainShader/OverlayScreen';
 import gsap from 'gsap';
+
 import './CSS3DScene.css';
+
 extend({ CSS3DRenderer });
+
 const CSS3DScene = () => {
     const { scene, camera } = useThree();
     const cssScene = new THREE.Scene();
     const ref = useRef();
     const overlayRef = useRef();
+
     useEffect(() => {
         // Setting up gl renderer
         const glcontainer = document.createElement('div');
@@ -23,9 +27,11 @@ const CSS3DScene = () => {
             antialias: true,
             alpha: true,
         });
+
         renderer.setSize(window.innerWidth, window.innerHeight);
         glcontainer.appendChild(renderer.domElement);
         document.body.appendChild(glcontainer);
+
         // Setup the CSS3DRenderer
         const cssRenderer = new CSS3DRenderer();
         cssRenderer.setSize(window.innerWidth, window.innerHeight);
@@ -33,11 +39,16 @@ const CSS3DScene = () => {
         cssRenderer.domElement.style.top = 0;
         cssRenderer.domElement.id = 'css3d';
         document.body.appendChild(cssRenderer.domElement);
+
+
         //adding film grain to scene
         camera.add(overlayRef.current);
+
+
         //Audio
         const listener = new THREE.AudioListener();
         camera.add(listener);
+
         const officeSound = new THREE.Audio(listener);
         const audioLoader = new THREE.AudioLoader();
         audioLoader.load('../Assets/Audio/office.mp3', function(buffer){
@@ -46,26 +57,37 @@ const CSS3DScene = () => {
             officeSound.setVolume(0.05);
             officeSound.play();
         });
+
         const startUpSound = new THREE.Audio(listener);
         audioLoader.load('../Assets/Audio/startup.mp3',function(buffer){
             startUpSound.setBuffer(buffer);
             startUpSound.setVolume(0.1);
             startUpSound.play();
         });
+
         // ENVIRONMENT
         const pmremGenerator = new THREE.PMREMGenerator( renderer );
         const envMap = pmremGenerator.fromScene( new RoomEnvironment(), 1.0 ).texture;
         scene.environment = envMap;
+
+
+
+
         const light = new THREE.PointLight(0xffffff,1);
         //scene.add(light);
+
         renderer.outputEncoding = THREE.LinearEncoding;
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         renderer.physicallyCorrectLights = true;
+
+
         //FOG
         const fogColor = 0xf9f9f9;
         const fogdensity = 0.03;
         scene.fog = new THREE.FogExp2(fogColor,fogdensity);
+
+
         // Container for iframe
         const container = document.createElement('div');
         container.style.width = "1400px";
@@ -76,23 +98,26 @@ const CSS3DScene = () => {
         container.style.justifyContent = "center";
         container.style.background = '#1d2e2f';
         container.style.pointerEvents = 'auto'; // Ensure the container allows pointer events
+
         const iframe = document.createElement('iframe');
         iframe.src = "https://laukaitisos.netlify.app/";
-        iframe.style.width = "1230px";
-        iframe.style.height = "850px";
-        iframe.style.marginTop = "75px";
-        iframe.style.marginLeft = "105px";
+        iframe.style.width = "1190px";
+        iframe.style.height = "840px";
+        iframe.style.marginTop = "80px";
+        iframe.style.marginLeft = "135px";
         iframe.style.boxSizing = 'border-box';
         iframe.style.opacity = '1';
         iframe.style.zIndex = '10';
         iframe.style.brightness = "0.1";
         iframe.style.overflow = "hidden"; // Hide scroll bars
+
         container.appendChild(iframe);
 
         // Creating CSS3DObject
         const object = new CSS3DObject(container);
         object.position.set(.73,3.1,.38); //3.1 for y
         object.rotation.y = Math.PI;
+
         object.scale.set(0.00125, 0.0012, 0.003); // Set appropriate values
         cssScene.add(object);
 
@@ -102,25 +127,13 @@ const CSS3DScene = () => {
         mat.opacity = 0.01;
         mat.transparent = true;
         mat.blending = THREE.NoBlending;
+
         const geometry = new THREE.PlaneGeometry(1400, 1000);
         const mesh = new THREE.Mesh(geometry, mat);
         mesh.position.set(.80,3.1,.38);
         mesh.rotation.copy(object.rotation);// Copy rotation of CSS3DObject
         mesh.scale.copy(object.scale);
         scene.add(mesh);
-
-
-        //creating ref for hover zoom
-        const refmat = new THREE.MeshBasicMaterial();
-        refmat.side = THREE.DoubleSide;
-        refmat.transparent = true;
-        refmat.blending = THREE.NoBlending;
-        const refgeometry = new THREE.PlaneGeometry(1700, 1400);
-        const refmesh = new THREE.Mesh(geometry, mat);
-        refmesh.position.set(.80,3.1,.37);
-        refmesh.rotation.copy(object.rotation);// Copy rotation of CSS3DObject
-        refmesh.scale.copy(object.scale);
-        scene.add(refmesh);
 
          // Creating vignette plate
          const texloader = new THREE.TextureLoader();
@@ -140,6 +153,7 @@ const CSS3DScene = () => {
              vmesh.scale.copy(object.scale); // Copy scale of CSS3DObject
              scene.add(vmesh);
          });
+
           // Creating dust plate
           const dustTexture = texloader.load(dust, () => {
               const dmat = new THREE.MeshBasicMaterial({
@@ -157,6 +171,7 @@ const CSS3DScene = () => {
               dmesh.scale.copy(object.scale); // Copy scale of CSS3DObject
               scene.add(dmesh);
           });
+
           //creating curved glass screen
           const planeGeometry = new THREE.PlaneGeometry(1300, 1000, 55, 55); // Increased segments for smooth curve
             const curveAmount = 20; // Adjust the amount of curvature
@@ -170,6 +185,7 @@ const CSS3DScene = () => {
                 const dist = Math.sqrt(distX + distY); // Combine distances
                 
                 vertex.z = curveAmount * dist; // Apply curvature
+
                 // Update the vertex position
                 planeGeometry.attributes.position.setXYZ(i, vertex.x, vertex.y, vertex.z);
             }
@@ -181,11 +197,13 @@ const CSS3DScene = () => {
                     transparent:true,
                     blending: THREE.NormalBlending
                 });
+
             const convexPlane = new THREE.Mesh(planeGeometry,smat);
             convexPlane.position.set(0.7, 3.13, 0.2);
             convexPlane.scale.copy(object.scale);
             scene.add(convexPlane);
         });
+
         //Video textures for screen effects
         const video = document.createElement('video');
         video.src = "../Assets/Textures/MonitorOverlay/VHS2.mp4"
@@ -195,7 +213,9 @@ const CSS3DScene = () => {
         video.style.pointerEvents = 'none'; 
         video.play();
         document.body.appendChild(video);
+
         const crtTexture = new THREE.VideoTexture(video);
+
         const videoMaterial = new THREE.MeshBasicMaterial({
             map: crtTexture,
             side: THREE.DoubleSide,
@@ -209,6 +229,7 @@ const CSS3DScene = () => {
         crtmesh.scale.copy(object.scale);
         crtmesh.rotation.y = Math.PI;
         scene.add(crtmesh);
+
         //second video to add more depth
         const vhsvideo = document.createElement('video');
         vhsvideo.src = "../Assets/Textures/MonitorOverlay/VHS1.mp4"
@@ -218,12 +239,14 @@ const CSS3DScene = () => {
         vhsvideo.style.pointerEvents = 'none'; 
         video.play();
         document.body.appendChild(vhsvideo);
+
         const vhsTexture = new THREE.VideoTexture(vhsvideo);
+
         const vhsmaterial = new THREE.MeshBasicMaterial({
             map: vhsTexture,
             side: THREE.DoubleSide,
             transparent:true,
-            opacity:0.4,
+            opacity:0.2,
             blending: THREE.AdditiveBlending
         });
         const vhsgeometry = new THREE.PlaneGeometry(1400, 1000);
@@ -231,6 +254,7 @@ const CSS3DScene = () => {
         vhsmesh.position.set(0.8, 3.13, .33);
         vhsmesh.scale.copy(object.scale); 
         scene.add(vhsmesh);
+
         //dimming plane
             const dimmaterial = new THREE.MeshBasicMaterial({
                 side: THREE.DoubleSide,
@@ -238,6 +262,7 @@ const CSS3DScene = () => {
                 transparent:true,
                 blending: THREE.NormalBlending,
             });
+
             // Dimming plane geometry
             const dimplane = new THREE.PlaneGeometry(1400, 1000);
             const dimMesh = new THREE.Mesh(dimplane, dimmaterial);
@@ -246,16 +271,6 @@ const CSS3DScene = () => {
             dimMesh.scale.copy(object.scale);
             scene.add(dimMesh);
     
-// Debounce function to limit the rate of function execution
-const debounce = (func, delay) => {
-    let timeoutId;
-    return (...args) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-            func.apply(null, args);
-        }, delay);
-    };
-};
 
 // Function to adjust camera position and lookAt
 const adjustCamera = (endPos, endLookAt, duration = 1) => {
@@ -283,7 +298,7 @@ const adjustCamera = (endPos, endLookAt, duration = 1) => {
         ease: 'power3.inOut',
         duration: duration,
         onUpdate: () => {
-            camera.lookAt(lookAtProxy);
+            camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
         }
     });
 
@@ -322,7 +337,7 @@ const orbitAnimation = tl.to(camera.position, {
     x: endPosition.x,
     y: endPosition.y,
     z: endPosition.z,
-    duration: 40,
+    duration: 70,
     repeat: -1, // Infinite repetition
     yoyo: true,
     ease: 'none',
@@ -333,99 +348,73 @@ const orbitAnimation = tl.to(camera.position, {
 
 camera.updateProjectionMatrix();
 
-// Flags to control interactions
-let isMouseDown = false;
-let isZoomedIn = false;
-let isHoveringScreen = false;
-
-// Function to handle zooming into the front of the desk
-const zoomToFrontOfDesk = () => {
-    const deskFrontPosition = { x: 0.8, y: 3, z: -5 };
-    adjustCamera(deskFrontPosition, { x: 0, y: 3.1, z: 30 }, 2); // Increase the duration for smooth transition
-    isZoomedIn = true; // Set the flag to true after zooming in
-};
-
-// Event listener for mouse click to zoom to the front of the desk
+// Event listener for mouse click to zoom in
 window.addEventListener('mousedown', () => {
-    if (!isZoomedIn) {
-        orbitAnimation.kill(); // Stop the idle animation
-        gsap.to(camera.position, { // Smoothly interrupt the orbit animation
-            x: camera.position.x,
-            y: camera.position.y,
-            z: camera.position.z,
-            ease: 'power3.inOut',
-            duration: 0.5,
-            onComplete: zoomToFrontOfDesk
-        });
-    }
+    orbitAnimation.kill(); // Stop the idle animation
+    isMouseDown = true;
+    adjustCamera({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 });
 });
 
-// Parallax effect
-window.addEventListener('mousemove', debounce((event) => {
-    if (!isZoomedIn) {
-        const parallaxFactor = 0.08; // Adjust the sensitivity of the parallax effect
-        const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-        const mouseY = -(event.clientY / window.innerHeight) * 2 - 1;
+window.addEventListener('mousemove', (event) => {
+    const parallaxFactor = 0.002; // Adjust the sensitivity of the parallax effect
+    const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+    const mouseY = -(event.clientY / window.innerHeight) * 2 - 1;
 
-        // Calculate the new lookAt target based on mouse position
-        const lookAtX = mouseX * parallaxFactor * 30;
-        const lookAtY = 3.1 + (mouseY * parallaxFactor * 30); // Adjust the factor for a subtle effect
+    // Calculate the new lookAt target based on mouse position
+    const lookAtX = mouseX * parallaxFactor * 30;
+    const lookAtY = 3.1 + (mouseY * parallaxFactor * 30); // Adjust the factor for a subtle effect
 
-        camera.lookAt(lookAtX, lookAtY, 30);
-    }
-}, 50)); // 50ms debounce delay
+    camera.lookAt(lookAtX, lookAtY, 30);
+});
 
 // Ensure this is called after setting up animations and event listener
 camera.updateProjectionMatrix();
 
-let screenObject = refmesh;
+let screenObject = vhsmesh;
 
+// Initialize raycaster and mouse vector
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
+let isMouseDown = false;
+let isHoveringScreen = false;
 
 // Function to handle zooming into the screen
 const zoomIntoScreen = () => {
-    const zoomPosition = { x: 0.7, y: 3.1, z: -1.3 };
-    adjustCamera(zoomPosition, { x: 0.7, y: 3.1, z: 0 }, 1); // Smooth transition to the screen
-    isHoveringScreen = true;
-};
-
-// Function to handle returning to desk view
-const returnToDeskView = () => {
-    const deskFrontPosition = { x: 0.8, y: 3, z: -5 };
-    adjustCamera(deskFrontPosition, { x: 0, y: 3.1, z: 30 }, 1); // Smooth transition back to the desk view
-    isHoveringScreen = false;
+    const zoomPosition = { x: 0.7, y: 3.1, z: -1.3 }; // Adjust as needed
+    adjustCamera(zoomPosition, { x: 0.7, y: 3.1, z: 0 });
 };
 
 // Function to handle mouse move and check for intersections
-const handleMouseMove = debounce((event) => {
+const handleMouseMove = (event) => {
+    // Calculate mouse position in normalized device coordinates (-1 to +1) for both components
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
+    // Update the raycaster with the camera and mouse position
     raycaster.setFromCamera(mouse, camera);
 
+    // Calculate objects intersecting the picking ray
     const intersects = raycaster.intersectObject(screenObject);
 
-    if (intersects.length > 0 && isZoomedIn) {
+    if (intersects.length > 0) {
         if (!isHoveringScreen) {
+            isHoveringScreen = true;
             zoomIntoScreen();
         }
     } else {
         if (isHoveringScreen) {
-            returnToDeskView();
+            isHoveringScreen = false;
+            // Reset the camera or handle the transition back if necessary
+            adjustCamera({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1); // Adjust duration if needed
         }
     }
-}, 50); // 50ms debounce delay
+};
 
 // Event listener for mouse movement to check for intersections
 window.addEventListener('mousemove', handleMouseMove);
 
-// Reset flag on mouse up
-window.addEventListener('mouseup', () => {
-    isMouseDown = false;
-});
-
-
+// Ensure this is called after setting up animations and event listener
+camera.updateProjectionMatrix();
 
 
 
@@ -438,22 +427,32 @@ const renderLoop = () => {
         viewVector.copy(camera.position);
         viewVector.sub(dimMesh.position);
         viewVector.normalize();
+
         const dot = viewVector.dot(planeNormal);
+
         // Calculate the distance from the camera vector to the plane vector
         const dimPos = dimMesh.position;
         const camPos = camera.position;
+
         const distance = camPos.distanceTo(dimPos);
+
         const opacity = Math.min(1 / (distance / 10000), 1); // Ensure opacity does not exceed 1
+
         const DIM_FACTOR = 3.5;
+
         // Update the material opacity
         const newOpacity = (1 - opacity) * DIM_FACTOR + (1 - dot) * DIM_FACTOR;
         dimMesh.material.opacity = newOpacity
     }
+
+
+
             renderer.render(scene, camera);
             cssRenderer.render(cssScene, camera);
             requestAnimationFrame(renderLoop);
         };
         renderLoop();
+
         // Cleanup
         return () => {
             cancelAnimationFrame(ref.current);
@@ -474,6 +473,8 @@ const renderLoop = () => {
             cssScene.remove(object);
         };
     }, [camera, scene]);
+
     return null;
 }
+
 export default CSS3DScene;
