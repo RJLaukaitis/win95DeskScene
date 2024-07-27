@@ -54,7 +54,7 @@ const CSS3DScene = () => {
         audioLoader.load('../Assets/Audio/office.mp3', function(buffer){
             officeSound.setBuffer(buffer);
             officeSound.setLoop(true);
-            officeSound.setVolume(0.05);
+            officeSound.setVolume(0.2);
             officeSound.play();
         });
 
@@ -272,8 +272,37 @@ const CSS3DScene = () => {
             scene.add(dimMesh);
     
 
-// Function to adjust camera position and lookAt
-const adjustCamera = (endPos, endLookAt, duration = 1) => {
+    const adjustCameraFirst = (endPos, endLookAt, duration = 1) => {
+    const lookAtProxy = new THREE.Vector3();
+    
+    gsap.to(camera.position, {
+        x: endPos.x,
+        y: endPos.y,
+        z: endPos.z,
+        ease: 'power3.inOut',
+        duration: duration,
+        onUpdate: () => {
+            camera.lookAt(lookAtProxy);
+        },
+        onComplete: () => {
+            camera.lookAt(endLookAt);
+        }
+    });
+
+    gsap.to(lookAtProxy, {
+        x: endLookAt.x,
+        y: endLookAt.y,
+        z: endLookAt.z,
+        ease: 'power3.inOut',
+        duration: duration,
+        onUpdate: () => {
+            camera.lookAt(lookAtProxy);
+        }
+    });
+};
+
+
+const adjustCameraOverScreen = (endPos, endLookAt, duration = 1) => {
     const startPos = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
     const lookAtProxy = new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z);
 
@@ -304,117 +333,121 @@ const adjustCamera = (endPos, endLookAt, duration = 1) => {
 
     camera.updateProjectionMatrix();
 };
+            
+            // Initial flyover animation
+            const zoomInPosition = { x: 15, y: 9, z: -20 }; // Initial zoom into the scene on page load
+            const startPosition = { x: 20, y: 9, z: -20 };
+            const endPosition = { x: -14, y: 9, z: -9 };
+            
+            // Set the initial camera position
+            camera.position.set(startPosition.x, startPosition.y, startPosition.z);
+            camera.lookAt(0, 3.1, 0);
+            
+            // Create a GSAP timeline to sequence animations
+            const tl = gsap.timeline();
+            
+            // Add the zoom-in animation to the timeline
+            tl.to(camera.position, {
+                x: zoomInPosition.x,
+                y: zoomInPosition.y,
+                z: zoomInPosition.z,
+                ease: 'power3.inOut',
+                duration: 2,
+                onUpdate: () => {
+                    camera.lookAt(0, 3.1, 0);
+                },
+                onComplete: () => {
+                    camera.lookAt(0, 3.1, 0);
+                }
+            });
+            
+            // Add the orbit animation to the timeline after the zoom-in
+            const orbitAnimation = tl.to(camera.position, {
+                x: endPosition.x,
+                y: endPosition.y,
+                z: endPosition.z,
+                duration: 70,
+                repeat: -1, // Infinite repetition
+                yoyo: true,
+                ease: 'none',
+                onUpdate: () => {
+                    camera.lookAt(0, 3.1, 0);
+                }
+            }, '+=0'); // Start immediately after the zoom-in
+            
+            camera.updateProjectionMatrix();
+            
+            // Event listener for mouse click to zoom in
+            window.addEventListener('mousedown', () => {
+                orbitAnimation.kill(); // Stop the idle animation
+                isMouseDown = true;
+                adjustCameraFirst({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1);
+            });
+            
+            window.addEventListener('mousemove', (event) => {
+                const parallaxFactor = 0.002; // Adjust the sensitivity of the parallax effect
+                const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+                const mouseY = -(event.clientY / window.innerHeight) * 2 - 1;
+            
+                // Calculate the new lookAt target based on mouse position
+                const lookAtX = mouseX * parallaxFactor * 30;
+                const lookAtY = 3.1 + (mouseY * parallaxFactor * 30); // Adjust the factor for a subtle effect
+            
+                camera.lookAt(lookAtX, lookAtY, 30);
+            });
+            
+            // Ensure this is called after setting up animations and event listener
+            camera.updateProjectionMatrix();
+            
+            let screenObject = vhsmesh;
+            
+            // Initialize raycaster and mouse vector
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+            let isMouseDown = false;
+            let isHoveringScreen = false;
+            
+            // Function to handle zooming into the screen
+            const zoomIntoScreen = () => {
+                const zoomPosition = { x: 0.7, y: 3.1, z: -1.3 }; // Adjust as needed
+                adjustCameraOverScreen(zoomPosition, { x: 0.7, y: 3.1, z: 0 });
+            };
+            
+            // Function to handle mouse move and check for intersections
+            const handleMouseMove = (event) => {
+                // Calculate mouse position in normalized device coordinates (-1 to +1) for both components
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            
+                // Update the raycaster with the camera and mouse position
+                raycaster.setFromCamera(mouse, camera);
+            
+                // Calculate objects intersecting the picking ray
+                const intersects = raycaster.intersectObject(screenObject);
+            
+                if (intersects.length > 0) {
+                    if (!isHoveringScreen) {
+                        isHoveringScreen = true;
+                        zoomIntoScreen();
+                    }
+                } else {
+                    if (isHoveringScreen) {
+                        isHoveringScreen = false;
+                        // Reset the camera or handle the transition back if necessary
+                        adjustCameraOverScreen({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1); // Adjust duration if needed
+                    }
+                }
+            };
+            
+            // Event listener for mouse movement to check for intersections
+            window.addEventListener('mousemove', handleMouseMove);
+            
+            // Ensure this is called after setting up animations and event listener
+            camera.updateProjectionMatrix();
+            
+            
+            
 
-// Initial flyover animation
-const zoomInPosition = { x: 15, y: 9, z: -20 }; // Initial zoom into the scene on page load
-const startPosition = { x: 20, y: 9, z: -20 };
-const endPosition = { x: -14, y: 9, z: -9 };
-
-// Set the initial camera position
-camera.position.set(startPosition.x, startPosition.y, startPosition.z);
-camera.lookAt(0, 3.1, 0);
-
-// Create a GSAP timeline to sequence animations
-const tl = gsap.timeline();
-
-// Add the zoom-in animation to the timeline
-tl.to(camera.position, {
-    x: zoomInPosition.x,
-    y: zoomInPosition.y,
-    z: zoomInPosition.z,
-    ease: 'power3.inOut',
-    duration: 2,
-    onUpdate: () => {
-        camera.lookAt(0, 3.1, 0);
-    },
-    onComplete: () => {
-        camera.lookAt(0, 3.1, 0);
-    }
-});
-
-// Add the orbit animation to the timeline after the zoom-in
-const orbitAnimation = tl.to(camera.position, {
-    x: endPosition.x,
-    y: endPosition.y,
-    z: endPosition.z,
-    duration: 70,
-    repeat: -1, // Infinite repetition
-    yoyo: true,
-    ease: 'none',
-    onUpdate: () => {
-        camera.lookAt(0, 3.1, 0);
-    }
-}, '+=0'); // Start immediately after the zoom-in
-
-camera.updateProjectionMatrix();
-
-// Event listener for mouse click to zoom in
-window.addEventListener('mousedown', () => {
-    orbitAnimation.kill(); // Stop the idle animation
-    isMouseDown = true;
-    adjustCamera({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 });
-});
-
-window.addEventListener('mousemove', (event) => {
-    const parallaxFactor = 0.002; // Adjust the sensitivity of the parallax effect
-    const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-    const mouseY = -(event.clientY / window.innerHeight) * 2 - 1;
-
-    // Calculate the new lookAt target based on mouse position
-    const lookAtX = mouseX * parallaxFactor * 30;
-    const lookAtY = 3.1 + (mouseY * parallaxFactor * 30); // Adjust the factor for a subtle effect
-
-    camera.lookAt(lookAtX, lookAtY, 30);
-});
-
-// Ensure this is called after setting up animations and event listener
-camera.updateProjectionMatrix();
-
-let screenObject = vhsmesh;
-
-// Initialize raycaster and mouse vector
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
-let isMouseDown = false;
-let isHoveringScreen = false;
-
-// Function to handle zooming into the screen
-const zoomIntoScreen = () => {
-    const zoomPosition = { x: 0.7, y: 3.1, z: -1.3 }; // Adjust as needed
-    adjustCamera(zoomPosition, { x: 0.7, y: 3.1, z: 0 });
-};
-
-// Function to handle mouse move and check for intersections
-const handleMouseMove = (event) => {
-    // Calculate mouse position in normalized device coordinates (-1 to +1) for both components
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    // Update the raycaster with the camera and mouse position
-    raycaster.setFromCamera(mouse, camera);
-
-    // Calculate objects intersecting the picking ray
-    const intersects = raycaster.intersectObject(screenObject);
-
-    if (intersects.length > 0) {
-        if (!isHoveringScreen) {
-            isHoveringScreen = true;
-            zoomIntoScreen();
-        }
-    } else {
-        if (isHoveringScreen) {
-            isHoveringScreen = false;
-            // Reset the camera or handle the transition back if necessary
-            adjustCamera({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1); // Adjust duration if needed
-        }
-    }
-};
-
-// Event listener for mouse movement to check for intersections
-window.addEventListener('mousemove', handleMouseMove);
-
-// Ensure this is called after setting up animations and event listener
-camera.updateProjectionMatrix();
 
 
 
