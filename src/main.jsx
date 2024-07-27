@@ -3,10 +3,10 @@ import { Canvas } from '@react-three/fiber';
 import ReactDOM from 'react-dom/client';
 import CSS3DScene from './CSS3DScene';
 import WelcomePage from './WelcomePage';
-import OverlayScreen from './grainShader/OverlayScreen';
 
 import './app.css';
 import { Environment } from '@react-three/drei';
+import FilmGrainEffect from './grainShader/FilmGrainEffect';
 
 const App = () => {
   const [showWelcome, setShowWelcome] = useState(true);
@@ -32,6 +32,7 @@ const App = () => {
         >
           {model && <primitive object ={model} />}
           <CSS3DScene />
+          <FilmGrainEffect/>
         </Canvas>
       )}
     </>
