@@ -70,7 +70,7 @@ const WelcomePage = ({ onEnter , setModel }) => {
     draco.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
     loader.setDRACOLoader(draco);
 
-    loader.load('../Assets/compressed.glb', function (glb) {
+    loader.load('../Assets/compressed2.glb', function (glb) {
       const model = glb.scene;
       model.scale.set(1, 1, 1);
       model.traverse(function (node) {

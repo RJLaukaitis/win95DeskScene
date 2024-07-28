@@ -79,7 +79,7 @@ const CSS3DScene = () => {
 
         //FOG
         const fogColor = 0xf9f9f9;
-        const fogdensity = 0.025;
+        const fogdensity = 0.02;
         scene.fog = new THREE.FogExp2(fogColor,fogdensity);
 
 
@@ -353,7 +353,7 @@ const CSS3DScene = () => {
                 },
                 onComplete: () => {
                     camera.lookAt(0, 3.1, 0);
-                    startOrbit(); // Start orbit animation after initial zoom-in
+                    startOrbit();
                 }
             });
             
@@ -375,20 +375,28 @@ const CSS3DScene = () => {
                 });
             };
             
+            // Control flag for raycaster activity
+            let isRaycasterActive = false;
+            
             // Event listener for mouse click to zoom in or return to orbit
             window.addEventListener('mousedown', () => {
                 if (isZoomedIntoScreen) return;
             
                 if (isZoomedIn) {
                     // Return to orbit if zoomed into the desk
-                    adjustCamera(startPosition, { x: 0, y: 3.1, z: 0 }, 1, startOrbit);
+                    adjustCamera(startPosition, { x: 0, y: 3.1, z: 0 }, 1, () => {
+                        startOrbit();
+                        isRaycasterActive = false;
+                    });
                     isZoomedIn = false;
                     isMouseDown = false;
                     window.removeEventListener('mousemove', followMouse);
                 } else {
                     // Zoom into the desk
                     orbitAnimation.kill(); // Stop the idle animation
-                    adjustCamera({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1);
+                    adjustCamera({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1, () => {
+                        isRaycasterActive = true;
+                    });
                     isZoomedIn = true;
                     isMouseDown = true;
                     window.addEventListener('mousemove', followMouse);
@@ -412,6 +420,7 @@ const CSS3DScene = () => {
                 const zoomPosition = { x: 0.7, y: 3.1, z: -1.3 };
                 adjustCameraOverScreen(zoomPosition, { x: 0.7, y: 3.1, z: 0 });
                 isZoomedIntoScreen = true;
+                officeSound.setFilter(lowPassFilter);
             };
             
             // Function to follow the mouse
@@ -441,6 +450,8 @@ const CSS3DScene = () => {
             
             // Function to handle mouse move and check for intersections
             const handleMouseMove = debounce((event) => {
+                if (!isRaycasterActive) return;
+            
                 mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
                 mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
             
@@ -475,16 +486,6 @@ const CSS3DScene = () => {
             
             // Ensure this is called after setting up animations and event listener
             camera.updateProjectionMatrix();
-            
-            
-            
-            
-            
-            
-            
-            
-            
-        
 
 // Animation loop for CSS3D rendering
 const renderLoop = () => {
