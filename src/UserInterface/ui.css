@@ -1,0 +1,26 @@
+.clickBox {
+    position: fixed;
+    bottom:0;
+    width:25%;
+    background-color: black;
+    color: white;
+    text-align: center;
+    margin-left: 35%;
+    font-size: 18px;
+}
+
+.panel {
+    position: fixed;
+    left: auto;
+    margin-left: 3%;
+    margin-top: 20px;
+    /* text-align: center; */
+    color: black;
+  }
+  
+  .info p {
+    margin: 5px 0;
+    color: white;
+    background-color: black;
+    padding: 5px 10px; /* Adjust padding as needed for readability */
+  }
