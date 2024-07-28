@@ -71,7 +71,7 @@ const CSS3DScene = () => {
 
 
         //renderer settings
-        renderer.outputEncoding = THREE.LinearEncoding;
+        renderer.outputEncoding = THREE.sRGBEncoding;
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         renderer.physicallyCorrectLights = true;
