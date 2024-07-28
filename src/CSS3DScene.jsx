@@ -70,11 +70,7 @@ const CSS3DScene = () => {
         scene.environment = envMap;
 
 
-
-
-        const light = new THREE.PointLight(0xffffff,1);
-        //scene.add(light);
-
+        //renderer settings
         renderer.outputEncoding = THREE.LinearEncoding;
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -271,70 +267,68 @@ const CSS3DScene = () => {
             scene.add(dimMesh);
     
 
-    const adjustCameraFirst = (endPos, endLookAt, duration = 1) => {
-    const lookAtProxy = new THREE.Vector3();
-    
-    gsap.to(camera.position, {
-        x: endPos.x,
-        y: endPos.y,
-        z: endPos.z,
-        ease: 'power3.inOut',
-        duration: duration,
-        onUpdate: () => {
-            camera.lookAt(lookAtProxy);
-        },
-        onComplete: () => {
-            camera.lookAt(endLookAt);
-        }
-    });
-
-    gsap.to(lookAtProxy, {
-        x: endLookAt.x,
-        y: endLookAt.y,
-        z: endLookAt.z,
-        ease: 'power3.inOut',
-        duration: duration,
-        onUpdate: () => {
-            camera.lookAt(lookAtProxy);
-        }
-    });
-};
-
-
-const adjustCameraOverScreen = (endPos, endLookAt, duration = 1) => {
-    const startPos = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
-    const lookAtProxy = new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z);
-
-    gsap.to(camera.position, {
-        x: endPos.x,
-        y: endPos.y,
-        z: endPos.z,
-        ease: 'power3.inOut',
-        duration: duration,
-        onUpdate: () => {
-            camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
-        },
-        onComplete: () => {
-            camera.lookAt(endLookAt.x, endLookAt.y, endLookAt.z);
-        }
-    });
-
-    gsap.to(lookAtProxy, {
-        x: endLookAt.x,
-        y: endLookAt.y,
-        z: endLookAt.z,
-        ease: 'power3.inOut',
-        duration: duration,
-        onUpdate: () => {
-            camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
-        }
-    });
-
-    camera.updateProjectionMatrix();
-};
+            const adjustCamera = (endPos, endLookAt, duration = 1) => {
+                const lookAtProxy = new THREE.Vector3();
+            
+                gsap.to(camera.position, {
+                    x: endPos.x,
+                    y: endPos.y,
+                    z: endPos.z,
+                    ease: 'power3.inOut',
+                    duration: duration,
+                    onUpdate: () => {
+                        camera.lookAt(lookAtProxy);
+                    },
+                    onComplete: () => {
+                        camera.lookAt(endLookAt);
+                    }
+                });
+            
+                gsap.to(lookAtProxy, {
+                    x: endLookAt.x,
+                    y: endLookAt.y,
+                    z: endLookAt.z,
+                    ease: 'power3.inOut',
+                    duration: duration,
+                    onUpdate: () => {
+                        camera.lookAt(lookAtProxy);
+                    }
+                });
+            };
+            
+            const adjustCameraOverScreen = (endPos, endLookAt, duration = 1) => {
+                const lookAtProxy = new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z);
+            
+                gsap.to(camera.position, {
+                    x: endPos.x,
+                    y: endPos.y,
+                    z: endPos.z,
+                    ease: 'power3.inOut',
+                    duration: duration,
+                    onUpdate: () => {
+                        camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
+                    },
+                    onComplete: () => {
+                        camera.lookAt(endLookAt.x, endLookAt.y, endLookAt.z);
+                    }
+                });
+            
+                gsap.to(lookAtProxy, {
+                    x: endLookAt.x,
+                    y: endLookAt.y,
+                    z: endLookAt.z,
+                    ease: 'power3.inOut',
+                    duration: duration,
+                    onUpdate: () => {
+                        camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
+                    }
+                });
+            
+                camera.updateProjectionMatrix();
+            };
             
             // Initial flyover animation
-            const zoomInPosition = { x: 15, y: 9, z: -20 }; // Initial zoom into the scene on page load
+            const zoomInPosition = { x: 15, y: 9, z: -20 };
             const startPosition = { x: 20, y: 9, z: -20 };
             const endPosition = { x: -14, y: 9, z: -9 };
             
@@ -378,24 +372,14 @@ const adjustCameraOverScreen = (endPos, endLookAt, duration = 1) => {
             
             // Event listener for mouse click to zoom in
             window.addEventListener('mousedown', () => {
-                orbitAnimation.kill(); // Stop the idle animation
-                isMouseDown = true;
-                adjustCameraFirst({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1);
+                if (!isZoomedIn) {
+                    orbitAnimation.kill(); // Stop the idle animation
+                    adjustCamera({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1);
+                    isZoomedIn = true;
+                    isMouseDown = true;
+                }
             });
             
-            window.addEventListener('mousemove', (event) => {
-                const parallaxFactor = 0.002; // Adjust the sensitivity of the parallax effect
-                const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-                const mouseY = -(event.clientY / window.innerHeight) * 2 - 1;
-            
-                // Calculate the new lookAt target based on mouse position
-                const lookAtX = mouseX * parallaxFactor * 30;
-                const lookAtY = 3.1 + (mouseY * parallaxFactor * 30); // Adjust the factor for a subtle effect
-            
-                camera.lookAt(lookAtX, lookAtY, 30);
-            });
-            
-            // Ensure this is called after setting up animations and event listener
             camera.updateProjectionMatrix();
             
             let screenObject = vhsmesh;
@@ -405,16 +389,20 @@ const adjustCameraOverScreen = (endPos, endLookAt, duration = 1) => {
             const mouse = new THREE.Vector2();
             let isMouseDown = false;
             let isHoveringScreen = false;
+            let isZoomedIn = false;
+            let isZoomedIntoScreen = false;
             
             // Function to handle zooming into the screen
             const zoomIntoScreen = () => {
                 const zoomPosition = { x: 0.7, y: 3.1, z: -1.3 }; // Adjust as needed
-                officeSound
                 adjustCameraOverScreen(zoomPosition, { x: 0.7, y: 3.1, z: 0 });
+                isZoomedIntoScreen = true;
             };
             
             // Function to handle mouse move and check for intersections
             const handleMouseMove = (event) => {
+                if (!isMouseDown) return; // Only proceed if mouse is clicked
+            
                 // Calculate mouse position in normalized device coordinates (-1 to +1) for both components
                 mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
                 mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -428,7 +416,6 @@ const adjustCameraOverScreen = (endPos, endLookAt, duration = 1) => {
                 if (intersects.length > 0) {
                     if (!isHoveringScreen) {
                         isHoveringScreen = true;
-                        officeSound.setFilter(lowPassFilter);
                         zoomIntoScreen();
                     }
                 } else {
@@ -436,7 +423,16 @@ const adjustCameraOverScreen = (endPos, endLookAt, duration = 1) => {
                         isHoveringScreen = false;
                         // Reset the camera or handle the transition back if necessary
                         adjustCameraOverScreen({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1); // Adjust duration if needed
+                        isZoomedIntoScreen = false;
                     }
+                }
+            
+                // Check if the mouse is at the edge of the screen
+                const edgeThreshold = 0.05; // Adjust the sensitivity
+                if (isZoomedIn && !isZoomedIntoScreen && (mouse.x < -1 + edgeThreshold || mouse.x > 1 - edgeThreshold)) {
+                    adjustCamera(startPosition, { x: 0, y: 3.1, z: 0 }, 1);
+                    isZoomedIn = false;
+                    isMouseDown = false;
                 }
             };
             
@@ -445,6 +441,11 @@ const adjustCameraOverScreen = (endPos, endLookAt, duration = 1) => {
             
             // Ensure this is called after setting up animations and event listener
             camera.updateProjectionMatrix();
+            
+            
+            
+            
+            
             
             
         
