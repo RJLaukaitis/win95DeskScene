@@ -32,7 +32,6 @@ const App = () => {
         >
           {model && <primitive object ={model} />}
           <CSS3DScene />
-          <FilmGrainEffect/>
         </Canvas>
       )}
     </>
