@@ -365,8 +365,8 @@ const CSS3DScene = () => {
                     x: endPosition.x,
                     y: endPosition.y,
                     z: endPosition.z,
-                    duration: 70,
-                    repeat: -1, // Infinite repetition
+                    duration: 30,
+                    repeat: -1,
                     yoyo: true,
                     ease: 'none',
                     onUpdate: () => {
@@ -377,19 +377,21 @@ const CSS3DScene = () => {
             
             // Event listener for mouse click to zoom in or return to orbit
             window.addEventListener('mousedown', () => {
-                if (isZoomedIntoScreen) return; // Do nothing if zoomed into the screen
+                if (isZoomedIntoScreen) return;
             
                 if (isZoomedIn) {
                     // Return to orbit if zoomed into the desk
-                    adjustCamera(startPosition, { x: 0, y: 3.1, z: 0 }, 1, startOrbit); // Resume orbit smoothly after returning
+                    adjustCamera(startPosition, { x: 0, y: 3.1, z: 0 }, 1, startOrbit);
                     isZoomedIn = false;
                     isMouseDown = false;
+                    window.removeEventListener('mousemove', followMouse);
                 } else {
                     // Zoom into the desk
                     orbitAnimation.kill(); // Stop the idle animation
                     adjustCamera({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1);
                     isZoomedIn = true;
                     isMouseDown = true;
+                    window.addEventListener('mousemove', followMouse);
                 }
             });
             
@@ -407,9 +409,25 @@ const CSS3DScene = () => {
             
             // Function to handle zooming into the screen
             const zoomIntoScreen = () => {
-                const zoomPosition = { x: 0.7, y: 3.1, z: -1.3 }; // Adjust as needed
+                const zoomPosition = { x: 0.7, y: 3.1, z: -1.3 };
                 adjustCameraOverScreen(zoomPosition, { x: 0.7, y: 3.1, z: 0 });
                 isZoomedIntoScreen = true;
+            };
+            
+            // Function to follow the mouse
+            const followMouse = (event) => {
+                if (!isZoomedIn || isZoomedIntoScreen) return;
+            
+                const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+                const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+            
+                // Adjust the camera position based on mouse movement
+                const targetX = 0.8 - mouseX * 0.2;
+                const targetY = 3 + mouseY * 0.2;  
+            
+                camera.position.x = targetX;
+                camera.position.y = targetY;
+                camera.lookAt(0, 3.1, 30);
             };
             
             // Debounce function to limit how often a function can be executed
@@ -423,7 +441,6 @@ const CSS3DScene = () => {
             
             // Function to handle mouse move and check for intersections
             const handleMouseMove = debounce((event) => {
-                // Calculate mouse position in normalized device coordinates (-1 to +1) for both components
                 mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
                 mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
             
@@ -439,20 +456,29 @@ const CSS3DScene = () => {
                         zoomIntoScreen();
                     }
                 } else {
-                    if (isHoveringScreen) {
+                    if (isHoveringScreen && isZoomedIntoScreen) {
                         isHoveringScreen = false;
-                        // Reset the camera or handle the transition back if necessary
-                        adjustCameraOverScreen({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1); // Adjust duration if needed
-                        isZoomedIntoScreen = false;
+                        adjustCameraOverScreen({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1, () => {
+                            isZoomedIntoScreen = false;
+                            setTimeout(() => {
+                                if (isZoomedIn && !isZoomedIntoScreen) {
+                                    window.addEventListener('mousemove', followMouse);
+                                }
+                            }, 1000);
+                        });
                     }
                 }
-            }, 50); // Debounce with a 50ms delay
+            }, 50); 
             
             // Event listener for mouse movement to check for intersections
             window.addEventListener('mousemove', handleMouseMove);
             
             // Ensure this is called after setting up animations and event listener
             camera.updateProjectionMatrix();
+            
+            
+            
+            
             
             
             
