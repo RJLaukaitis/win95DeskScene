@@ -79,7 +79,7 @@ const CSS3DScene = () => {
 
         //FOG
         const fogColor = 0xf9f9f9;
-        const fogdensity = 0.03;
+        const fogdensity = 0.025;
         scene.fog = new THREE.FogExp2(fogColor,fogdensity);
 
 
@@ -267,7 +267,7 @@ const CSS3DScene = () => {
             scene.add(dimMesh);
     
 
-            const adjustCamera = (endPos, endLookAt, duration = 1) => {
+            const adjustCamera = (endPos, endLookAt, duration = 1, onComplete = () => {}) => {
                 const lookAtProxy = new THREE.Vector3();
             
                 gsap.to(camera.position, {
@@ -281,6 +281,7 @@ const CSS3DScene = () => {
                     },
                     onComplete: () => {
                         camera.lookAt(endLookAt);
+                        onComplete();
                     }
                 });
             
@@ -296,7 +297,7 @@ const CSS3DScene = () => {
                 });
             };
             
-            const adjustCameraOverScreen = (endPos, endLookAt, duration = 1) => {
+            const adjustCameraOverScreen = (endPos, endLookAt, duration = 1, onComplete = () => {}) => {
                 const lookAtProxy = new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z);
             
                 gsap.to(camera.position, {
@@ -310,6 +311,7 @@ const CSS3DScene = () => {
                     },
                     onComplete: () => {
                         camera.lookAt(endLookAt.x, endLookAt.y, endLookAt.z);
+                        onComplete();
                     }
                 });
             
@@ -351,24 +353,27 @@ const CSS3DScene = () => {
                 },
                 onComplete: () => {
                     camera.lookAt(0, 3.1, 0);
+                    startOrbit();
                 }
             });
             
-            // Add the orbit animation to the timeline after the zoom-in
-            const orbitAnimation = tl.to(camera.position, {
-                x: endPosition.x,
-                y: endPosition.y,
-                z: endPosition.z,
-                duration: 70,
-                repeat: -1, // Infinite repetition
-                yoyo: true,
-                ease: 'none',
-                onUpdate: () => {
-                    camera.lookAt(0, 3.1, 0);
-                }
-            }, '+=0'); // Start immediately after the zoom-in
-            
             camera.updateProjectionMatrix();
+            
+            let orbitAnimation;
+            const startOrbit = () => {
+                orbitAnimation = gsap.to(camera.position, {
+                    x: endPosition.x,
+                    y: endPosition.y,
+                    z: endPosition.z,
+                    duration: 70,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: 'none',
+                    onUpdate: () => {
+                        camera.lookAt(0, 3.1, 0);
+                    }
+                });
+            };
             
             // Event listener for mouse click to zoom in
             window.addEventListener('mousedown', () => {
@@ -394,14 +399,23 @@ const CSS3DScene = () => {
             
             // Function to handle zooming into the screen
             const zoomIntoScreen = () => {
-                const zoomPosition = { x: 0.7, y: 3.1, z: -1.3 }; // Adjust as needed
+                const zoomPosition = { x: 0.7, y: 3.1, z: -1.3 };
                 adjustCameraOverScreen(zoomPosition, { x: 0.7, y: 3.1, z: 0 });
                 isZoomedIntoScreen = true;
             };
             
+            // Debounce function to limit how often a function can be executed
+            const debounce = (func, wait) => {
+                let timeout;
+                return (...args) => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), wait);
+                };
+            };
+            
             // Function to handle mouse move and check for intersections
-            const handleMouseMove = (event) => {
-                if (!isMouseDown) return; // Only proceed if mouse is clicked
+            const handleMouseMove = debounce((event) => {
+                if (!isMouseDown) return;
             
                 // Calculate mouse position in normalized device coordinates (-1 to +1) for both components
                 mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -410,7 +424,6 @@ const CSS3DScene = () => {
                 // Update the raycaster with the camera and mouse position
                 raycaster.setFromCamera(mouse, camera);
             
-                // Calculate objects intersecting the picking ray
                 const intersects = raycaster.intersectObject(screenObject);
             
                 if (intersects.length > 0) {
@@ -421,29 +434,29 @@ const CSS3DScene = () => {
                 } else {
                     if (isHoveringScreen) {
                         isHoveringScreen = false;
-                        // Reset the camera or handle the transition back if necessary
-                        adjustCameraOverScreen({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1); // Adjust duration if needed
+                        adjustCameraOverScreen({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1);
                         isZoomedIntoScreen = false;
                     }
                 }
             
                 // Check if the mouse is at the edge of the screen
                 const edgeThreshold = 0.05; // Adjust the sensitivity
-                if (isZoomedIn && !isZoomedIntoScreen && (mouse.x < -1 + edgeThreshold || mouse.x > 1 - edgeThreshold)) {
-                    adjustCamera(startPosition, { x: 0, y: 3.1, z: 0 }, 1);
+                const clientX = event.clientX;
+                const clientY = event.clientY;
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+            
+                if (isZoomedIn && !isZoomedIntoScreen && (clientX < windowWidth * edgeThreshold || clientX > windowWidth * (1 - edgeThreshold) || clientY < windowHeight * edgeThreshold || clientY > windowHeight * (1 - edgeThreshold))) {
+                    adjustCamera(startPosition, { x: 0, y: 3.1, z: 0 }, 1, startOrbit);
                     isZoomedIn = false;
                     isMouseDown = false;
                 }
-            };
+            }, 50);
             
             // Event listener for mouse movement to check for intersections
             window.addEventListener('mousemove', handleMouseMove);
             
-            // Ensure this is called after setting up animations and event listener
             camera.updateProjectionMatrix();
-            
-            
-            
             
             
             
@@ -470,7 +483,7 @@ const renderLoop = () => {
 
         const opacity = Math.min(1 / (distance / 10000), 1); // Ensure opacity does not exceed 1
 
-        const DIM_FACTOR = 3.5;
+        const DIM_FACTOR = 2.0;
 
         // Update the material opacity
         const newOpacity = (1 - opacity) * DIM_FACTOR + (1 - dot) * DIM_FACTOR;
