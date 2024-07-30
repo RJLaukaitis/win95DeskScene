@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { TypeAnimation } from 'react-type-animation';
+import Typewriter from './Typewriter'; // Import the custom component
 import './ui.css';
-
-const playTypingSound = () => {
-    const audio = new Audio('../../Assets/Audio/ticker.mp3');
-    audio.volume = 0.3;
-    audio.play();
-};
 
 const Ui = () => {
     const [time, setTime] = useState('');
@@ -35,51 +29,51 @@ const Ui = () => {
         setShowName(true);
     };
 
+    const playCompletionSound = () => {
+        const audio = new Audio('../../Assets/Audio/ticker.mp3');
+        audio.volume = 0.3;
+        audio.play();
+    };
+
+    useEffect(() => {
+        if (showTime) {
+            playCompletionSound();
+        }
+    }, [showTime]);
+
     return (
         <div className='ui-container' onClick={!showInfo ? handleClick : null}>
-            <div className='clickBox'>
-                {!showInfo && (
-                    <TypeAnimation
-                        sequence={['Click anywhere to continue.']}
-                        wrapper="span"
-                        speed={1}
-                        style={{ fontSize: '1.2em', display: 'inline-block' }}
-                        repeat={0}
-                        onCharacterTyped={() => playTypingSound()}
+            {!showInfo && (
+                <div className='clickBox'>
+                    <Typewriter
+                        text="Click to continue."
+                        delay={100}
                     />
-                )}
-            </div>
+                </div>
+            )}
             {showInfo && (
                 <div className='panel'>
                     {showName && (
                         <div className='name-box'>
-                            <TypeAnimation
-                                cursor={false}
-                                sequence={['Ronald Laukaitis', () => setShowPosition(true)]}
-                                wrapper="span"
-                                speed={1}
-                                style={{ fontSize: '14px', display: 'inline-block' }}
-                                repeat={0}
-                                onCharacterTyped={() => playTypingSound()}
+                            <Typewriter
+                                text="Ronald Laukaitis"
+                                delay={100}
+                                onComplete={() => setShowPosition(true)}
                             />
                         </div>
                     )}
                     {showPosition && (
                         <div className='position-box'>
-                            <TypeAnimation
-                                cursor={false}
-                                sequence={['Lehigh University Student', () => setShowTime(true)]}
-                                wrapper="span"
-                                speed={1}
-                                style={{ fontSize: '14px', display: 'inline-block' }}
-                                repeat={0}
-                                onCharacterTyped={() => playTypingSound()}
+                            <Typewriter
+                                text="Lehigh University Student"
+                                delay={100}
+                                onComplete={() => setShowTime(true)}
                             />
                         </div>
                     )}
                     {showTime && (
                         <div className='time-box'>
-                            <span style={{ fontSize: '12px', display: 'inline-block', backgroundColor: 'black', color: 'white', padding: '10px' }}>{time}</span>
+                            <span style={{ fontSize: '1em', display: 'inline-block', backgroundColor: 'black', color: 'white', padding: '5px 10px', boxSizing: 'border-box' }}>{time}</span>
                         </div>
                     )}
                 </div>
