@@ -36,7 +36,7 @@
   pointer-events: auto; /* Enable pointer events for interactive elements */
 }
 
-.name-box, .position-box, .time-box {
+.name-box, .position-box{
   display: inline-block;
   background-color: black;
   color: white;
@@ -46,10 +46,27 @@
   box-sizing: border-box;
   transition: all 0.3s ease-in-out;
   max-width: fit-content; /* Ensures the box fits its content */
-  padding: 10px;
+  padding: 5px;
 }
 
-.time-box span {
-  padding: 5px 10px; /* Thinner padding for the time box */
-  font-size: 1em; /* Slightly smaller font size for the time box */
+.time-sound-container {
+  display: flex;
+  align-items: center;
 }
+
+.time-box {
+  display: inline-block;
+  background-color: black;
+  color: white;
+  box-sizing: border-box;
+}
+
+.sound-box {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-left: 10px;
+  background-color: black;
+  padding:5.2px;
+}
+

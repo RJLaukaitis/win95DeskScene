@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Typewriter from './Typewriter'; // Import the custom component
+import soundIcon from '../../Assets/Ui_images/sound.png';
+import mutedIcon from '../../Assets/Ui_images/muted.png';
 import './ui.css';
 
 const Ui = () => {
@@ -8,6 +10,8 @@ const Ui = () => {
     const [showName, setShowName] = useState(false);
     const [showPosition, setShowPosition] = useState(false);
     const [showTime, setShowTime] = useState(false);
+    const [showSound, setShowSound] = useState(false);
+    const [isMuted, setIsMuted] = useState(false);
 
     useEffect(() => {
         const startTime = () => {
@@ -38,8 +42,15 @@ const Ui = () => {
     useEffect(() => {
         if (showTime) {
             playCompletionSound();
+            setTimeout(() => {
+                setShowSound(true);
+            }, 500);
         }
     }, [showTime]);
+
+    const handleSoundToggle = () => {
+        setIsMuted(!isMuted);
+    };
 
     return (
         <div className='ui-container'>
@@ -72,8 +83,19 @@ const Ui = () => {
                         </div>
                     )}
                     {showTime && (
-                        <div className='time-box'>
-                            <span style={{ fontSize: '1em', display: 'inline-block', backgroundColor: 'black', color: 'white', padding: '5px 10px', boxSizing: 'border-box' }}>{time}</span>
+                        <div className='time-sound-container'>
+                            <div className='time-box'>
+                                <span style={{ fontSize: '1em', display: 'inline-block', backgroundColor: 'black', color: 'white', padding: '5px 10px', boxSizing: 'border-box' }}>{time}</span>
+                            </div>
+                            {showSound && (
+                                <div className='sound-box' onClick={handleSoundToggle} style={{ cursor: 'pointer', marginLeft: '10px', display: 'flex', alignItems: 'center' }}>
+                                    <img
+                                        src={isMuted ? mutedIcon : soundIcon}
+                                        alt="sound-icon"
+                                        style={{ width: '14px', height: '14px' }}
+                                    />
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
