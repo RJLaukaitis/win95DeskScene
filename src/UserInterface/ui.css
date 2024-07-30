@@ -24,3 +24,10 @@
     background-color: black;
     padding: 5px 10px; /* Adjust padding as needed for readability */
   }
+
+  .time {
+    margin: 5px 0;
+    color: white;
+    background-color: black;
+    padding: 5px 10px; /* Adjust padding as needed for readability */
+  }

@@ -8,8 +8,8 @@ const Ui = () => {
     const [typedClickBox, setTypedClickBox] = useState('');
 
     const playTypingSound = () => {
-        const audio = new Audio('../../Assets/Audio/Typing.mp3');
-        audio.volume = 0.1;
+        const audio = new Audio('../../Assets/Audio/ticker.mp3');
+        audio.volume = 0.3;
         audio.play();
     };
 
