@@ -4,12 +4,28 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 2;
-  pointer-events: none;
+  z-index: 2; /* Higher than iframe */
+  pointer-events: none; /* Allow clicks to pass through */
+  transition: opacity 0.5s ease-in-out;
+}
+
+.ui-fade-out {
+  opacity: 0;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3; /* Higher z-index for visibility */
+  pointer-events: auto; /* Enable pointer events for the overlay */
+  background: transparent; /* Transparent background */
 }
 
 .clickBox {
-  pointer-events: auto;
+  pointer-events: auto; /* Enable pointer events for the clickBox */
   position: absolute;
   bottom: 20px;
   left: 50%;
@@ -19,7 +35,7 @@
   color: white;
   text-align: center;
   font-size: 1.2em;
-  z-index: 3;
+  z-index: 4; /* Higher z-index for visibility */
 }
 
 .panel {
@@ -48,16 +64,16 @@
 }
 
 .time-box{
-pointer-events: auto; /* Enable pointer events for these elements */
-display: inline-block;
-background-color: black;
-color: white;
-margin: 0;
-white-space: pre-wrap;
-word-break: break-word;
-box-sizing: border-box;
-transition: all 0.3s ease-in-out;
-max-width: fit-content;
+  pointer-events: auto;
+  display: inline-block;
+  background-color: black;
+  color: white;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  box-sizing: border-box;
+  transition: all 0.3s ease-in-out;
+  max-width: fit-content;
 }
 
 .time-sound-container {

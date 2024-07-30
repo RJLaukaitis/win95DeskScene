@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState} from 'react';
 import { extend, useThree, useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
 import ReactDOM from 'react-dom';
@@ -12,9 +12,11 @@ import gsap from 'gsap';
 
 import './CSS3DScene.css';
 
+
 extend({ CSS3DRenderer });
 
 const CSS3DScene = () => {
+    const [zoomState, setZoomState] = useState(false);
     const { scene, camera } = useThree();
     const cssScene = new THREE.Scene();
     const ref = useRef();
@@ -382,6 +384,8 @@ const CSS3DScene = () => {
             
             // Event listener for mouse click to zoom in or return to orbit
             window.addEventListener('mousedown', () => {
+                if (event.target.closest('.sound-box, .name-box, .position-box, .time-box')) return; // Ignore clicks on specific UI elements
+                
                 if (isZoomedIntoScreen) return;
             
                 if (isZoomedIn) {
@@ -419,6 +423,7 @@ const CSS3DScene = () => {
             
             // Function to handle zooming into the screen
             const zoomIntoScreen = () => {
+                setZoomState(true);
                 const zoomPosition = { x: 0.7, y: 3.1, z: -1.3 };
                 adjustCameraOverScreen(zoomPosition, { x: 0.7, y: 3.1, z: 0 });
                 isZoomedIntoScreen = true;
@@ -490,7 +495,7 @@ const CSS3DScene = () => {
             camera.updateProjectionMatrix();
 
 
-        ReactDOM.render(<Ui />, document.getElementById('ui-container'));
+        ReactDOM.render(<Ui Zoomed={isZoomedIntoScreen}/>, document.getElementById('ui-container'));
 
 
 // Animation loop for CSS3D rendering
@@ -513,7 +518,7 @@ const renderLoop = () => {
 
         const opacity = Math.min(1 / (distance / 10000), 1); // Ensure opacity does not exceed 1
 
-        const DIM_FACTOR = 2.0;
+        const DIM_FACTOR = 2.3;
 
         // Update the material opacity
         const newOpacity = (1 - opacity) * DIM_FACTOR + (1 - dot) * DIM_FACTOR;
