@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Typewriter from './Typewriter';
+import Typewriter from './Typewriter'; // Import the custom component
 import './ui.css';
 
 const Ui = () => {
@@ -42,11 +42,11 @@ const Ui = () => {
     }, [showTime]);
 
     return (
-        <div className='ui-container' onClick={!showInfo ? handleClick : null}>
+        <div className='ui-container'>
             {!showInfo && (
-                <div className='clickBox'>
+                <div className='clickBox' onClick={handleClick}>
                     <Typewriter
-                        text="Click to continue."
+                        text="Click anywhere to continue."
                         delay={100}
                     />
                 </div>

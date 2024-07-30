@@ -3,10 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import ReactDOM from 'react-dom/client';
 import CSS3DScene from './CSS3DScene';
 import WelcomePage from './WelcomePage';
-import Ui from './UserInterface/Ui'
-
 import './app.css';
-import { Environment } from '@react-three/drei';
 import FilmGrainEffect from './grainShader/FilmGrainEffect';
 
 const App = () => {

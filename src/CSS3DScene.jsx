@@ -98,10 +98,10 @@ const CSS3DScene = () => {
 
         const iframe = document.createElement('iframe');
         iframe.src = "https://laukaitisos.netlify.app/";
-        iframe.style.width = "1190px";
+        iframe.style.width = "1200px";
         iframe.style.height = "840px";
         iframe.style.marginTop = "80px";
-        iframe.style.marginLeft = "135px";
+        iframe.style.marginLeft = "120px";
         iframe.style.boxSizing = 'border-box';
         iframe.style.opacity = '1';
         iframe.style.zIndex = '10';
