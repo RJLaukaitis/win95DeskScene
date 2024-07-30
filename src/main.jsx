@@ -21,8 +21,7 @@ const App = () => {
 
   return (
     <>
-      <Ui/>
-      {/* {showWelcome ? (
+      {showWelcome ? (
         <WelcomePage onEnter={handleEnter} setModel={setModel} />
       ) : (
         <Canvas
@@ -35,7 +34,7 @@ const App = () => {
           {model && <primitive object ={model} />}
           <CSS3DScene />
         </Canvas>
-      )} */}
+      )}
     </>
   );
 };

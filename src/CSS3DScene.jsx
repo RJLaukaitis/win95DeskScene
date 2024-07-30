@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { extend, useThree, useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
+import ReactDOM from 'react-dom';
+import Ui from './UserInterface/Ui';
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
 import dust from "../Assets/Textures/MonitorOverlay/dust.jpg";
@@ -486,6 +488,10 @@ const CSS3DScene = () => {
             
             // Ensure this is called after setting up animations and event listener
             camera.updateProjectionMatrix();
+
+
+        ReactDOM.render(<Ui />, document.getElementById('ui-container'));
+
 
 // Animation loop for CSS3D rendering
 const renderLoop = () => {

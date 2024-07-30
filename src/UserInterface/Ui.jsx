@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Typewriter from './Typewriter'; // Import the custom component
+import Typewriter from './Typewriter';
 import './ui.css';
 
 const Ui = () => {
