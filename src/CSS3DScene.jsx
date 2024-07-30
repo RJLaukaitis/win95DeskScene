@@ -16,7 +16,7 @@ import './CSS3DScene.css';
 extend({ CSS3DRenderer });
 
 const CSS3DScene = () => {
-    const [zoomState, setZoomState] = useState(false);
+    const zoomStateRef = useRef(false);
     const { scene, camera } = useThree();
     const cssScene = new THREE.Scene();
     const ref = useRef();
@@ -386,7 +386,7 @@ const CSS3DScene = () => {
             window.addEventListener('mousedown', () => {
                 if (event.target.closest('.sound-box, .name-box, .position-box, .time-box')) return; // Ignore clicks on specific UI elements
                 
-                if (isZoomedIntoScreen) return;
+                if (zoomStateRef.current) return;
             
                 if (isZoomedIn) {
                     // Return to orbit if zoomed into the desk
@@ -423,10 +423,10 @@ const CSS3DScene = () => {
             
             // Function to handle zooming into the screen
             const zoomIntoScreen = () => {
-                setZoomState(true);
                 const zoomPosition = { x: 0.7, y: 3.1, z: -1.3 };
                 adjustCameraOverScreen(zoomPosition, { x: 0.7, y: 3.1, z: 0 });
                 isZoomedIntoScreen = true;
+                zoomStateRef.current = true;
                 officeSound.setFilter(lowPassFilter);
             };
             
@@ -478,6 +478,7 @@ const CSS3DScene = () => {
                         isHoveringScreen = false;
                         adjustCameraOverScreen({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1, () => {
                             isZoomedIntoScreen = false;
+                            zoomStateRef.current = false; // Update ref
                             setTimeout(() => {
                                 if (isZoomedIn && !isZoomedIntoScreen) {
                                     window.addEventListener('mousemove', followMouse);
@@ -493,10 +494,6 @@ const CSS3DScene = () => {
             
             // Ensure this is called after setting up animations and event listener
             camera.updateProjectionMatrix();
-
-
-        ReactDOM.render(<Ui Zoomed={isZoomedIntoScreen}/>, document.getElementById('ui-container'));
-
 
 // Animation loop for CSS3D rendering
 const renderLoop = () => {
@@ -518,7 +515,7 @@ const renderLoop = () => {
 
         const opacity = Math.min(1 / (distance / 10000), 1); // Ensure opacity does not exceed 1
 
-        const DIM_FACTOR = 2.3;
+        const DIM_FACTOR = 2.5;
 
         // Update the material opacity
         const newOpacity = (1 - opacity) * DIM_FACTOR + (1 - dot) * DIM_FACTOR;
@@ -552,6 +549,10 @@ const renderLoop = () => {
             cssScene.remove(object);
         };
     }, [camera, scene]);
+
+    useEffect(() => {
+        ReactDOM.render(<Ui zoomStateRef={zoomStateRef} />, document.getElementById('ui-container'));
+      }, [zoomStateRef]);
 
     return null;
 }
