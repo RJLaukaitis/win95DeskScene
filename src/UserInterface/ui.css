@@ -1,33 +1,51 @@
+.ui-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0; /* Adjust as needed */
+  cursor: pointer; /* Add cursor pointer for the whole container */
+}
+
 .clickBox {
-    position: fixed;
-    bottom:0;
-    width:25%;
-    background-color: black;
-    color: white;
-    text-align: center;
-    margin-left: 35%;
-    font-size: 18px;
+  position: absolute;
+  bottom:20px;
+  padding: 10px;
+  background-color: black;
+  color: white;
+  width:25%;
+  text-align: center;
+  font-size: 1.2em;
 }
 
 .panel {
-    position: fixed;
-    left: auto;
-    margin-left: 3%;
-    margin-top: 20px;
-    /* text-align: center; */
-    color: black;
-  }
-  
-  .info p {
-    margin: 5px 0;
-    color: white;
-    background-color: black;
-    padding: 5px 10px; /* Adjust padding as needed for readability */
-  }
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
-  .time {
-    margin: 5px 0;
-    color: white;
-    background-color: black;
-    padding: 5px 10px; /* Adjust padding as needed for readability */
-  }
+.name-box, .position-box, .time-box {
+  display: inline-block;
+  background-color: black;
+  color: white;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  box-sizing: border-box;
+  transition: all 0.3s ease-in-out;
+  max-width: fit-content; /* Ensures the box fits its content */
+}
+
+.name-box, .position-box {
+  padding: 10px;
+}
+
+.time-box span {
+  padding: 5px 10px; /* Thinner padding for the time box */
+  font-size: 1em; /* Slightly smaller font size for the time box */
+}

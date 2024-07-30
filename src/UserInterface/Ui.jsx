@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import './Ui.css';
+import { TypeAnimation } from 'react-type-animation';
+import './ui.css';
+
+const playTypingSound = () => {
+    const audio = new Audio('../../Assets/Audio/ticker.mp3');
+    audio.volume = 0.3;
+    audio.play();
+};
 
 const Ui = () => {
     const [time, setTime] = useState('');
-    const [typedName, setTypedName] = useState('');
-    const [typedInfo, setTypedInfo] = useState('');
-    const [typedClickBox, setTypedClickBox] = useState('');
-
-    const playTypingSound = () => {
-        const audio = new Audio('../../Assets/Audio/ticker.mp3');
-        audio.volume = 0.3;
-        audio.play();
-    };
+    const [showInfo, setShowInfo] = useState(false);
+    const [showName, setShowName] = useState(false);
+    const [showPosition, setShowPosition] = useState(false);
+    const [showTime, setShowTime] = useState(false);
 
     useEffect(() => {
         const startTime = () => {
@@ -28,49 +30,60 @@ const Ui = () => {
         return () => clearInterval(timer);
     }, []);
 
-    useEffect(() => {
-        const textName = 'Ronald Laukaitis';
-        const textInfo = 'Lehigh University Student';
-        const textClickBox = 'Click anywhere to continue.';
-
-        const typeEffect = (text, setTypedState) => {
-            let index = 0;
-            const interval = setInterval(() => {
-                if (index < text.length) {
-                    setTypedState(prev => prev + text[index]);
-                    playTypingSound();
-                    index++;
-                } else {
-                    clearInterval(interval);
-                }
-            }, 100);
-        };
-
-        setTypedName('');
-        setTypedInfo(''); 
-        setTypedClickBox('');
-
-        typeEffect(textName, setTypedName);
-        setTimeout(() => typeEffect(textInfo, setTypedInfo), textName.length * 100 + 500);
-        setTimeout(() => typeEffect(textClickBox, setTypedClickBox), textName.length * 100 + textInfo.length * 100 + 1000);
-    }, []);
+    const handleClick = () => {
+        setShowInfo(true);
+        setShowName(true);
+    };
 
     return (
-        <div className='ui-container'>
+        <div className='ui-container' onClick={!showInfo ? handleClick : null}>
             <div className='clickBox'>
-                <p>{typedClickBox}</p>
+                {!showInfo && (
+                    <TypeAnimation
+                        sequence={['Click anywhere to continue.']}
+                        wrapper="span"
+                        speed={1}
+                        style={{ fontSize: '1.2em', display: 'inline-block' }}
+                        repeat={0}
+                        onCharacterTyped={() => playTypingSound()}
+                    />
+                )}
             </div>
-
-            <div className='panel'>
-                <div className='info'>
-                    <p>{typedName}</p>
-                    <p>{typedInfo}</p>
+            {showInfo && (
+                <div className='panel'>
+                    {showName && (
+                        <div className='name-box'>
+                            <TypeAnimation
+                                cursor={false}
+                                sequence={['Ronald Laukaitis', () => setShowPosition(true)]}
+                                wrapper="span"
+                                speed={1}
+                                style={{ fontSize: '14px', display: 'inline-block' }}
+                                repeat={0}
+                                onCharacterTyped={() => playTypingSound()}
+                            />
+                        </div>
+                    )}
+                    {showPosition && (
+                        <div className='position-box'>
+                            <TypeAnimation
+                                cursor={false}
+                                sequence={['Lehigh University Student', () => setShowTime(true)]}
+                                wrapper="span"
+                                speed={1}
+                                style={{ fontSize: '14px', display: 'inline-block' }}
+                                repeat={0}
+                                onCharacterTyped={() => playTypingSound()}
+                            />
+                        </div>
+                    )}
+                    {showTime && (
+                        <div className='time-box'>
+                            <span style={{ fontSize: '12px', display: 'inline-block', backgroundColor: 'black', color: 'white', padding: '10px' }}>{time}</span>
+                        </div>
+                    )}
                 </div>
-                
-                <div className='time'>
-                    <p>{time}</p>
-                </div>
-            </div>
+            )}
         </div>
     );
 };
