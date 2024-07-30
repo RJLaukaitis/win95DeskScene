@@ -98,10 +98,10 @@ const CSS3DScene = () => {
 
         const iframe = document.createElement('iframe');
         iframe.src = "https://laukaitisos.netlify.app/";
-        iframe.style.width = "1200px";
-        iframe.style.height = "840px";
-        iframe.style.marginTop = "80px";
-        iframe.style.marginLeft = "120px";
+        iframe.style.width = "1240px";
+        iframe.style.height = "865px";
+        iframe.style.marginTop = "67px";
+        iframe.style.marginLeft = "100px";
         iframe.style.boxSizing = 'border-box';
         iframe.style.opacity = '1';
         iframe.style.zIndex = '10';
@@ -490,7 +490,7 @@ const CSS3DScene = () => {
             camera.updateProjectionMatrix();
 
 
-        ReactDOM.render(<Ui />, document.getElementById('ui-container'));
+        //ReactDOM.render(<Ui />, document.getElementById('ui-container'));
 
 
 // Animation loop for CSS3D rendering
