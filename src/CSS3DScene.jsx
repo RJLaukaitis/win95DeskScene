@@ -94,7 +94,7 @@ const CSS3DScene = () => {
         container.style.alignItems = "center";
         container.style.justifyContent = "center";
         container.style.background = '#1d2e2f';
-        container.style.pointerEvents = 'auto'; // Ensure the container allows pointer events
+        container.style.pointerEvents = 'all'; // Ensure the container allows pointer events
 
         const iframe = document.createElement('iframe');
         iframe.src = "https://laukaitisos.netlify.app/";
@@ -104,8 +104,8 @@ const CSS3DScene = () => {
         iframe.style.marginLeft = "100px";
         iframe.style.boxSizing = 'border-box';
         iframe.style.opacity = '1';
-        iframe.style.zIndex = '10';
-        iframe.style.brightness = "0.1";
+        iframe.style.zIndex = '15';
+        iframe.style.brightness = "1";
         iframe.style.overflow = "hidden"; // Hide scroll bars
 
         container.appendChild(iframe);
@@ -490,7 +490,7 @@ const CSS3DScene = () => {
             camera.updateProjectionMatrix();
 
 
-        //ReactDOM.render(<Ui />, document.getElementById('ui-container'));
+        ReactDOM.render(<Ui />, document.getElementById('ui-container'));
 
 
 // Animation loop for CSS3D rendering

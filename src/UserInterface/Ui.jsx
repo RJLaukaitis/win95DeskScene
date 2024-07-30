@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Typewriter from './Typewriter'; // Import the custom component
+import Typewriter from './Typewriter';
 import soundIcon from '../../Assets/Ui_images/sound.png';
 import mutedIcon from '../../Assets/Ui_images/muted.png';
 import './ui.css';
@@ -88,7 +88,7 @@ const Ui = () => {
                                 <span style={{ fontSize: '1em', display: 'inline-block', backgroundColor: 'black', color: 'white', padding: '5px 10px', boxSizing: 'border-box' }}>{time}</span>
                             </div>
                             {showSound && (
-                                <div className='sound-box' onClick={handleSoundToggle} style={{ cursor: 'pointer', marginLeft: '10px', display: 'flex', alignItems: 'center' }}>
+                                <div className='sound-box' onClick={handleSoundToggle}>
                                     <img
                                         src={isMuted ? mutedIcon : soundIcon}
                                         alt="sound-icon"
