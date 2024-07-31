@@ -6,8 +6,9 @@ import Ui from './UserInterface/Ui';
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
 import dust from "../Assets/Textures/MonitorOverlay/dust.jpg";
-import smudges from "../Assets/Textures/MonitorOverlay/smudge.png"
+import smudges from "../Assets/Textures/MonitorOverlay/smudge.png";
 import vignette from "../Assets/Textures/MonitorOverlay/vignette1.png";
+import FilmGrainOverlay from './grainShader/FilmGrainOverlay';
 import gsap from 'gsap';
 
 import './CSS3DScene.css';
@@ -19,6 +20,7 @@ const CSS3DScene = () => {
     const zoomStateRef = useRef(false);
     const { scene, camera } = useThree();
     const cssScene = new THREE.Scene();
+    const filmGrainContainerRef = useRef(null);
     const ref = useRef();
 
     useEffect(() => {
@@ -72,7 +74,6 @@ const CSS3DScene = () => {
         const pmremGenerator = new THREE.PMREMGenerator( renderer );
         const envMap = pmremGenerator.fromScene( new RoomEnvironment(), 1.0 ).texture;
         scene.environment = envMap;
-
 
         //renderer settings
         renderer.outputEncoding = THREE.sRGBEncoding;
@@ -550,10 +551,20 @@ const renderLoop = () => {
         };
     }, [camera, scene]);
 
+    //useeffect for ui
     useEffect(() => {
         ReactDOM.render(<Ui zoomStateRef={zoomStateRef} />, document.getElementById('ui-container'));
       }, [zoomStateRef]);
 
+      useEffect(() => {
+        const overlayContainer = document.getElementById('film-grain-overlay');
+        if (overlayContainer) {
+          const root = ReactDOM.createRoot(overlayContainer);
+          root.render(<FilmGrainOverlay amount={0.1} />);
+        } else {
+          console.error('Overlay container not found');
+        }
+      }, []);
     return null;
 }
 

@@ -16,3 +16,7 @@ body,
   border-radius: 10px;
   z-index: 2;
 }
+
+#film-grain-container {
+  pointer-events: none;
+}
