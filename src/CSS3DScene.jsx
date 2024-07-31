@@ -242,7 +242,7 @@ const CSS3DScene = () => {
             map: crtTexture,
             side: THREE.DoubleSide,
             transparent:true,
-            opacity:.2,
+            opacity:.4,
             blending: THREE.AdditiveBlending
         });
         const crtgeometry = new THREE.PlaneGeometry(1400, 1000);
@@ -296,7 +296,7 @@ const CSS3DScene = () => {
 
             const adjustCamera = (endPos, endLookAt, duration = 1, onComplete = () => {}) => {
                 const lookAtProxy = new THREE.Vector3();
-            
+                
                 gsap.to(camera.position, {
                     x: endPos.x,
                     y: endPos.y,
@@ -311,7 +311,7 @@ const CSS3DScene = () => {
                         onComplete();
                     }
                 });
-            
+                
                 gsap.to(lookAtProxy, {
                     x: endLookAt.x,
                     y: endLookAt.y,
@@ -326,7 +326,7 @@ const CSS3DScene = () => {
             
             const adjustCameraOverScreen = (endPos, endLookAt, duration = 1, onComplete = () => {}) => {
                 const lookAtProxy = new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z);
-            
+                
                 gsap.to(camera.position, {
                     x: endPos.x,
                     y: endPos.y,
@@ -341,7 +341,7 @@ const CSS3DScene = () => {
                         onComplete();
                     }
                 });
-            
+                
                 gsap.to(lookAtProxy, {
                     x: endLookAt.x,
                     y: endLookAt.y,
@@ -352,23 +352,16 @@ const CSS3DScene = () => {
                         camera.lookAt(lookAtProxy.x, lookAtProxy.y, lookAtProxy.z);
                     }
                 });
-            
-                camera.updateProjectionMatrix();
             };
             
-            // Initial flyover animation
             const zoomInPosition = { x: 15, y: 9, z: -20 };
             const startPosition = { x: 20, y: 9, z: -20 };
             const endPosition = { x: -14, y: 9, z: -9 };
             
-            // Set the initial camera position
             camera.position.set(startPosition.x, startPosition.y, startPosition.z);
             camera.lookAt(0, 3.1, 0);
             
-            // Create a GSAP timeline to sequence animations
             const tl = gsap.timeline();
-            
-            // Add the zoom-in animation to the timeline
             tl.to(camera.position, {
                 x: zoomInPosition.x,
                 y: zoomInPosition.y,
@@ -402,17 +395,18 @@ const CSS3DScene = () => {
                 });
             };
             
-            // Control flag for raycaster activity
             let isRaycasterActive = false;
+            let isMouseDown = false;
+            let isHoveringScreen = false;
+            let isZoomedIn = false;
+            let isZoomedIntoScreen = false;
             
-            // Event listener for mouse click to zoom in or return to orbit
-            window.addEventListener('mousedown', () => {
-                if (event.target.closest('.sound-box, .name-box, .position-box, .time-box')) return; // Ignore clicks on specific UI elements
-                
+            window.addEventListener('mousedown', (event) => {
+                if (event.target.closest('.sound-box, .name-box, .position-box, .time-box')) return;
+            
                 if (zoomStateRef.current) return;
             
                 if (isZoomedIn) {
-                    // Return to orbit if zoomed into the desk
                     adjustCamera(startPosition, { x: 0, y: 3.1, z: 0 }, 1, () => {
                         startOrbit();
                         isRaycasterActive = false;
@@ -421,8 +415,7 @@ const CSS3DScene = () => {
                     isMouseDown = false;
                     window.removeEventListener('mousemove', followMouse);
                 } else {
-                    // Zoom into the desk
-                    orbitAnimation.kill(); // Stop the idle animation
+                    orbitAnimation.kill();
                     adjustCamera({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1, () => {
                         isRaycasterActive = true;
                     });
@@ -432,19 +425,11 @@ const CSS3DScene = () => {
                 }
             });
             
-            camera.updateProjectionMatrix();
+            const screenObject = dimMesh;
             
-            let screenObject = dimMesh;
-            
-            // Initialize raycaster and mouse vector
             const raycaster = new THREE.Raycaster();
             const mouse = new THREE.Vector2();
-            let isMouseDown = false;
-            let isHoveringScreen = false;
-            let isZoomedIn = false;
-            let isZoomedIntoScreen = false;
             
-            // Function to handle zooming into the screen
             const zoomIntoScreen = () => {
                 const zoomPosition = { x: 0.7, y: 3.1, z: -1.3 };
                 adjustCameraOverScreen(zoomPosition, { x: 0.7, y: 3.1, z: 0 });
@@ -453,14 +438,12 @@ const CSS3DScene = () => {
                 officeSound.setFilter(lowPassFilter);
             };
             
-            // Function to follow the mouse
             const followMouse = (event) => {
                 if (!isZoomedIn || isZoomedIntoScreen) return;
             
                 const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
                 const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
             
-                // Adjust the camera position based on mouse movement
                 const targetX = 0.8 - mouseX * 0.2;
                 const targetY = 3 + mouseY * 0.2;  
             
@@ -469,7 +452,6 @@ const CSS3DScene = () => {
                 camera.lookAt(0, 3.1, 30);
             };
             
-            // Debounce function to limit how often a function can be executed
             const debounce = (func, wait) => {
                 let timeout;
                 return (...args) => {
@@ -478,17 +460,14 @@ const CSS3DScene = () => {
                 };
             };
             
-            // Function to handle mouse move and check for intersections
             const handleMouseMove = debounce((event) => {
                 if (!isRaycasterActive) return;
             
                 mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
                 mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
             
-                // Update the raycaster with the camera and mouse position
                 raycaster.setFromCamera(mouse, camera);
             
-                // Calculate objects intersecting the picking ray
                 const intersects = raycaster.intersectObject(screenObject);
             
                 if (intersects.length > 0) {
@@ -501,7 +480,7 @@ const CSS3DScene = () => {
                         isHoveringScreen = false;
                         adjustCameraOverScreen({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1, () => {
                             isZoomedIntoScreen = false;
-                            zoomStateRef.current = false; // Update ref
+                            zoomStateRef.current = false;
                             setTimeout(() => {
                                 if (isZoomedIn && !isZoomedIntoScreen) {
                                     window.addEventListener('mousemove', followMouse);
@@ -510,13 +489,13 @@ const CSS3DScene = () => {
                         });
                     }
                 }
-            }, 50); 
+            }, 50);
             
-            // Event listener for mouse movement to check for intersections
             window.addEventListener('mousemove', handleMouseMove);
             
-            // Ensure this is called after setting up animations and event listener
             camera.updateProjectionMatrix();
+            
+
 
 // Animation loop for CSS3D rendering
 const renderLoop = () => {
