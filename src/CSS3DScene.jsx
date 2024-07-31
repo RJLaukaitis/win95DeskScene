@@ -7,7 +7,9 @@ import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRe
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
 import dust from "../Assets/Textures/MonitorOverlay/dust.jpg";
 import smudges from "../Assets/Textures/MonitorOverlay/smudge.png";
+import {TAARenderPass} from 'three/examples/jsm/postprocessing/TAARenderPass.js'
 import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
+import { SSAARenderPass } from 'three/examples/jsm/postprocessing/SSAARenderPass.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import FilmGrainShader from './Grain/FilmGrainShader.js';
@@ -77,9 +79,16 @@ const CSS3DScene = () => {
         
         const grainPass = new ShaderPass(FilmGrainShader);
         composer.addPass(grainPass);
+
+        const ssaaPass = new SSAARenderPass(scene,camera);
+        composer.addPass(ssaaPass);
+
+        const taaPass = new TAARenderPass(scene,camera);
+        //composer.addPass(taaPass);
+
         
         const smaaPass = new SMAAPass(window.innerWidth, window.innerHeight);
-        composer.addPass(smaaPass);
+        //composer.addPass(smaaPass);
 
 
 
@@ -431,7 +440,7 @@ const CSS3DScene = () => {
             
             camera.updateProjectionMatrix();
             
-            let screenObject = vhsmesh;
+            let screenObject = dimMesh;
             
             // Initialize raycaster and mouse vector
             const raycaster = new THREE.Raycaster();
