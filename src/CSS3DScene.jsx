@@ -7,6 +7,7 @@ import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRe
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
 import dust from "../Assets/Textures/MonitorOverlay/dust.jpg";
 import smudges from "../Assets/Textures/MonitorOverlay/smudge.png";
+import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import FilmGrainShader from './Grain/FilmGrainShader.js';
@@ -34,7 +35,10 @@ const CSS3DScene = () => {
             alpha: true,
         });
 
+        renderer.outputEncoding = THREE.sRGBEncoding;
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1; // Adjust exposure if necessary
         glcontainer.appendChild(renderer.domElement);
         document.body.appendChild(glcontainer);
 
@@ -68,12 +72,14 @@ const CSS3DScene = () => {
 
         //
         const composer = new EffectComposer(renderer);
-    const renderPass = new RenderPass(scene, camera);
-    composer.addPass(renderPass);
-
-    const grainPass = new ShaderPass(FilmGrainShader);
-    grainPass.renderToScreen = true;
-    composer.addPass(grainPass);
+        const renderPass = new RenderPass(scene, camera);
+        composer.addPass(renderPass);
+        
+        const grainPass = new ShaderPass(FilmGrainShader);
+        composer.addPass(grainPass);
+        
+        const smaaPass = new SMAAPass(window.innerWidth, window.innerHeight);
+        composer.addPass(smaaPass);
 
 
 
@@ -121,7 +127,7 @@ const CSS3DScene = () => {
         iframe.style.boxSizing = 'border-box';
         iframe.style.opacity = '1';
         iframe.style.zIndex = '15';
-        iframe.style.brightness = "1";
+        iframe.style.brightness = "3";
         iframe.style.overflow = "hidden"; // Hide scroll bars
 
         container.appendChild(iframe);
