@@ -130,7 +130,7 @@ const CSS3DScene = () => {
         iframe.style.boxSizing = 'border-box';
         iframe.style.opacity = '1';
         iframe.style.zIndex = '15';
-        iframe.style.brightness = "3";
+        iframe.style.brightness = "5";
         iframe.style.overflow = "hidden"; // Hide scroll bars
 
         container.appendChild(iframe);
@@ -215,7 +215,7 @@ const CSS3DScene = () => {
                 const smat = new THREE.MeshBasicMaterial({
                     map: smudgeTexture,
                     side: THREE.DoubleSide,
-                    opacity: .12,
+                    opacity: .06,
                     transparent:true,
                     blending: THREE.NormalBlending
                 });
@@ -228,7 +228,7 @@ const CSS3DScene = () => {
 
         //Video textures for screen effects
         const video = document.createElement('video');
-        video.src = "../Assets/Textures/MonitorOverlay/VHS2.mp4"
+        video.src = "../Assets/Textures/MonitorOverlay/VHS3.mp4"
         video.autoplay = true;
         video.loop = true;
         video.muted = true;
@@ -275,7 +275,7 @@ const CSS3DScene = () => {
         const vhsmesh = new THREE.Mesh(vhsgeometry, vhsmaterial);
         vhsmesh.position.set(0.8, 3.13, .33);
         vhsmesh.scale.copy(object.scale); 
-        scene.add(vhsmesh);
+        //scene.add(vhsmesh);
 
         //dimming plane
             const dimmaterial = new THREE.MeshBasicMaterial({
@@ -444,8 +444,8 @@ const CSS3DScene = () => {
                 const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
                 const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
             
-                const targetX = 0.8 - mouseX * 0.2;
-                const targetY = 3 + mouseY * 0.2;  
+                const targetX = 0.8 - mouseX * 0.4;
+                const targetY = 3 + mouseY * 0.4;  
             
                 camera.position.x = targetX;
                 camera.position.y = targetY;

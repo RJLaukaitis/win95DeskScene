@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 const playTypingSound = () => {
     const audio = new Audio('../../Assets/Audio/ticker.mp3');
-    audio.volume = 0.3;
+    audio.volume = 0.5;
     audio.play();
 };
 

@@ -44,7 +44,7 @@ const Ui = ({ zoomStateRef }) => {
       playCompletionSound();
       setTimeout(() => {
         setShowSound(true);
-      }, 500);
+      }, 250);
     }
   }, [showTime]);
 
@@ -61,7 +61,7 @@ const Ui = ({ zoomStateRef }) => {
           <div className='clickBox'>
             <Typewriter
               text="Click anywhere to continue."
-              delay={100}
+              delay={80}
             />
           </div>
         </>
@@ -72,7 +72,7 @@ const Ui = ({ zoomStateRef }) => {
             <div className='name-box'>
               <Typewriter
                 text="Ronald Laukaitis"
-                delay={100}
+                delay={80}
                 onComplete={() => setShowPosition(true)}
               />
             </div>
@@ -81,7 +81,7 @@ const Ui = ({ zoomStateRef }) => {
             <div className='position-box'>
               <Typewriter
                 text="Lehigh University Student"
-                delay={100}
+                delay={80}
                 onComplete={() => setShowTime(true)}
               />
             </div>
