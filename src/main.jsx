@@ -3,7 +3,6 @@ import { Canvas } from '@react-three/fiber';
 import ReactDOM from 'react-dom';
 import CSS3DScene from './CSS3DScene';
 import WelcomePage from './WelcomePage';
-import FilmGrainOverlay from './grainShader/FilmGrainOverlay';
 
 
 import './app.css';
@@ -11,14 +10,6 @@ import './app.css';
 const App = () => {
   const [showWelcome, setShowWelcome] = useState(true);
   const [model, setModel] = useState(null);
-  const filmGrainContainerRef = useRef(null);
-
-
-  useEffect(() => {
-    if (filmGrainContainerRef.current) {
-      ReactDOM.render(<FilmGrainOverlay amount={0.1} />, filmGrainContainerRef.current);
-    }
-  }, []);
 
 
   const handleEnter = () => {

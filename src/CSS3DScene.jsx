@@ -7,8 +7,11 @@ import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRe
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
 import dust from "../Assets/Textures/MonitorOverlay/dust.jpg";
 import smudges from "../Assets/Textures/MonitorOverlay/smudge.png";
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import FilmGrainShader from './Grain/FilmGrainShader.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import vignette from "../Assets/Textures/MonitorOverlay/vignette1.png";
-import FilmGrainOverlay from './grainShader/FilmGrainOverlay';
 import gsap from 'gsap';
 
 import './CSS3DScene.css';
@@ -20,7 +23,6 @@ const CSS3DScene = () => {
     const zoomStateRef = useRef(false);
     const { scene, camera } = useThree();
     const cssScene = new THREE.Scene();
-    const filmGrainContainerRef = useRef(null);
     const ref = useRef();
 
     useEffect(() => {
@@ -64,6 +66,18 @@ const CSS3DScene = () => {
             startUpSound.play();
         });
 
+        //
+        const composer = new EffectComposer(renderer);
+    const renderPass = new RenderPass(scene, camera);
+    composer.addPass(renderPass);
+
+    const grainPass = new ShaderPass(FilmGrainShader);
+    grainPass.renderToScreen = true;
+    composer.addPass(grainPass);
+
+
+
+
         //lowpass filter for when camera is on computer screen
         const context = listener.context;
         const lowPassFilter = context.createBiquadFilter();
@@ -86,7 +100,6 @@ const CSS3DScene = () => {
         const fogColor = 0xf9f9f9;
         const fogdensity = 0.02;
         scene.fog = new THREE.FogExp2(fogColor,fogdensity);
-
 
         // Container for iframe
         const container = document.createElement('div');
@@ -524,9 +537,18 @@ const renderLoop = () => {
     }
 
 
-
             renderer.render(scene, camera);
             cssRenderer.render(cssScene, camera);
+            if (grainPass.uniforms.u_time) {
+                grainPass.uniforms.u_time.value = performance.now() * 0.001;
+              } else {
+                console.error('u_time uniform is undefined');
+              }
+            
+              composer.render();
+            
+
+
             requestAnimationFrame(renderLoop);
         };
         renderLoop();
@@ -555,16 +577,6 @@ const renderLoop = () => {
     useEffect(() => {
         ReactDOM.render(<Ui zoomStateRef={zoomStateRef} />, document.getElementById('ui-container'));
       }, [zoomStateRef]);
-
-      useEffect(() => {
-        const overlayContainer = document.getElementById('film-grain-overlay');
-        if (overlayContainer) {
-          const root = ReactDOM.createRoot(overlayContainer);
-          root.render(<FilmGrainOverlay amount={0.1} />);
-        } else {
-          console.error('Overlay container not found');
-        }
-      }, []);
     return null;
 }
 
