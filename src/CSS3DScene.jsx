@@ -76,19 +76,13 @@ const CSS3DScene = () => {
         const composer = new EffectComposer(renderer);
         const renderPass = new RenderPass(scene, camera);
         composer.addPass(renderPass);
-        
+
+        const taaPass = new TAARenderPass(scene, camera);
+        taaPass.sampleLevel = 1.0; // Adjust sample level as needed
+        composer.addPass(taaPass);
+    
         const grainPass = new ShaderPass(FilmGrainShader);
         composer.addPass(grainPass);
-
-        const ssaaPass = new SSAARenderPass(scene,camera);
-        composer.addPass(ssaaPass);
-
-        const taaPass = new TAARenderPass(scene,camera);
-        //composer.addPass(taaPass);
-
-        
-        const smaaPass = new SMAAPass(window.innerWidth, window.innerHeight);
-        //composer.addPass(smaaPass);
 
 
 

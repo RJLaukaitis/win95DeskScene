@@ -32,7 +32,7 @@ const FilmGrainShader = {
       vec4 sceneColor = texture2D(tDiffuse, vUv);
 
       // Increase grainAmount 
-      float grainAmount = 0.05; // Adjust this value to control grain intensity
+      float grainAmount = 0.04; // Adjust this value to control grain intensity
       float noise = random(vUv * u_time) * grainAmount;
 
       // Add noise to the scene color
