@@ -1,16 +1,14 @@
-import React, {useEffect, useState,useRef  } from 'react';
+import React, { useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import ReactDOM from 'react-dom';
 import CSS3DScene from './CSS3DScene';
 import WelcomePage from './WelcomePage';
-
-
 import './app.css';
 
 const App = () => {
   const [showWelcome, setShowWelcome] = useState(true);
   const [model, setModel] = useState(null);
-
+  const [modelLoaded, setModelLoaded] = useState(false);
 
   const handleEnter = () => {
     setShowWelcome(false);
@@ -19,7 +17,7 @@ const App = () => {
   return (
     <>
       {showWelcome ? (
-        <WelcomePage onEnter={handleEnter} setModel={setModel} />
+        <WelcomePage onEnter={handleEnter} setModel={setModel} setModelLoaded={setModelLoaded} />
       ) : (
         <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
           <Canvas
@@ -29,7 +27,7 @@ const App = () => {
               far: 2000,
             }}
           >
-            {model && <primitive object={model} />}
+            {modelLoaded && <primitive object={model} />}
             <CSS3DScene />
           </Canvas>
         </div>

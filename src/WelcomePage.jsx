@@ -1,16 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import "./WelcomePage.css";
-import { Html, useGLTF } from '@react-three/drei';
-import { Canvas } from '@react-three/fiber';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
+import * as THREE from 'three';
 
-
-const WelcomePage = ({ onEnter , setModel }) => {
+const WelcomePage = ({ onEnter, setModel, setModelLoaded }) => {
   const infoRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
-  const [modelLoaded, setModelLoaded] = useState(false);
-
 
   useEffect(() => {
     const mainSystemInfo = [
@@ -34,12 +30,6 @@ const WelcomePage = ({ onEnter , setModel }) => {
       "Starting services..."
     ];
 
-    const moreMessages = [
-      "Initializing network...",
-      "Cleaning up...",
-      "Starting services..."
-    ]
-
     const displayInfo = (messages, delay, callback) => {
       messages.forEach((info, index) => {
         setTimeout(() => {
@@ -54,12 +44,9 @@ const WelcomePage = ({ onEnter , setModel }) => {
     const displayMessages = async () => {
       await new Promise(resolve => {
         displayInfo(mainSystemInfo, 200, resolve);
-        displayInfo(moreMessages, 1000,resolve);
       });
       displayInfo(additionalMessages, 800, () => {
-        if (modelLoaded){
-          setShowModal(true);
-        }
+        setShowModal(true);
       });
     };
 
@@ -70,7 +57,7 @@ const WelcomePage = ({ onEnter , setModel }) => {
     draco.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
     loader.setDRACOLoader(draco);
 
-    loader.load('../Assets/compressed2.glb', function (glb) {
+    loader.load('../Assets/compressed3.glb', function (glb) {
       const model = glb.scene;
       model.scale.set(1, 1, 1);
       model.traverse(function (node) {
@@ -87,7 +74,7 @@ const WelcomePage = ({ onEnter , setModel }) => {
       console.error('An error happened while loading the model', error);
     });
 
-  }, [modelLoaded]);
+  }, [setModel, setModelLoaded]);
 
   return (
     <div className="splash-screen">

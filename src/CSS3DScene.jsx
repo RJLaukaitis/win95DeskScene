@@ -58,7 +58,7 @@ const CSS3DScene = () => {
 
         const officeSound = new THREE.Audio(listener);
         const audioLoader = new THREE.AudioLoader();
-        audioLoader.load('../Assets/Audio/office.mp3', function(buffer){
+        audioLoader.load('../Assets/Audio/office2.mp3', function(buffer){
             officeSound.setBuffer(buffer);
             officeSound.setLoop(true);
             officeSound.setVolume(0.1);
@@ -66,23 +66,23 @@ const CSS3DScene = () => {
         });
 
         const startUpSound = new THREE.Audio(listener);
-        audioLoader.load('../Assets/Audio/startup.mp3',function(buffer){
+        audioLoader.load('../Assets/Audio/startup2.mp3',function(buffer){
             startUpSound.setBuffer(buffer);
             startUpSound.setVolume(0.1);
             startUpSound.play();
         });
 
         //
-        const composer = new EffectComposer(renderer);
-        const renderPass = new RenderPass(scene, camera);
-        composer.addPass(renderPass);
+        // const composer = new EffectComposer(renderer);
+        // const renderPass = new RenderPass(scene, camera);
+        // composer.addPass(renderPass);
 
-        const taaPass = new TAARenderPass(scene, camera);
-        taaPass.sampleLevel = 1.0; // Adjust sample level as needed
-        composer.addPass(taaPass);
+        // const taaPass = new TAARenderPass(scene, camera);
+        // taaPass.sampleLevel = 1.0; // Adjust sample level as needed
+        // composer.addPass(taaPass);
     
-        const grainPass = new ShaderPass(FilmGrainShader);
-        composer.addPass(grainPass);
+        // const grainPass = new ShaderPass(FilmGrainShader);
+        // composer.addPass(grainPass);
 
 
 
@@ -436,6 +436,7 @@ const CSS3DScene = () => {
                 isZoomedIntoScreen = true;
                 zoomStateRef.current = true;
                 officeSound.setFilter(lowPassFilter);
+                officeSound.setVolume(0.05)
             };
             
             const followMouse = (event) => {
@@ -479,6 +480,7 @@ const CSS3DScene = () => {
                     if (isHoveringScreen && isZoomedIntoScreen) {
                         isHoveringScreen = false;
                         adjustCameraOverScreen({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1, () => {
+                            officeSound.setFilter(null);
                             isZoomedIntoScreen = false;
                             zoomStateRef.current = false;
                             setTimeout(() => {
@@ -527,13 +529,13 @@ const renderLoop = () => {
 
             renderer.render(scene, camera);
             cssRenderer.render(cssScene, camera);
-            if (grainPass.uniforms.u_time) {
-                grainPass.uniforms.u_time.value = performance.now() * 0.001;
-              } else {
-                console.error('u_time uniform is undefined');
-              }
+            // if (grainPass.uniforms.u_time) {
+            //     grainPass.uniforms.u_time.value = performance.now() * 0.001;
+            //   } else {
+            //     console.error('u_time uniform is undefined');
+            //   }
             
-              composer.render();
+            //composer.render();
             
 
 
