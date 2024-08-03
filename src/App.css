@@ -21,3 +21,32 @@ body,
   pointer-events: none;
 }
 
+.welcome-container {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff; /* or your preferred background color */
+  transition: opacity 1s ease;
+}
+
+.welcome-container.fade-out {
+  opacity: 0;
+}
+
+.canvas-container {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.canvas-container.fade-in {
+  opacity: 1;
+}
+
+
+

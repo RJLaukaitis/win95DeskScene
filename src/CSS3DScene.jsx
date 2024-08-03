@@ -22,11 +22,12 @@ import './CSS3DScene.css';
 
 extend({ CSS3DRenderer });
 
-const CSS3DScene = () => {
+const CSS3DScene = ({ onLoadingComplete }) => {
     const zoomStateRef = useRef(false);
     const { scene, camera } = useThree();
     const cssScene = new THREE.Scene();
     const ref = useRef();
+
 
     useEffect(() => {
         // Setting up gl renderer
@@ -276,7 +277,6 @@ const CSS3DScene = () => {
         vhsmesh.position.set(0.8, 3.13, .33);
         vhsmesh.scale.copy(object.scale); 
         //scene.add(vhsmesh);
-
         //dimming plane
             const dimmaterial = new THREE.MeshBasicMaterial({
                 side: THREE.DoubleSide,
@@ -496,8 +496,8 @@ const CSS3DScene = () => {
             window.addEventListener('mousemove', handleMouseMove);
             
             camera.updateProjectionMatrix();
-            
 
+            onLoadingComplete();
 
 // Animation loop for CSS3D rendering
 const renderLoop = () => {
@@ -519,7 +519,7 @@ const renderLoop = () => {
 
         const opacity = Math.min(1 / (distance / 10000), 1); // Ensure opacity does not exceed 1
 
-        const DIM_FACTOR = 2.5;
+        const DIM_FACTOR = 3.0;
 
         // Update the material opacity
         const newOpacity = (1 - opacity) * DIM_FACTOR + (1 - dot) * DIM_FACTOR;
