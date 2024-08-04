@@ -29,29 +29,9 @@ const CSS3DScene = ({ onLoadingComplete }) => {
     const smudgeTextureRef = useRef();
     const crtTextureRef = useRef();
 
+    let renderer, cssRenderer;
+
     useEffect(() => {
-        // Setting up gl renderer
-        const glcontainer = document.createElement('div');
-        glcontainer.id = 'webgl';
-        const renderer = new THREE.WebGLRenderer({
-            antialias: true,
-            alpha: true,
-        });
-
-        renderer.outputEncoding = THREE.sRGBEncoding;
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1; // Adjust exposure if necessary
-        glcontainer.appendChild(renderer.domElement);
-        document.body.appendChild(glcontainer);
-
-        // Setup the CSS3DRenderer
-        const cssRenderer = new CSS3DRenderer();
-        cssRenderer.setSize(window.innerWidth, window.innerHeight);
-        cssRenderer.domElement.style.position = 'absolute';
-        cssRenderer.domElement.style.top = 0;
-        cssRenderer.domElement.id = 'css3d';
-        document.body.appendChild(cssRenderer.domElement);
 
         //loading glb
         const loader = new GLTFLoader();
@@ -66,7 +46,37 @@ const CSS3DScene = ({ onLoadingComplete }) => {
             model.side = THREE.DoubleSide;
             model.rotation.y = Math.PI / 2;
             modelRef.current = model; // Save reference to model
+
+            onLoadingComplete(); // Notify that the model is loaded
         });
+
+        // Setup the CSS3DRenderer
+        
+        const glcontainer = document.createElement('div');
+        glcontainer.id = 'webgl';
+         renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            alpha: true,
+        });
+
+        cssRenderer = new CSS3DRenderer();
+        cssRenderer.setSize(window.innerWidth, window.innerHeight);
+        cssRenderer.domElement.style.position = 'absolute';
+        cssRenderer.domElement.style.top = 0;
+        cssRenderer.domElement.id = 'css3d';
+        document.body.appendChild(cssRenderer.domElement);
+
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1; // Adjust exposure if necessary
+        glcontainer.appendChild(renderer.domElement);
+        document.body.appendChild(glcontainer);
+
+                // ENVIRONMENT
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    const envMap = pmremGenerator.fromScene(new RoomEnvironment(), 1.0).texture;
+    scene.environment = envMap;
 
         // Audio
         const listener = new THREE.AudioListener();
@@ -93,11 +103,6 @@ const CSS3DScene = ({ onLoadingComplete }) => {
         const lowPassFilter = context.createBiquadFilter();
         lowPassFilter.type = 'lowpass';
         lowPassFilter.frequency.setValueAtTime(2100, context.currentTime);
-
-        // ENVIRONMENT
-        const pmremGenerator = new THREE.PMREMGenerator(renderer);
-        const envMap = pmremGenerator.fromScene(new RoomEnvironment(), 1.0).texture;
-        scene.environment = envMap;
 
         // FOG
         const fogColor = 0xf9f9f9;
@@ -263,7 +268,7 @@ const CSS3DScene = ({ onLoadingComplete }) => {
 
         const adjustCamera = (endPos, endLookAt, duration = 1, onComplete = () => { }) => {
             const lookAtProxy = new THREE.Vector3();
-
+        
             gsap.to(camera.position, {
                 x: endPos.x,
                 y: endPos.y,
@@ -278,7 +283,7 @@ const CSS3DScene = ({ onLoadingComplete }) => {
                     onComplete();
                 }
             });
-
+        
             gsap.to(lookAtProxy, {
                 x: endLookAt.x,
                 y: endLookAt.y,
@@ -290,10 +295,10 @@ const CSS3DScene = ({ onLoadingComplete }) => {
                 }
             });
         };
-
+        
         const adjustCameraOverScreen = (endPos, endLookAt, duration = 1, onComplete = () => { }) => {
             const lookAtProxy = new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z);
-
+        
             gsap.to(camera.position, {
                 x: endPos.x,
                 y: endPos.y,
@@ -308,7 +313,7 @@ const CSS3DScene = ({ onLoadingComplete }) => {
                     onComplete();
                 }
             });
-
+        
             gsap.to(lookAtProxy, {
                 x: endLookAt.x,
                 y: endLookAt.y,
@@ -320,14 +325,14 @@ const CSS3DScene = ({ onLoadingComplete }) => {
                 }
             });
         };
-
+        
         const zoomInPosition = { x: 15, y: 9, z: -20 };
         const startPosition = { x: 20, y: 9, z: -20 };
         const endPosition = { x: -14, y: 9, z: -9 };
-
+        
         camera.position.set(startPosition.x, startPosition.y, startPosition.z);
         camera.lookAt(0, 3.1, 0);
-
+        
         const tl = gsap.timeline();
         tl.to(camera.position, {
             x: zoomInPosition.x,
@@ -343,9 +348,9 @@ const CSS3DScene = ({ onLoadingComplete }) => {
                 startOrbit();
             }
         });
-
+        
         camera.updateProjectionMatrix();
-
+        
         let orbitAnimation;
         const startOrbit = () => {
             orbitAnimation = gsap.to(camera.position, {
@@ -361,65 +366,77 @@ const CSS3DScene = ({ onLoadingComplete }) => {
                 }
             });
         };
-
+        
         let isRaycasterActive = false;
         let isMouseDown = false;
         let isHoveringScreen = false;
         let isZoomedIn = false;
         let isZoomedIntoScreen = false;
-
+        let isTransitioning = false;
+        
         window.addEventListener('mousedown', (event) => {
             if (event.target.closest('.sound-box, .name-box, .position-box, .time-box')) return;
-
-            if (zoomStateRef.current) return;
-
+        
+            if (zoomStateRef.current || isTransitioning) return;
+        
             if (isZoomedIn) {
+                isTransitioning = true;
                 adjustCamera(startPosition, { x: 0, y: 3.1, z: 0 }, 1, () => {
                     startOrbit();
                     isRaycasterActive = false;
+                    isTransitioning = false;
+                    window.addEventListener('mousemove', followMouse);
                 });
                 isZoomedIn = false;
                 isMouseDown = false;
                 window.removeEventListener('mousemove', followMouse);
             } else {
                 orbitAnimation.kill();
+                isTransitioning = true;
                 adjustCamera({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1, () => {
                     isRaycasterActive = true;
+                    isTransitioning = false;
                 });
                 isZoomedIn = true;
                 isMouseDown = true;
                 window.addEventListener('mousemove', followMouse);
             }
         });
-
+        
         const screenObject = dimMesh;
-
+        
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
-
+        
         const zoomIntoScreen = () => {
+            if (isTransitioning) return;
+        
+            isTransitioning = true;
             const zoomPosition = { x: 0.7, y: 3.1, z: -1.3 };
-            adjustCameraOverScreen(zoomPosition, { x: 0.7, y: 3.1, z: 0 });
-            isZoomedIntoScreen = true;
-            zoomStateRef.current = true;
-            officeSound.setFilter(lowPassFilter);
-            officeSound.setVolume(0.05)
+            adjustCameraOverScreen(zoomPosition, { x: 0.7, y: 3.1, z: 0 }, 1, () => {
+                isZoomedIntoScreen = true;
+                zoomStateRef.current = true;
+                officeSound.setFilter(lowPassFilter);
+                officeSound.setVolume(0.05);
+                window.removeEventListener('mousemove', followMouse);
+                isTransitioning = false;
+            });
         };
-
+        
         const followMouse = (event) => {
-            if (!isZoomedIn || isZoomedIntoScreen) return;
-
+            if (!isZoomedIn || isZoomedIntoScreen || isTransitioning) return;
+        
             const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
             const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
-
+        
             const targetX = 0.8 - mouseX * 0.4;
             const targetY = 3 + mouseY * 0.4;
-
+        
             camera.position.x = targetX;
             camera.position.y = targetY;
             camera.lookAt(0, 3.1, 30);
         };
-
+        
         const debounce = (func, wait) => {
             let timeout;
             return (...args) => {
@@ -427,17 +444,17 @@ const CSS3DScene = ({ onLoadingComplete }) => {
                 timeout = setTimeout(() => func.apply(this, args), wait);
             };
         };
-
+        
         const handleMouseMove = debounce((event) => {
-            if (!isRaycasterActive) return;
-
+            if (!isRaycasterActive || isTransitioning) return;
+        
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
+        
             raycaster.setFromCamera(mouse, camera);
-
+        
             const intersects = raycaster.intersectObject(screenObject);
-
+        
             if (intersects.length > 0) {
                 if (!isHoveringScreen) {
                     isHoveringScreen = true;
@@ -446,25 +463,24 @@ const CSS3DScene = ({ onLoadingComplete }) => {
             } else {
                 if (isHoveringScreen && isZoomedIntoScreen) {
                     isHoveringScreen = false;
+                    isTransitioning = true;
                     adjustCameraOverScreen({ x: 0.8, y: 3, z: -5 }, { x: 0, y: 3.1, z: 30 }, 1, () => {
                         officeSound.setFilter(null);
                         isZoomedIntoScreen = false;
                         zoomStateRef.current = false;
-                        setTimeout(() => {
-                            if (isZoomedIn && !isZoomedIntoScreen) {
-                                window.addEventListener('mousemove', followMouse);
-                            }
-                        }, 1000);
+                        isTransitioning = false;
+                        window.addEventListener('mousemove', followMouse);
                     });
                 }
             }
         }, 50);
-
+        
         window.addEventListener('mousemove', handleMouseMove);
-
+        
         camera.updateProjectionMatrix();
-
-        onLoadingComplete();
+        
+        
+        
 
         // Animation loop for CSS3D rendering
         const renderLoop = () => {
