@@ -13,6 +13,9 @@ const Ui = ({ zoomStateRef }) => {
   const [showSound, setShowSound] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
 
+  const audio = new Audio(('../../Assets/Audio/ticker.mp3'));
+  audio.volume = 0.3;
+
   useEffect(() => {
     const startTime = () => {
       const today = new Date();
@@ -34,9 +37,9 @@ const Ui = ({ zoomStateRef }) => {
   };
 
   const playCompletionSound = () => {
-    const audio = new Audio('../../Assets/Audio/ticker.mp3');
-    audio.volume = 0.3;
-    audio.play();
+    if (!isMuted) {
+      audio.play();
+    }
   };
 
   useEffect(() => {
@@ -44,7 +47,7 @@ const Ui = ({ zoomStateRef }) => {
       playCompletionSound();
       setTimeout(() => {
         setShowSound(true);
-      }, 250);
+      }, 750);
     }
   }, [showTime]);
 

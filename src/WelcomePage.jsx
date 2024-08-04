@@ -1,13 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import "./WelcomePage.css";
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
-import * as THREE from 'three';
 
-const WelcomePage = ({ onEnter, setModel, setModelLoaded, onLoadingComplete }) => {
+const WelcomePage = ({ onEnter, onLoadingComplete }) => {
   const infoRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
-  const [loadingComplete, setLoadingComplete] = useState(false);
 
   useEffect(() => {
     const mainSystemInfo = [
@@ -48,37 +44,12 @@ const WelcomePage = ({ onEnter, setModel, setModelLoaded, onLoadingComplete }) =
       });
       displayInfo(additionalMessages, 800, () => {
         setShowModal(true);
-        setLoadingComplete(true); // Notify that loading is complete
+        onLoadingComplete(); // Notify that loading is complete
       });
     };
 
     displayMessages();
-
-    const loader = new GLTFLoader();
-    const draco = new DRACOLoader();
-    draco.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
-    loader.setDRACOLoader(draco);
-
-    loader.load('../Assets/compressed3.glb', function (glb) {
-      const model = glb.scene;
-      model.scale.set(1, 1, 1);
-      model.traverse(function (node) {
-        if (node.isMesh) {
-          node.castShadow = true;
-          node.receiveShadow = true;
-        }
-      });
-      model.side = THREE.DoubleSide;
-      model.rotation.y = Math.PI / 2;
-      setModel(model);
-      setModelLoaded(true);
-      onLoadingComplete(); // Notify that loading is complete
-    }, undefined, function (error) {
-      console.error('An error happened while loading the model', error);
-      onLoadingComplete(); // Ensure button becomes clickable even if loading fails
-    });
-
-  }, [setModel, setModelLoaded, onLoadingComplete]);
+  }, [onLoadingComplete]);
 
   return (
     <div className="splash-screen">
@@ -104,7 +75,7 @@ const WelcomePage = ({ onEnter, setModel, setModelLoaded, onLoadingComplete }) =
           <div className="modal-content">
             <p>All systems ready.</p>
             <p> Note: Best experienced on a desktop!</p>
-            <button onClick={loadingComplete ? onEnter : null} disabled={!loadingComplete}>
+            <button onClick={onEnter}>
               Enter
             </button>
           </div>

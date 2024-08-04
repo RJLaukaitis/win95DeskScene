@@ -7,8 +7,6 @@ import './app.css';
 
 const App = () => {
   const [showWelcome, setShowWelcome] = useState(true);
-  const [model, setModel] = useState(null);
-  const [modelLoaded, setModelLoaded] = useState(false);
   const [loading, setLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
 
@@ -17,7 +15,7 @@ const App = () => {
       setFadeOut(true);
       setTimeout(() => {
         setShowWelcome(false);
-      }, 1500); // Match this duration with your CSS transition duration
+      }, 1500);
     }
   };
 
@@ -37,8 +35,6 @@ const App = () => {
         <div className={`welcome-container ${fadeOut ? 'fade-out' : ''}`}>
           <WelcomePage
             onEnter={handleEnter}
-            setModel={setModel}
-            setModelLoaded={setModelLoaded}
             onLoadingComplete={handleLoadingComplete}
           />
         </div>
@@ -51,7 +47,6 @@ const App = () => {
               far: 2000,
             }}
           >
-            {modelLoaded && <primitive object={model} />}
             <CSS3DScene onLoadingComplete={handleLoadingComplete}/>
           </Canvas>
         </div>
