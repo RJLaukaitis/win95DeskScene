@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState} from 'react';
+import { useEffect, useRef } from 'react';
 import { extend, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import ReactDOM from 'react-dom';
@@ -21,6 +21,13 @@ const CSS3DScene = ({ onLoadingComplete }) => {
     const { scene, camera } = useThree();
     const cssScene = new THREE.Scene();
     const ref = useRef();
+
+    // References to loaded resources
+    const modelRef = useRef();
+    const vignetteTextureRef = useRef();
+    const dustTextureRef = useRef();
+    const smudgeTextureRef = useRef();
+    const crtTextureRef = useRef();
 
     useEffect(() => {
         // Setting up gl renderer
@@ -53,11 +60,12 @@ const CSS3DScene = ({ onLoadingComplete }) => {
         loader.setDRACOLoader(draco);
 
         loader.load('../Assets/compressed3.glb', function (glb) {
-        const model = glb.scene;
-        scene.add(model);
-        model.scale.set(1, 1, 1);
-        model.side = THREE.DoubleSide;
-        model.rotation.y = Math.PI / 2;
+            const model = glb.scene;
+            scene.add(model);
+            model.scale.set(1, 1, 1);
+            model.side = THREE.DoubleSide;
+            model.rotation.y = Math.PI / 2;
+            modelRef.current = model; // Save reference to model
         });
 
         // Audio
@@ -145,9 +153,9 @@ const CSS3DScene = ({ onLoadingComplete }) => {
 
         // Creating vignette plate
         const texloader = new THREE.TextureLoader();
-        const vignetteTexture = texloader.load(vignette, () => {
+        vignetteTextureRef.current = texloader.load(vignette, () => {
             const vmat = new THREE.MeshBasicMaterial({
-                map: vignetteTexture,
+                map: vignetteTextureRef.current,
                 side: THREE.DoubleSide,
                 transparent: true,
                 opacity: 1,
@@ -163,9 +171,9 @@ const CSS3DScene = ({ onLoadingComplete }) => {
         });
 
         // Creating dust plate
-        const dustTexture = texloader.load(dust, () => {
+        dustTextureRef.current = texloader.load(dust, () => {
             const dmat = new THREE.MeshBasicMaterial({
-                map: dustTexture,
+                map: dustTextureRef.current,
                 side: THREE.DoubleSide,
                 transparent: true,
                 opacity: 0.01,
@@ -196,9 +204,9 @@ const CSS3DScene = ({ onLoadingComplete }) => {
             // Update the vertex position
             planeGeometry.attributes.position.setXYZ(i, vertex.x, vertex.y, vertex.z);
         }
-        const smudgeTexture = texloader.load(smudges, () => {
+        smudgeTextureRef.current = texloader.load(smudges, () => {
             const smat = new THREE.MeshBasicMaterial({
-                map: smudgeTexture,
+                map: smudgeTextureRef.current,
                 side: THREE.DoubleSide,
                 opacity: .06,
                 transparent: true,
@@ -221,10 +229,10 @@ const CSS3DScene = ({ onLoadingComplete }) => {
         video.play();
         document.body.appendChild(video);
 
-        const crtTexture = new THREE.VideoTexture(video);
+        crtTextureRef.current = new THREE.VideoTexture(video);
 
         const videoMaterial = new THREE.MeshBasicMaterial({
-            map: crtTexture,
+            map: crtTextureRef.current,
             side: THREE.DoubleSide,
             transparent: true,
             opacity: .4,
@@ -506,6 +514,34 @@ const CSS3DScene = ({ onLoadingComplete }) => {
             // Dispose of three.js objects
             renderer.dispose();
             cssRenderer.dispose();
+
+            // Dispose of loaded resources
+            if (modelRef.current) {
+                scene.remove(modelRef.current);
+                modelRef.current.traverse((child) => {
+                    if (child.isMesh) {
+                        child.geometry.dispose();
+                        if (child.material.isMaterial) {
+                            child.material.dispose();
+                        } else {
+                            child.material.forEach((material) => material.dispose());
+                        }
+                    }
+                });
+            }
+
+            const texturesToDispose = [
+                vignetteTextureRef.current,
+                dustTextureRef.current,
+                smudgeTextureRef.current,
+                crtTextureRef.current,
+            ];
+
+            texturesToDispose.forEach((texture) => {
+                if (texture) {
+                    texture.dispose();
+                }
+            });
 
             // Remove added DOM elements
             if (document.getElementById('webgl')) {
