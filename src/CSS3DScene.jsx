@@ -121,7 +121,7 @@ const CSS3DScene = ({ onLoadingComplete }) => {
         container.style.pointerEvents = 'all'; // Ensure the container allows pointer events
 
         const iframe = document.createElement('iframe');
-        iframe.src = "https://laukaitisos.netlify.app/";
+        iframe.src = "http://localhost:3000/";
         iframe.style.width = "1240px";
         iframe.style.height = "865px";
         iframe.style.marginTop = "67px";

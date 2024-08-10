@@ -49,7 +49,7 @@ const WelcomePage = ({ onEnter, onLoadingComplete }) => {
     };
 
     displayMessages();
-  }, [onLoadingComplete]);
+  }, []); // Empty dependency array to ensure it runs only once
 
   return (
     <div className="splash-screen">
