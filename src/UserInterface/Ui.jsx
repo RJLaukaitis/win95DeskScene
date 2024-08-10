@@ -94,15 +94,6 @@ const Ui = ({ zoomStateRef }) => {
               <div className='time-box'>
                 <span style={{ fontSize: '1em', display: 'inline-block', backgroundColor: 'black', color: 'white', padding: '5px 10px', boxSizing: 'border-box' }}>{time}</span>
               </div>
-              {showSound && (
-                <div className='sound-box' onClick={handleSoundToggle}>
-                  <img
-                    src={isMuted ? mutedIcon : soundIcon}
-                    alt="sound-icon"
-                    style={{ width: '14px', height: '14px' }}
-                  />
-                </div>
-              )}
             </div>
           )}
         </div>
