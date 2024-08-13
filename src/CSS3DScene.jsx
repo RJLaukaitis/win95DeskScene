@@ -7,7 +7,7 @@ import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRe
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import dust from "../Assets/Textures/MonitorOverlay/dust.jpg";
 import smudges from "../Assets/Textures/MonitorOverlay/smudge.png";
-import vignette from "../Assets/Textures/MonitorOverlay/vignette1.png";
+import vignette from "../Assets/Textures/MonitorOverlay/vignette2.png";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import gsap from 'gsap';
@@ -122,10 +122,10 @@ const CSS3DScene = ({ onLoadingComplete }) => {
 
         const iframe = document.createElement('iframe');
         iframe.src = "https://laukaitisos.netlify.app/";
-        iframe.style.width = "1240px";
+        iframe.style.width = "1260px";
         iframe.style.height = "865px";
         iframe.style.marginTop = "67px";
-        iframe.style.marginLeft = "100px";
+        iframe.style.marginLeft = "75px";
         iframe.style.border = '0';
         iframe.style.padding = '0';
         iframe.style.boxShadow = 'none';
@@ -138,7 +138,7 @@ const CSS3DScene = ({ onLoadingComplete }) => {
 
         // Creating CSS3DObject
         const object = new CSS3DObject(container);
-        object.position.set(.73, 3.1, .38); //3.1 for y
+        object.position.set(.70, 3.1, .38); //3.1 for y
         object.rotation.y = Math.PI;
 
         object.scale.set(0.00125, 0.0012, 0.003); // Set appropriate values
@@ -153,7 +153,7 @@ const CSS3DScene = ({ onLoadingComplete }) => {
 
         const geometry = new THREE.PlaneGeometry(1400, 1000);
         const mesh = new THREE.Mesh(geometry, mat);
-        mesh.position.set(.80, 3.1, .38);
+        mesh.position.set(.77, 3.1, .38);
         mesh.rotation.copy(object.rotation); // Copy rotation of CSS3DObject
         mesh.scale.copy(object.scale);
         scene.add(mesh);
@@ -164,13 +164,13 @@ const CSS3DScene = ({ onLoadingComplete }) => {
             const vmat = new THREE.MeshBasicMaterial({
                 map: vignetteTextureRef.current,
                 side: THREE.DoubleSide,
-                transparent: true,
-                opacity: 1,
+                opacity: .7,
+                transparent:true,
                 blending: THREE.NormalBlending
             });
             const vgeometry = new THREE.PlaneGeometry(1400, 1000);
             const vmesh = new THREE.Mesh(vgeometry, vmat);
-            vmesh.position.set(.8, 3.13, 0.36); // Position it slightly in front of the iframe
+            vmesh.position.set(.75, 3.13, 0.36); // Position it slightly in front of the iframe
             vmesh.rotation.copy(object.rotation); // Copy rotation of CSS3DObject
             vmesh.scale.copy(object.scale); // Copy scale of CSS3DObject
             scene.add(vmesh);
@@ -244,10 +244,11 @@ const CSS3DScene = ({ onLoadingComplete }) => {
             transparent: true,
             opacity: .4,
             blending: THREE.AdditiveBlending
+            
         });
         const crtgeometry = new THREE.PlaneGeometry(1400, 1000);
         const crtmesh = new THREE.Mesh(crtgeometry, videoMaterial);
-        crtmesh.position.set(0.8, 3.13, .35);
+        crtmesh.position.set(0.75, 3.13, .35);
         crtmesh.scale.copy(object.scale);
         crtmesh.rotation.y = Math.PI;
         scene.add(crtmesh);
