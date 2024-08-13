@@ -126,7 +126,7 @@ const CSS3DScene = ({ onLoadingComplete }) => {
         iframe.style.height = "865px";
         iframe.style.marginTop = "67px";
         iframe.style.marginLeft = "100px";
-        iframe.style.boxSizing = 'border-box';
+        // iframe.style.boxSizing = 'border-box';
         iframe.style.opacity = '1';
         iframe.style.zIndex = '15';
         iframe.style.brightness = "5";
