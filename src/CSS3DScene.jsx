@@ -121,12 +121,14 @@ const CSS3DScene = ({ onLoadingComplete }) => {
         container.style.pointerEvents = 'all'; // Ensure the container allows pointer events
 
         const iframe = document.createElement('iframe');
-        iframe.src = "http://localhost:3000/";
+        iframe.src = "https://laukaitisos.netlify.app/";
         iframe.style.width = "1240px";
         iframe.style.height = "865px";
         iframe.style.marginTop = "67px";
         iframe.style.marginLeft = "100px";
-        // iframe.style.boxSizing = 'border-box';
+        iframe.style.border = '0';
+        iframe.style.padding = '0';
+        iframe.style.boxShadow = 'none';
         iframe.style.opacity = '1';
         iframe.style.zIndex = '15';
         iframe.style.brightness = "5";
@@ -267,7 +269,7 @@ const CSS3DScene = ({ onLoadingComplete }) => {
         scene.add(dimMesh);
 
         const adjustCamera = (endPos, endLookAt, duration = 1, onComplete = () => { }) => {
-            const lookAtProxy = new THREE.Vector3();
+            const lookAtProxy = new THREE.Vector3(0,3.1,0);
         
             gsap.to(camera.position, {
                 x: endPos.x,
@@ -381,7 +383,7 @@ const CSS3DScene = ({ onLoadingComplete }) => {
         
             if (isZoomedIn) {
                 isTransitioning = true;
-                adjustCamera(startPosition, { x: 0, y: 3.1, z: 0 }, 1, () => {
+                adjustCamera(startPosition, { x: 0, y: 3.1, z: 0}, 1, () => {
                     startOrbit();
                     isRaycasterActive = false;
                     isTransitioning = false;
