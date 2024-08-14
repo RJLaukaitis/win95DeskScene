@@ -39,7 +39,7 @@ const CSS3DScene = ({ onLoadingComplete }) => {
         draco.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
         loader.setDRACOLoader(draco);
 
-        loader.load('../Assets/compressed3.glb', function (glb) {
+        loader.load('../Assets/compressed.glb', function (glb) {
             const model = glb.scene;
             scene.add(model);
             model.scale.set(1, 1, 1);
@@ -164,7 +164,7 @@ const CSS3DScene = ({ onLoadingComplete }) => {
             const vmat = new THREE.MeshBasicMaterial({
                 map: vignetteTextureRef.current,
                 side: THREE.DoubleSide,
-                opacity: .7,
+                opacity: .65,
                 transparent:true,
                 blending: THREE.NormalBlending
             });
