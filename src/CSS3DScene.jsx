@@ -121,7 +121,7 @@ const CSS3DScene = ({ onLoadingComplete }) => {
         container.style.pointerEvents = 'all'; // Ensure the container allows pointer events
 
         const iframe = document.createElement('iframe');
-        iframe.src = "https://laukaitisos.netlify.app/";
+        iframe.src = "http://localhost:3000"; //http://localhost:3000 for local testing 
         iframe.style.width = "1260px";
         iframe.style.height = "865px";
         iframe.style.marginTop = "67px";
@@ -164,7 +164,7 @@ const CSS3DScene = ({ onLoadingComplete }) => {
             const vmat = new THREE.MeshBasicMaterial({
                 map: vignetteTextureRef.current,
                 side: THREE.DoubleSide,
-                opacity: .65,
+                opacity: .6,
                 transparent:true,
                 blending: THREE.NormalBlending
             });
