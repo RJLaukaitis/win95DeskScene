@@ -30,7 +30,7 @@ body,
   align-items: center;
   justify-content: center;
   font-size: 2em;
-  z-index: 1000; /* Ensure it's on top of other elements */
+  z-index: 1000;
 }
 
 button {

@@ -38,6 +38,8 @@ const Ui = ({ zoomStateRef }) => {
 
   const playCompletionSound = () => {
     if (!isMuted) {
+      const audio = new Audio('../../Assets/Audio/ticker.mp3');
+      audio.volume = 1;
       audio.play();
     }
   };

@@ -44,12 +44,12 @@ const WelcomePage = ({ onEnter, onLoadingComplete }) => {
       });
       displayInfo(additionalMessages, 800, () => {
         setShowModal(true);
-        onLoadingComplete(); // Notify that loading is complete
+        onLoadingComplete(); 
       });
     };
 
     displayMessages();
-  }, []); // Empty dependency array to ensure it runs only once
+  }, []); 
 
   return (
     <div className="splash-screen">
