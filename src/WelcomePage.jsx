@@ -75,7 +75,7 @@ const WelcomePage = ({ onEnter, onLoadingComplete }) => {
           <div className="modal-content">
             <p>All systems ready.</p>
             <div className='warning'>
-                <p> Note: Best experienced on a desktop!</p>
+                <p> WARNING: This website is best viewed on a Desktop or Laptop!</p>
               </div>
             <button onClick={onEnter}>
               Enter

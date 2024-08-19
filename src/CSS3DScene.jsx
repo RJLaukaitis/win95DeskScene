@@ -329,9 +329,9 @@ const CSS3DScene = ({ onLoadingComplete }) => {
             });
         };
         
-        const zoomInPosition = { x: 15, y: 9, z: -20 };
-        const startPosition = { x: 20, y: 9, z: -20 };
-        const endPosition = { x: -14, y: 9, z: -9 };
+        const zoomInPosition = { x: 15, y: 9, z: -14 };
+        const startPosition = { x: 15, y: 9, z: -14 };
+        const endPosition = { x: -6, y: 9, z: -14 };
         
         camera.position.set(startPosition.x, startPosition.y, startPosition.z);
         camera.lookAt(0, 3.1, 0);
@@ -360,7 +360,7 @@ const CSS3DScene = ({ onLoadingComplete }) => {
                 x: endPosition.x,
                 y: endPosition.y,
                 z: endPosition.z,
-                duration: 30,
+                duration: 25,
                 repeat: -1,
                 yoyo: true,
                 ease: 'none',
@@ -505,7 +505,7 @@ const CSS3DScene = ({ onLoadingComplete }) => {
 
                 const opacity = Math.min(1 / (distance / 10000), 1); // Ensure opacity does not exceed 1
 
-                const DIM_FACTOR = 3.0;
+                const DIM_FACTOR = 1.5;
 
                 // Update the material opacity
                 const newOpacity = (1 - opacity) * DIM_FACTOR + (1 - dot) * DIM_FACTOR;
